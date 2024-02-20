@@ -1,0 +1,5 @@
+
+#ifndef MINITRACE_MACROS_H
+#define MINITRACE_MACROS_H
+
+#endif //MINITRACE_MACROS_H
