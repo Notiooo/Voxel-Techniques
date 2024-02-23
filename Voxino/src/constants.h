@@ -5,14 +5,12 @@
 #include <iostream>
 #include <stdlib.h>
 
-#ifndef _DEBUG
-    #undef MTR_ENABLED
-#endif
-
 /**
  * \brief This will remove 2D drawn by SFML and also the ImGUI
  */
 // #define DISABLE_SFML_GRAPHICS_MODULE
 // #define DISABLE_IMGUI
+#define IS_TRACY_ENABLED TRUE
+#define IS_MINITRACE_ENABLED FALSE
 
 constexpr static auto IS_MINITRACE_COLLECTING_AT_START = false;

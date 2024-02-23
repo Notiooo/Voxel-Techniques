@@ -102,6 +102,7 @@ void StateStack::updateImGui(const float& deltaTime)
 
 void StateStack::draw(sf::Window& target) const
 {
+    MEASURE_SCOPE_WITH_GPU;
     // Drawing starts from the lowest state to the highest state
     for (const auto& [id, state]: mStack)
     {

@@ -3,7 +3,6 @@
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"
 #include "Utils/Mouse.h"
-#include "constants.h"
 #include "pch.h"
 
 namespace Voxino
@@ -24,6 +23,7 @@ const sf::Time Application::TIME_PER_FIXED_UPDATE_CALLS =
     sf::seconds(1.f / MINIMAL_FIXED_UPDATES_PER_FRAME);
 const int Application::SCREEN_WIDTH = 1280;
 const int Application::SCREEN_HEIGHT = 720;
+
 
 Application::Application()
 {
@@ -64,10 +64,12 @@ Application::Application()
     {
         throw std::runtime_error("Failed to initialize GLEW");
     }
+    TracyGpuContext;
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    initializeTracyScreenCapture();
 
     // Setup all application-flow states
     mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
@@ -78,11 +80,27 @@ Application::Application()
     mAppStack.push(State_ID::LogoState);
 }
 
-void Application::run()
+void Application::initializeTracyScreenCapture()
 {
-    spdlog::info("Game starts, the resolution is {}x{}", mGameWindow->getSize().x,
-                 mGameWindow->getSize().y);
+    glGenTextures(4, m_fiTexture);
+    glGenFramebuffers(4, m_fiFramebuffer);
+    glGenBuffers(4, m_fiPbo);
+    for (int i = 0; i < 4; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, m_fiTexture[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 320, 180, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fiFramebuffer[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_fiTexture[i],
+                               0);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, m_fiPbo[i]);
+        glBufferData(GL_PIXEL_PACK_BUFFER, 320 * 180 * 4, nullptr, GL_STREAM_READ);
+    }
+}
 
+void Application::prepareProfilers()
+{
     mtr_init("chrome-trace.json");
     if constexpr (not IS_MINITRACE_COLLECTING_AT_START)
     {
@@ -94,7 +112,13 @@ void Application::run()
     }
     MTR_META_PROCESS_NAME("Game");
     MTR_META_THREAD_NAME("main thread");
+}
+void Application::run()
+{
+    spdlog::info("Game starts, the resolution is {}x{}", mGameWindow->getSize().x,
+                 mGameWindow->getSize().y);
 
+    prepareProfilers();
     performApplicationLoop();
 
     mGameWindow->close();
@@ -107,20 +131,18 @@ void Application::run()
 
 void Application::performApplicationLoop()
 {
-    MINITRACE_COLLECT_FUNCTION();
     sf::Clock clock;
     auto frameTimeElapsed = sf::Time::Zero;
     mFixedUpdateClock.restart();
     while (isGameRunning)
     {
-        MINITRACE_COLLECT_FUNCTION_CUSTOM("ApplicationLoop");
+        MEASURE_SCOPE_CUSTOM("ApplicationLoop");
         frameTimeElapsed = clock.restart();
         update(frameTimeElapsed);
         fixedUpdateAtEqualIntervals();
         processEvents();
 
         render();
-
         mtr_flush();
     }
     mAppStack.forceInstantClear();
@@ -128,7 +150,7 @@ void Application::performApplicationLoop()
 
 void Application::fixedUpdateAtEqualIntervals()
 {
-    MINITRACE_COLLECT_FUNCTION();
+    MEASURE_SCOPE;
     mTimeSinceLastFixedUpdate += mFixedUpdateClock.restart();
     if (mTimeSinceLastFixedUpdate > TIME_PER_FIXED_UPDATE_CALLS)
     {
@@ -171,6 +193,33 @@ void Application::updateImGuiMiniTrace()
 #endif
 }
 
+void Application::updateImGuiSelectScene()
+{
+    ImGui::Begin("Scene Selector");
+    static auto changeScene = [this](State_ID state_id)
+    {
+        mAppStack.clear();
+        mAppStack.push(state_id);
+    };
+
+    if (ImGui::Button("Logo"))
+    {
+        changeScene(State_ID::LogoState);
+    }
+
+    if (ImGui::Button("Game State"))
+    {
+        changeScene(State_ID::GameState);
+    }
+
+    if (ImGui::Button("Exit Application"))
+    {
+        changeScene(State_ID::ExitApplicationState);
+    }
+
+    ImGui::End();
+}
+
 void Application::updateImGui(const sf::Time& deltaTime)
 {
 #ifndef DISABLE_IMGUI
@@ -179,13 +228,14 @@ void Application::updateImGui(const sf::Time& deltaTime)
                         deltaTime);
 
     updateImGuiMiniTrace();
+    updateImGuiSelectScene();
     mAppStack.updateImGui(deltaTime.asSeconds());
 #endif
 }
 
 void Application::processEvents()
 {
-    MINITRACE_COLLECT_FUNCTION();
+    MEASURE_SCOPE;
     sf::Event event{};
     while (mGameWindow->pollEvent(event))
     {
@@ -204,14 +254,14 @@ void Application::processEvents()
 
 void Application::fixedUpdate(const sf::Time& deltaTime)
 {
-    MINITRACE_COLLECT_FUNCTION();
+    MEASURE_SCOPE;
     const auto deltaTimeInSeconds = deltaTime.asSeconds();
     mAppStack.fixedUpdate(deltaTimeInSeconds);
 }
 
 void Application::update(const sf::Time& deltaTime)
 {
-    MINITRACE_COLLECT_FUNCTION();
+    MEASURE_SCOPE;
     const auto deltaTimeInSeconds = deltaTime.asSeconds();
     Mouse::update(deltaTimeInSeconds, *mGameWindow);
 
@@ -225,9 +275,40 @@ void Application::update(const sf::Time& deltaTime)
     }
 }
 
-void Application::render() const
+void Application::performTracyProfilerScreenCapture()
 {
-    MINITRACE_COLLECT_FUNCTION();
+    while (!m_fiQueue.empty())
+    {
+        const auto fiIdx = m_fiQueue.front();
+        if (glClientWaitSync(m_fiFence[fiIdx], 0, 0) == GL_TIMEOUT_EXPIRED)
+        {
+            break;
+        }
+        glDeleteSync(m_fiFence[fiIdx]);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, m_fiPbo[fiIdx]);
+        auto ptr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, 320 * 180 * 4, GL_MAP_READ_BIT);
+        FrameImage(ptr, 320, 180, m_fiQueue.size(), true);
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        m_fiQueue.erase(m_fiQueue.begin());
+    }
+
+    assert(m_fiQueue.empty() || m_fiQueue.front() != m_fiIdx);// check for buffer overrun
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fiFramebuffer[m_fiIdx]);
+    glBlitFramebuffer(0, 0, mGameWindow->getSize().x, mGameWindow->getSize().y, 0, 0, 320, 180,
+                      GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fiFramebuffer[m_fiIdx]);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, m_fiPbo[m_fiIdx]);
+    glReadPixels(0, 0, 320, 180, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    m_fiFence[m_fiIdx] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    m_fiQueue.emplace_back(m_fiIdx);
+    m_fiIdx = (m_fiIdx + 1) % 4;
+}
+
+void Application::render()
+{
+    MEASURE_SCOPE_WITH_GPU;
     glClearColor(0.f, 0.f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -240,8 +321,11 @@ void Application::render() const
     mGameWindow->popGLStates();
 #endif
 
+    performTracyProfilerScreenCapture();
     // display to the window
     mGameWindow->display();
+    FrameMark;
+    TracyGpuCollect;
 }
 
 

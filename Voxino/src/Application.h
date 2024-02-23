@@ -48,6 +48,16 @@ private:
     void performApplicationLoop();
 
     /**
+     * \brief TODO: THIS
+     */
+    void prepareProfilers();
+
+    /**
+     * \brief TODO: THIS
+     */
+    void initializeTracyScreenCapture();
+
+    /**
      * \brief Intercepts user inputs and passes them to processes inside the application.
      */
     void processEvents();
@@ -81,6 +91,11 @@ private:
     static void updateImGuiMiniTrace();
 
     /**
+     * \brief TODO: THIS
+     */
+    void updateImGuiSelectScene();
+
+    /**
      * \brief Creates ImGui objects (every frame)
      * \param deltaTime Time elapsed since the previous frame
      */
@@ -98,6 +113,12 @@ private:
      */
     void update(const sf::Time& deltaTime);
 
+
+    /**
+     * \brief TODO: THIS
+     */
+    void performTracyProfilerScreenCapture();
+
     /**
      * \brief Displays the application on the image of the application window
      *
@@ -105,7 +126,7 @@ private:
      * iteration and displays them on the screen in the order they appear in the code.
      * It clears the screen with a black image before displaying a new frame.
      */
-    void render() const;
+    void render();
 
     /**
      * \brief Loads the resources needed by the processes inside the application.
@@ -171,6 +192,15 @@ private:
      * itself, as well as to pause the game.
      */
     StateStack mAppStack;
+
+
+    // Tracy Profiler Screen capture variables
+    GLuint m_fiTexture[4];
+    GLuint m_fiFramebuffer[4];
+    GLuint m_fiPbo[4];
+    GLsync m_fiFence[4];
+    int m_fiIdx = 0;
+    std::vector<int> m_fiQueue;
 };
 
 }// namespace Voxino

@@ -50,7 +50,6 @@ add_executable(VoxinoTests
         ${Utils_Sources}
         )
 
-
 target_compile_definitions(VoxinoTests PUBLIC GTEST_LINKED_AS_SHARED_LIBRARY)
 target_link_libraries(VoxinoTests PRIVATE VoxinoSrc)
 target_link_libraries(VoxinoTests PRIVATE gtest gtest_main)
@@ -70,6 +69,7 @@ add_custom_command(TARGET VoxinoTests POST_BUILD
         $<TARGET_FILE:sfml-system>
         $<TARGET_FILE:sfml-audio>
         $<TARGET_FILE:spdlog>
+        $<TARGET_FILE:TracyClient>
         $<TARGET_FILE_DIR:VoxinoTests>
         )
 
