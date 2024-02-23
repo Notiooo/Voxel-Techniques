@@ -24,7 +24,7 @@ GameState::GameState(StateStack& stack, WindowToRender& window)
 
 void GameState::draw(sf::Window& target) const
 {
-    MTR_SCOPE("GameState", "GameState::draw");
+    MINITRACE_COLLECT_FUNCTION();
     mGameBackground.draw(mRenderer);
     mSkybox.draw(mPlayer.camera());
     mInfiniteGridFloor.draw(target, mPlayer.camera());
@@ -34,14 +34,14 @@ void GameState::draw(sf::Window& target) const
 
 bool GameState::fixedUpdate(const float& deltaTime)
 {
-    MTR_SCOPE("GameState", "GameState::fixedUpdate");
+    MINITRACE_COLLECT_FUNCTION();
     mPlayer.fixedUpdate(deltaTime);
     return true;
 }
 
 bool GameState::update(const float& deltaTime)
 {
-    MTR_SCOPE("GameState", "GameState::update");
+    MINITRACE_COLLECT_FUNCTION();
     mPlayer.update(deltaTime);
 
     if (mPhaseInLogoColor.opacity() > 0)
@@ -53,7 +53,7 @@ bool GameState::update(const float& deltaTime)
 
 bool GameState::handleEvent(const sf::Event& event)
 {
-    MTR_SCOPE("GameState", "GameState::handleEvent");
+    MINITRACE_COLLECT_FUNCTION();
     mPlayer.handleEvent(event);
 
     if (event.type == sf::Event::KeyPressed)
@@ -70,7 +70,7 @@ bool GameState::handleEvent(const sf::Event& event)
 
 bool GameState::updateImGui(const float& deltaTime)
 {
-    MTR_SCOPE("GameState", "GameState::updateImGui");
+    MINITRACE_COLLECT_FUNCTION();
     return true;
 }
 

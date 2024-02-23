@@ -24,20 +24,20 @@ LogoState::LogoState(StateStack& stack, sf::Window& window)
 
 void LogoState::draw(sf::Window& target) const
 {
-    MTR_SCOPE("LogoState", "LogoState::draw");
+    MINITRACE_COLLECT_FUNCTION();
     mRectangle.draw(mRenderer);
     mLogo.draw(mRenderer);
 }
 
 bool LogoState::fixedUpdate(const float& deltaTime)
 {
-    MTR_SCOPE("LogoState", "LogoState::fixedUpdate");
+    MINITRACE_COLLECT_FUNCTION();
     return true;
 }
 
 bool LogoState::update(const float& deltaTime)
 {
-    MTR_SCOPE("LogoState", "LogoState::update");
+    MINITRACE_COLLECT_FUNCTION();
     switch (mPhase)
     {
         case Phase::FadeIn:
@@ -63,7 +63,7 @@ bool LogoState::update(const float& deltaTime)
 
 bool LogoState::handleEvent(const sf::Event& event)
 {
-    MTR_SCOPE("LogoState", "LogoState::handleEvent");
+    MINITRACE_COLLECT_FUNCTION();
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
     {
         requestPop();
@@ -74,7 +74,7 @@ bool LogoState::handleEvent(const sf::Event& event)
 
 bool LogoState::updateImGui(const float& deltaTime)
 {
-    MTR_SCOPE("LogoState", "LogoState::updateImGui");
+    MINITRACE_COLLECT_FUNCTION();
     return true;
 }
 

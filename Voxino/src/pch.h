@@ -35,4 +35,5 @@
 
 // Other
 #include "stb_image.h"
+#include "utils/minitrace_macros.h"
 #include <result.hpp>

@@ -107,13 +107,13 @@ void Application::run()
 
 void Application::performApplicationLoop()
 {
-    MTR_SCOPE("Application", "Application::performApplicationLoop");
+    MINITRACE_COLLECT_FUNCTION();
     sf::Clock clock;
     auto frameTimeElapsed = sf::Time::Zero;
     mFixedUpdateClock.restart();
     while (isGameRunning)
     {
-        MTR_SCOPE("Application", "ApplicationLoop");
+        MINITRACE_COLLECT_FUNCTION_CUSTOM("ApplicationLoop");
         frameTimeElapsed = clock.restart();
         update(frameTimeElapsed);
         fixedUpdateAtEqualIntervals();
@@ -128,7 +128,7 @@ void Application::performApplicationLoop()
 
 void Application::fixedUpdateAtEqualIntervals()
 {
-    MTR_SCOPE("Application", "Application::fixedUpdateAtEqualIntervals");
+    MINITRACE_COLLECT_FUNCTION();
     mTimeSinceLastFixedUpdate += mFixedUpdateClock.restart();
     if (mTimeSinceLastFixedUpdate > TIME_PER_FIXED_UPDATE_CALLS)
     {
@@ -185,7 +185,7 @@ void Application::updateImGui(const sf::Time& deltaTime)
 
 void Application::processEvents()
 {
-    MTR_SCOPE("Application", "Application::processEvents");
+    MINITRACE_COLLECT_FUNCTION();
     sf::Event event{};
     while (mGameWindow->pollEvent(event))
     {
@@ -204,14 +204,14 @@ void Application::processEvents()
 
 void Application::fixedUpdate(const sf::Time& deltaTime)
 {
-    MTR_SCOPE("Application", "Application::fixedUpdate");
+    MINITRACE_COLLECT_FUNCTION();
     const auto deltaTimeInSeconds = deltaTime.asSeconds();
     mAppStack.fixedUpdate(deltaTimeInSeconds);
 }
 
 void Application::update(const sf::Time& deltaTime)
 {
-    MTR_SCOPE("Application", "Application::update");
+    MINITRACE_COLLECT_FUNCTION();
     const auto deltaTimeInSeconds = deltaTime.asSeconds();
     Mouse::update(deltaTimeInSeconds, *mGameWindow);
 
@@ -227,7 +227,7 @@ void Application::update(const sf::Time& deltaTime)
 
 void Application::render() const
 {
-    MTR_SCOPE("Application", "Application::render");
+    MINITRACE_COLLECT_FUNCTION();
     glClearColor(0.f, 0.f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
