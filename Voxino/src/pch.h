@@ -36,4 +36,5 @@
 // Other
 #include "stb_image.h"
 #include "utils/profiler_macros.h"
+#include <FastNoiseLite.h>
 #include <result.hpp>

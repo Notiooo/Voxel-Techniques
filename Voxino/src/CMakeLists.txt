@@ -33,6 +33,7 @@ target_include_directories(VoxinoSrc PUBLIC
         ${FETCHCONTENT_BASE_DIR}/entt-src/src
         ${FETCHCONTENT_BASE_DIR}/tracy-src/public/tracy
         ${FETCHCONTENT_BASE_DIR}/yaml-cpp-src/include
+        ${FETCHCONTENT_BASE_DIR}/fastnoiselite-src/Cpp
         ${glm_SOURCE_DIR}
         ${CUSTOM_INCLUDES_DIR}
 )
