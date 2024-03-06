@@ -25,5 +25,11 @@ set(PROJECT_SOURCES
         World/Camera.cpp
         World/Skybox.cpp
         World/InfiniteGridFloor.cpp
+        World/Polygons/Block/Block.cpp
+        World/Polygons/Block/BlockMap.cpp
+        World/Polygons/Block/BlockType.cpp
         Utils/Mouse.cpp
+        Utils/CoordinateBase.cpp
+        Utils/Direction.cpp
+        Utils/IteratorRanges.cpp
         )
