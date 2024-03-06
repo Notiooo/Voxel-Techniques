@@ -57,7 +57,7 @@ private:
     GLenum deduceImageFormat() const;
 
     /**
-     * \brief Loads a texture of one face of the skybox. TODO: Make it more readable
+     * \brief Loads a texture of one face of the skybox.
      * \param faces The texture file paths for the skybox faces.
      * \param faceId The ID of the face to which the texture is applied.
      */

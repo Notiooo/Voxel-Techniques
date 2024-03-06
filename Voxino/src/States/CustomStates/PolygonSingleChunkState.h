@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Renderer/Graphics/2D/Rectangle2D.h"
+#include "Player/Player.h"
 #include "Renderer/Renderer.h"
+#include "Resources/TexturePack.h"
 #include "States/State.h"
-#include "World/Skybox.h"
-#include <Player/Player.h>
+#include "World/Polygons/Chunks/Chunk.h"
+
 #include <World/InfiniteGridFloor.h>
+#include <World/Skybox.h>
 
 namespace Voxino
 {
@@ -13,12 +15,13 @@ namespace Voxino
 class StateStack;
 
 /**
- * \brief The game state in which all the action of the game (user training) takes place.
+ * \brief The game state in which the game world is created,
+ * all objects are placed and the processes inside the game world are controlled.
  */
-class GameState : public State
+class PolygonSingleChunkState : public State
 {
 public:
-    GameState(StateStack& stack, WindowToRender& window);
+    PolygonSingleChunkState(StateStack& stack, WindowToRender& window);
 
     /**
      * \brief Draws only this state to the passed target
@@ -34,7 +37,7 @@ public:
 
     /**
      * \brief Updates the imgui logic dependent, or independent of time, every rendered frame.
-     * \param deltaTime the time that has passed since the game was last updated.
+     * \param deltaTime the time that has passed since the application was last updated.
      */
     bool updateImGui(const float& deltaTime) override;
 
@@ -51,13 +54,16 @@ public:
     bool handleEvent(const sf::Event& event) override;
 
 private:
+    void switchWireframe();
+
+
+private:
     WindowToRender& mWindow;
     Player mPlayer;
     Renderer mRenderer;
-    Rectangle2D mGameBackground;
-    sf::Clock mPhaseInClock;
-    Rectangle2D mPhaseInLogoColor;
-    InfiniteGridFloor mInfiniteGridFloor;
+    Shader mShader;
+    TexturePack mTexturePack;
+    Chunk mChunk;
     Skybox mSkybox;
 };
 

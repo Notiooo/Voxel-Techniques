@@ -29,9 +29,9 @@ public:
      */
     explicit Player(WindowToRender& window);
 
-    static constexpr auto PLAYER_MAX_FLYING_SPEED = 5.f;
+    static constexpr auto PLAYER_MAX_FLYING_SPEED = 25.f;
     static constexpr auto PLAYER_FLYING_DECELERATE_RATIO = 10.f;
-    static constexpr auto PLAYER_ACCELERATE_SPEED = 2.5f;
+    static constexpr auto PLAYER_ACCELERATE_SPEED = 10.5f;
 
     /**
      * \brief Draws all player components to a given target

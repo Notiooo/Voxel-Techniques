@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         States/State.cpp
         States/StateStack.cpp
         States/CustomStates/LogoState.cpp
+        States/CustomStates/PolygonSingleChunkState.cpp
         States/CustomStates/ExitApplicationState.cpp
         States/CustomStates/GameState.cpp
         Player/Player.cpp

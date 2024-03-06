@@ -2,6 +2,7 @@
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"
+#include "States/CustomStates/PolygonSingleChunkState.h"
 #include "Utils/Mouse.h"
 #include "pch.h"
 
@@ -80,9 +81,10 @@ Application::Application()
     mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
     mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
     mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState>(State_ID::PolygonSingleChunkState, *mGameWindow);
 
     // Initial state of the statestack is TitleState
-    mAppStack.push(State_ID::LogoState);
+    mAppStack.push(State_ID::PolygonSingleChunkState);
 }
 
 void Application::initializeTracyScreenCapture()
@@ -216,6 +218,11 @@ void Application::updateImGuiSelectScene()
     if (ImGui::Button("Game State"))
     {
         changeScene(State_ID::GameState);
+    }
+
+    if (ImGui::Button("Polygon Single Chunk"))
+    {
+        changeScene(State_ID::PolygonSingleChunkState);
     }
 
     if (ImGui::Button("Exit Application"))
