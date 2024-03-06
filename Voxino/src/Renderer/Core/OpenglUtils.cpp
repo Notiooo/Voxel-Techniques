@@ -15,8 +15,7 @@ bool GLLogCall(const char* function, const char* file, int line)
 {
     if (const GLenum error = glGetError())
     {
-        std::cout << "[OpenGL Error] (0x" << std::hex << error << std::dec << "): " << function
-                  << " " << file << " at line: " << line << std::endl;
+        spdlog::error("[OpenGL Error] (0x{:X}): {} {} at line: {}", error, function, file, line);
         return false;
     }
     return true;

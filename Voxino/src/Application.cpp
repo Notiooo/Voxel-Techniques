@@ -56,6 +56,11 @@ Application::Application()
 #ifndef DISABLE_IMGUI
     ImGui::SFML::Init(*mGameWindow, sf::Vector2f(mGameWindow->getSize()), true);
     setupImGuiStyle();
+    ImGuiIO& io = ImGui::GetIO();
+    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
+    {
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    }
 #endif
 
     // GLEW setup
@@ -99,7 +104,7 @@ void Application::initializeTracyScreenCapture()
     }
 }
 
-void Application::prepareProfilers()
+void Application::initializeMinitraceProfiler()
 {
     mtr_init("chrome-trace.json");
     if constexpr (not IS_MINITRACE_COLLECTING_AT_START)
@@ -113,12 +118,13 @@ void Application::prepareProfilers()
     MTR_META_PROCESS_NAME("Game");
     MTR_META_THREAD_NAME("main thread");
 }
+
 void Application::run()
 {
     spdlog::info("Game starts, the resolution is {}x{}", mGameWindow->getSize().x,
                  mGameWindow->getSize().y);
 
-    prepareProfilers();
+    initializeMinitraceProfiler();
     performApplicationLoop();
 
     mGameWindow->close();
@@ -195,7 +201,7 @@ void Application::updateImGuiMiniTrace()
 
 void Application::updateImGuiSelectScene()
 {
-    ImGui::Begin("Scene Selector");
+    ImGui::Begin("Scene Selector", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     static auto changeScene = [this](State_ID state_id)
     {
         mAppStack.clear();
@@ -216,7 +222,35 @@ void Application::updateImGuiSelectScene()
     {
         changeScene(State_ID::ExitApplicationState);
     }
+    ImGui::End();
+}
 
+void Application::displayFPS(float deltaTime)
+{
+    static float fpsValues[100] = {};
+    static int fpsIndex = 0;
+    static float accumDeltaTime = 0.0f;
+    float fps = 1.0f / deltaTime;
+
+    fpsValues[fpsIndex] = fps;
+    fpsIndex = (fpsIndex + 1) % IM_ARRAYSIZE(fpsValues);
+
+    accumDeltaTime += deltaTime;
+    if (fpsIndex == 0)
+    {
+        float averageFPS = IM_ARRAYSIZE(fpsValues) / accumDeltaTime;
+        accumDeltaTime = 0.0f;
+    }
+
+    ImGui::Begin("Performance");
+    float contentWidth = ImGui::GetContentRegionAvail().x;
+    float textWidth = ImGui::CalcTextSize("FPS: 100").x;
+    float centerX = (contentWidth - textWidth) * 0.5f;
+    ImGui::SetCursorPosX(centerX);
+    ImGui::Text("FPS: %.1f", fps);
+    ImVec2 plotSize = ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y);
+    ImGui::PlotLines("##FPS", fpsValues, IM_ARRAYSIZE(fpsValues), fpsIndex, nullptr, 0.0f, 120.0f,
+                     plotSize);
     ImGui::End();
 }
 
@@ -226,9 +260,9 @@ void Application::updateImGui(const sf::Time& deltaTime)
 
     ImGui::SFML::Update(sf::Mouse::getPosition(*mGameWindow), sf::Vector2f(mGameWindow->getSize()),
                         deltaTime);
-
     updateImGuiMiniTrace();
     updateImGuiSelectScene();
+    displayFPS(deltaTime.asSeconds());
     mAppStack.updateImGui(deltaTime.asSeconds());
 #endif
 }
@@ -275,7 +309,7 @@ void Application::update(const sf::Time& deltaTime)
     }
 }
 
-void Application::performTracyProfilerScreenCapture()
+void Application::performScreenCaptureTracyProfiler()
 {
     while (!m_fiQueue.empty())
     {
@@ -311,8 +345,6 @@ void Application::render()
     MEASURE_SCOPE_WITH_GPU;
     glClearColor(0.f, 0.f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // draw the application
     mAppStack.draw(*mGameWindow);
 
 #ifndef DISABLE_IMGUI
@@ -321,7 +353,7 @@ void Application::render()
     mGameWindow->popGLStates();
 #endif
 
-    performTracyProfilerScreenCapture();
+    performScreenCaptureTracyProfiler();
     // display to the window
     mGameWindow->display();
     FrameMark;

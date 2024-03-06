@@ -48,12 +48,12 @@ private:
     void performApplicationLoop();
 
     /**
-     * \brief TODO: THIS
+     * \brief Sets the basic parameters of the minitrace profiler
      */
-    void prepareProfilers();
+    void initializeMinitraceProfiler();
 
     /**
-     * \brief TODO: THIS
+     * \brief Configures the display of per frame images in the tracy profiler
      */
     void initializeTracyScreenCapture();
 
@@ -91,9 +91,15 @@ private:
     static void updateImGuiMiniTrace();
 
     /**
-     * \brief TODO: THIS
+     * \brief Updates the display of the imgui menu for scene selection
      */
     void updateImGuiSelectScene();
+
+    /**
+     * Updates the display of the imgui menu displaying frame per second statistics
+     * \param deltaTime Time elapsed since the previous frame
+     */
+    void displayFPS(float deltaTime);
 
     /**
      * \brief Creates ImGui objects (every frame)
@@ -115,9 +121,9 @@ private:
 
 
     /**
-     * \brief TODO: THIS
+     * \brief Retrieves image frame for Tracy Profiler
      */
-    void performTracyProfilerScreenCapture();
+    void performScreenCaptureTracyProfiler();
 
     /**
      * \brief Displays the application on the image of the application window
@@ -138,7 +144,7 @@ private:
     void loadResources();
 
     /**
-     * \brief TODO: THIS
+     * \brief Sets the ImGui style
      */
     static void setupImGuiStyle();
 
