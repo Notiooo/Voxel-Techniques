@@ -29,6 +29,15 @@ set(PROJECT_SOURCES
         World/Polygons/Block/Block.cpp
         World/Polygons/Block/BlockMap.cpp
         World/Polygons/Block/BlockType.cpp
+        World/Polygons/Chunks/Chunk.cpp
+        World/Polygons/Chunks/ChunkInterface.cpp
+        World/Polygons/Chunks/ChunkContainer.cpp
+        World/Polygons/Chunks/SimpleTerrainGenerator.cpp
+        World/Polygons/Meshes/Mesh3D.cpp
+        World/Polygons/Meshes/Model3D.cpp
+        World/Polygons/Meshes/WorldBlockMesh.cpp
+        World/Polygons/Meshes/Builders/BlockMeshBuilder.cpp
+        World/Polygons/Meshes/Builders/MeshBuilder.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp

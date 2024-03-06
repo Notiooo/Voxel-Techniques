@@ -35,8 +35,8 @@ public:
     void draw(const Renderer& target, const Camera& camera, const Shader& shader) const;
 
     /**
-     * \brief TODO: THIS
-     * \param newTexture TODO: THIS
+     * \brief Sets the texture the mesh uses
+     * \param newTexture New texture used by mesh
      */
     void setTexture(Texture&& newTexture);
 
