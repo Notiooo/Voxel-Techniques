@@ -9,13 +9,7 @@
 namespace Voxino
 {
 
-Texture::Texture(const std::string& filePath, Type type)
-    : mTextureId(0)
-    , mFilePath(filePath)
-    , mWidth(0)
-    , mHeight(0)
-    , mNrChannels(0)
-    , mTextureType(type)
+void Texture::loadImage(const std::string& filePath)
 {
     unsigned char* mData = nullptr;
     stbi_set_flip_vertically_on_load(true);
@@ -41,6 +35,27 @@ Texture::Texture(const std::string& filePath, Type type)
         spdlog::error("Failed to load a texture: {}", filePath);
     }
     stbi_image_free(mData);
+}
+
+Texture::Texture(Type type)
+    : mTextureId(0)
+    , mFilePath("")
+    , mWidth(0)
+    , mHeight(0)
+    , mNrChannels(0)
+    , mTextureType(type)
+{
+}
+
+Texture::Texture(const std::string& filePath, Type type)
+    : mTextureId(0)
+    , mFilePath(filePath)
+    , mWidth(0)
+    , mHeight(0)
+    , mNrChannels(0)
+    , mTextureType(type)
+{
+    loadImage(filePath);
 };
 
 Texture::~Texture()
@@ -106,6 +121,11 @@ int Texture::height() const
     return mHeight;
 }
 
+glm::ivec2 Texture::size() const
+{
+    return {mWidth, mHeight};
+}
+
 float Texture::aspectRatio() const
 {
     return mAspectRatio;
@@ -114,6 +134,21 @@ float Texture::aspectRatio() const
 Texture::Type Texture::type() const
 {
     return mTextureType;
+}
+
+void Texture::setSmoothing(bool isSmooth)
+{
+    bind();
+    if (isSmooth)
+    {
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    }
+    else
+    {
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    }
 }
 
 }// namespace Voxino

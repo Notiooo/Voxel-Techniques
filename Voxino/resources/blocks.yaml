@@ -1,0 +1,72 @@
+blocks:
+  - name: Air
+    transparent: true
+    collidable: false
+
+  - name: Grass
+    textureTop: GrassTop
+    textureSide: GrassSide
+    textureBottom: Dirt
+
+  - name: Dirt
+    texture: Dirt
+
+  - name: Stone
+    texture: Stone
+
+  - name: Sand
+    texture: Sand
+
+  - name: Water
+    texture: Water
+    transparent: true
+    collidable: false
+
+  - name: Log
+    textureTop: BottomTopLog
+    textureSide: Log
+    textureBottom: BottomTopLog
+
+  - name: Leaves
+    texture: Leaves
+    transparent: true
+
+  - name: Cactus
+    textureTop: CactusTop
+    textureSide: CactusSide
+    textureBottom: CactusBottom
+
+  - name: Dry Grass
+    textureTop: DryGrassTop
+    textureSide: DryGrassSide
+    textureBottom: Dirt
+
+  - name: Snowy Grass
+    textureTop: SnowyGrassTop
+    textureSide: SnowyGrassSide
+    textureBottom: Dirt
+
+  - name: Snowy Leaves
+    texture: SnowyLeaves
+    transparent: true
+
+  - name: Spruce Log
+    textureTop: SpruceLogBottomTop
+    textureSide: SpruceLogSide
+    textureBottom: SpruceLogBottomTop
+
+  - name: Planks
+    texture: Planks
+
+  - name: Spruce Planks
+    texture: SprucePlanks
+
+  - name: Gravel
+    texture: Gravel
+
+  - name: Ice
+    texture: Ice
+    transparent: true
+
+  - name: Cobblestone
+    texture: Cobblestone
