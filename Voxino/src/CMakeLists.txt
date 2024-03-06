@@ -32,6 +32,7 @@ target_include_directories(VoxinoSrc PUBLIC
         ${FETCHCONTENT_BASE_DIR}/result-src/include
         ${FETCHCONTENT_BASE_DIR}/entt-src/src
         ${FETCHCONTENT_BASE_DIR}/tracy-src/public/tracy
+        ${FETCHCONTENT_BASE_DIR}/yaml-cpp-src/include
         ${glm_SOURCE_DIR}
         ${CUSTOM_INCLUDES_DIR}
 )
@@ -49,6 +50,7 @@ target_link_libraries(VoxinoSrc
         spdlog
         minitrace
         TracyClient
+        yaml-cpp::yaml-cpp
 )
 
 # Copy libraries
@@ -63,6 +65,7 @@ add_custom_command(TARGET VoxinoSrc POST_BUILD
         $<TARGET_FILE:spdlog>
         $<TARGET_FILE:minitrace>
         $<TARGET_FILE:TracyClient>
+        $<TARGET_FILE:yaml-cpp::yaml-cpp>
         $<TARGET_FILE_DIR:VoxinoSrc>
 )
 

@@ -70,6 +70,7 @@ add_custom_command(TARGET VoxinoTests POST_BUILD
         $<TARGET_FILE:sfml-audio>
         $<TARGET_FILE:spdlog>
         $<TARGET_FILE:TracyClient>
+        $<TARGET_FILE:yaml-cpp::yaml-cpp>
         $<TARGET_FILE_DIR:VoxinoTests>
         )
 
