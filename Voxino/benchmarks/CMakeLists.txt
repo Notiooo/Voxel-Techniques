@@ -47,9 +47,14 @@ add_executable(VoxinoBenchmarks
         )
 
 #target_compile_definitions(VoxinoBenchmarks PUBLIC BENCHMARK_LINKED_AS_SHARED_LIBRARY)
-target_link_libraries(VoxinoBenchmarks PRIVATE VoxinoSrc)
+target_link_libraries(VoxinoBenchmarks PRIVATE VoxinoSrc glew_s glm)
 target_link_libraries(VoxinoBenchmarks PRIVATE benchmark benchmark_main)
 target_link_libraries(VoxinoBenchmarks PRIVATE gmock gmock_main)
+
+target_include_directories(VoxinoBenchmarks PUBLIC
+        ${FETCHCONTENT_BASE_DIR}/glew-src/include
+        ${glm_SOURCE_DIR}
+)
 
 # Copy libraries
 
@@ -65,6 +70,8 @@ add_custom_command(TARGET VoxinoBenchmarks POST_BUILD
         $<TARGET_FILE:sfml-system>
         $<TARGET_FILE:sfml-audio>
         $<TARGET_FILE:spdlog>
+        $<TARGET_FILE:TracyClient>
+        $<TARGET_FILE:yaml-cpp::yaml-cpp>
         $<TARGET_FILE_DIR:VoxinoBenchmarks>
         )
 
