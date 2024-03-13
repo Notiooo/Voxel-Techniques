@@ -13,12 +13,13 @@ struct CoordinateBase
     using IntegerUnit = int;
 
     CoordinateBase(IntegerUnit x, IntegerUnit y, IntegerUnit z);
-    CoordinateBase(const sf::Vector3i& blockCoordinates);
+    explicit CoordinateBase(sf::Vector3i blockCoordinates);
+    CoordinateBase(glm::ivec3 blockCoordinates);
 
     CoordinateBase(CoordinateBase&&) noexcept;
     CoordinateBase(const CoordinateBase&) noexcept;
 
-    operator sf::Vector3<IntegerUnit>() const
+    operator glm::vec<3, IntegerUnit>() const
     {
         return mBlockCoordinates;
     }
@@ -30,7 +31,7 @@ struct CoordinateBase
     bool operator!=(const CoordinateBase& rhs) const;
 
 private:
-    sf::Vector3<IntegerUnit> mBlockCoordinates;
+    glm::vec<3, IntegerUnit> mBlockCoordinates;
 
 public:
     IntegerUnit& x = mBlockCoordinates.x;

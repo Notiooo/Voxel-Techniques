@@ -14,13 +14,13 @@ blocks:
   - name: Stone
     texture: Stone
 
-  - name: Sand
-    texture: Sand
-
   - name: Water
     texture: Water
     transparent: true
     collidable: false
+
+  - name: Sand
+    texture: Sand
 
   - name: Log
     textureTop: BottomTopLog

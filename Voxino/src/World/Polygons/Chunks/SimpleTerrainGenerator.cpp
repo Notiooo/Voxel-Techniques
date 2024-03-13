@@ -15,19 +15,18 @@ SimpleTerrainGenerator::SimpleTerrainGenerator(int seed)
     mBasicTerrain.SetSeed(seed);
 }
 
-void SimpleTerrainGenerator::generateTerrain(ChunkInterface& chunk,
-                                             ChunkInterface::ChunkBlocks& chunkBlocks)
+void SimpleTerrainGenerator::generateTerrain(ChunkInterface& chunk, ChunkBlocks& chunkBlocks)
 {
     generateTerrainForChunk(chunk, chunkBlocks);
 }
 
 
 void SimpleTerrainGenerator::generateTerrainForChunk(const ChunkInterface& chunk,
-                                                     ChunkInterface::ChunkBlocks& chunkBlocks)
+                                                     ChunkBlocks& chunkBlocks)
 {
-    for (auto x = 0; x < ChunkInterface::BLOCKS_PER_X_DIMENSION; ++x)
+    for (auto x = 0; x < ChunkBlocks::BLOCKS_PER_X_DIMENSION; ++x)
     {
-        for (auto z = 0; z < ChunkInterface::BLOCKS_PER_Z_DIMENSION; ++z)
+        for (auto z = 0; z < ChunkBlocks::BLOCKS_PER_Z_DIMENSION; ++z)
         {
             auto globalCoord = chunk.localToGlobalCoordinates({x, 0, z});
             auto surfaceLevel = surfaceLevelAtGivenPosition(globalCoord.x, globalCoord.z);
@@ -52,44 +51,39 @@ int SimpleTerrainGenerator::surfaceLevelAtGivenPosition(int blockCoordinateX, in
     return surfaceLevel;
 }
 
-void SimpleTerrainGenerator::generateColumnOfBlocks(ChunkInterface::ChunkBlocks& chunkBlocks,
-                                                    int surfaceLevel, int blockCoordinateX,
-                                                    int blockCoordinateZ)
+void SimpleTerrainGenerator::generateColumnOfBlocks(ChunkBlocks& chunkBlocks, int surfaceLevel,
+                                                    int blockCoordinateX, int blockCoordinateZ)
 {
     auto& x = blockCoordinateX;
     auto& z = blockCoordinateZ;
 
-    for (auto y = 0; y < ChunkInterface::BLOCKS_PER_Y_DIMENSION; ++y)
+    for (auto y = 0; y < ChunkBlocks::BLOCKS_PER_Y_DIMENSION; ++y)
     {
         if (y == surfaceLevel)
         {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Grass);
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Grass);
         }
         else if (y < surfaceLevel - 5)
         {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Stone);
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Stone);
         }
         else if (y < surfaceLevel)
         {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Dirt);
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Dirt);
         }
         else if (y < SEA_LEVEL + 1 && y < surfaceLevel + 2)
         {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Sand);
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Sand);
 
             // TODO: Change it to more sophisticated system
-            if (chunkBlocks[x][y - 1][z]->id() == BlockId::Grass)
+            if (chunkBlocks.block(x, y - 1, z).id() == BlockId::Grass)
             {
-                chunkBlocks[x][y - 1][z]->setBlockType(BlockId::Sand);
+                chunkBlocks.block(x, y - 1, z).setBlockType(BlockId::Sand);
             }
         }
         else if (y < SEA_LEVEL)
         {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Water);
-        }
-        else
-        {
-            chunkBlocks[x][y][z] = std::make_unique<Block>(BlockId::Air);
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Water);
         }
     }
 }

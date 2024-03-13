@@ -224,7 +224,7 @@ private:
      * Creates a block mesh on the indicated local coordinates
      * @param pos The indicated position of the block on which the mesh should be created
      */
-    void createBlockMesh(const Block::Coordinate& pos);
+    void createBlockMesh(const Block::Coordinate& pos, const Block& block);
 
     /**
      * @brief Checks whether a block can be overwritten depending on the list of blocks that can be

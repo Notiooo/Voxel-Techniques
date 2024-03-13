@@ -1,9 +1,6 @@
 #pragma once
 #include "Renderer/Renderer.h"
-#include "Utils/MultiDimensionalArray.h"
 #include "World/Polygons/Block/Block.h"
-#include <memory>
-
 
 namespace Voxino
 {
@@ -16,15 +13,6 @@ class ChunkInterface
 public:
     virtual ~ChunkInterface() = default;
 
-    static constexpr int BLOCKS_PER_X_DIMENSION = 16;
-    static constexpr int BLOCKS_PER_Y_DIMENSION = 127;
-    static constexpr int BLOCKS_PER_Z_DIMENSION = 16;
-    static constexpr int BLOCKS_IN_CHUNK =
-        BLOCKS_PER_X_DIMENSION * BLOCKS_PER_Y_DIMENSION * BLOCKS_PER_Z_DIMENSION;
-
-    using ChunkBlocks = MultiDimensionalArray<std::unique_ptr<Block>, BLOCKS_PER_X_DIMENSION,
-                                              BLOCKS_PER_Y_DIMENSION, BLOCKS_PER_Z_DIMENSION>;
-
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.
      */
@@ -34,6 +22,11 @@ public:
      * \brief Swaps the current chunk mesh with the latest, most recently generated one
      */
     virtual void updateMesh() = 0;
+
+    /**
+     * It is rebuilding this mesh fresh. Very expensive operation
+     */
+    virtual void rebuildMesh() = 0;
 
     /**
      * Updates the status/logic of the state at equal intervals independent of the frame rate.
@@ -122,11 +115,6 @@ public:
      */
     [[nodiscard]] virtual bool isLocalCoordinateOnChunkEdge(
         const Block::Coordinate& localCoordinates) = 0;
-
-    /**
-     * It is rebuilding this mesh fresh. Very expensive operation
-     */
-    virtual void rebuildMesh() = 0;
 
     /**
      * Returns information whether any chunk is in contact with the listed block. This is important

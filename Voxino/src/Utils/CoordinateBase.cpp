@@ -9,8 +9,13 @@ CoordinateBase::CoordinateBase(IntegerUnit x, IntegerUnit y, IntegerUnit z)
 {
 }
 
-CoordinateBase::CoordinateBase(const sf::Vector3i& blockCoordinates)
-    : mBlockCoordinates(blockCoordinates)
+CoordinateBase::CoordinateBase(sf::Vector3i blockCoordinates)
+    : mBlockCoordinates({blockCoordinates.x, blockCoordinates.y, blockCoordinates.z})
+{
+}
+
+CoordinateBase::CoordinateBase(glm::ivec3 blockCoordinates)
+    : mBlockCoordinates(std::move(blockCoordinates))
 {
 }
 

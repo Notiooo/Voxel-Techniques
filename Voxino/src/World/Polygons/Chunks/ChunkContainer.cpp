@@ -1,8 +1,7 @@
-#include "ChunkContainer.h"
+#include "World/Polygons/Chunks/ChunkContainer.h"
 #include "CoordinatesAroundOriginGetter.h"
 #include "Utils/IteratorRanges.h"
 #include "World/Polygons/Block/BlockMap.h"
-#include "pch.h"
 
 namespace Voxino
 {
@@ -19,7 +18,6 @@ void ChunkContainer::drawTerrain(const Renderer& renderer, const Shader& shader,
 void ChunkContainer::drawLiquids(const Renderer& renderer, const Shader& shader,
                                  const Camera& camera) const
 {
-    ;
     for (auto& [coordinate, chunk]: data())
     {
         chunk->drawLiquids(renderer, shader, camera);
@@ -74,9 +72,9 @@ void ChunkContainer::tryToPlaceScheduledBlocksForPresentChunks()
 
 sf::Vector3i ChunkContainer::Coordinate::nonChunkMetric() const
 {
-    return sf::Vector3i(x * ChunkInterface::BLOCKS_PER_X_DIMENSION * Block::BLOCK_SIZE,
-                        y * ChunkInterface::BLOCKS_PER_Y_DIMENSION * Block::BLOCK_SIZE,
-                        z * ChunkInterface::BLOCKS_PER_Z_DIMENSION * Block::BLOCK_SIZE);
+    return sf::Vector3i(x * ChunkBlocks::BLOCKS_PER_X_DIMENSION * Block::BLOCK_SIZE,
+                        y * ChunkBlocks::BLOCKS_PER_Y_DIMENSION * Block::BLOCK_SIZE,
+                        z * ChunkBlocks::BLOCKS_PER_Z_DIMENSION * Block::BLOCK_SIZE);
 }
 
 ChunkContainer::Coordinate ChunkContainer::Coordinate::blockToChunkMetric(
@@ -91,9 +89,9 @@ ChunkContainer::Coordinate ChunkContainer::Coordinate::blockToChunkMetric(
 
     // clang-format off
     auto returnVar = ChunkContainer::Coordinate(
-        fastFloor(worldBlockCoordinate.x / static_cast<float>(ChunkInterface::BLOCKS_PER_X_DIMENSION)),
-        fastFloor(worldBlockCoordinate.y / static_cast<float>(ChunkInterface::BLOCKS_PER_Y_DIMENSION)),
-        fastFloor(worldBlockCoordinate.z / static_cast<float>(ChunkInterface::BLOCKS_PER_Z_DIMENSION))
+        fastFloor(worldBlockCoordinate.x / static_cast<float>(ChunkBlocks::BLOCKS_PER_X_DIMENSION)),
+        fastFloor(worldBlockCoordinate.y / static_cast<float>(ChunkBlocks::BLOCKS_PER_Y_DIMENSION)),
+        fastFloor(worldBlockCoordinate.z / static_cast<float>(ChunkBlocks::BLOCKS_PER_Z_DIMENSION))
     );
     // clang-format on
 
@@ -183,12 +181,12 @@ std::shared_ptr<ChunkInterface> ChunkContainer::chunkNearby(const ChunkInterface
         case Direction::ToTheRight:
         {
             return blockPositionToChunk(
-                baseChunk.localToGlobalCoordinates({ChunkInterface::BLOCKS_PER_X_DIMENSION, 0, 0}));
+                baseChunk.localToGlobalCoordinates({ChunkBlocks::BLOCKS_PER_X_DIMENSION, 0, 0}));
         }
         case Direction::InFront:
         {
             return blockPositionToChunk(
-                baseChunk.localToGlobalCoordinates({0, 0, ChunkInterface::BLOCKS_PER_Z_DIMENSION}));
+                baseChunk.localToGlobalCoordinates({0, 0, ChunkBlocks::BLOCKS_PER_Z_DIMENSION}));
         }
         case Direction::Behind:
         {

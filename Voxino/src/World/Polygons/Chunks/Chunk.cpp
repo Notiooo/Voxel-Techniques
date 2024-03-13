@@ -60,10 +60,8 @@ void Chunk::generateChunkTerrain()
     mTerrainGenerator->generateTerrain(*this, *mChunkOfBlocks);
 }
 
-void Chunk::createBlockMesh(const Block::Coordinate& pos)
+void Chunk::createBlockMesh(const Block::Coordinate& pos, const Block& block)
 {
-    const auto& block = localBlock(pos);
-
     for (auto i = 0; i < static_cast<int>(Block::Face::Counter); ++i)
     {
         if (doesBlockFaceHasTransparentNeighbor(static_cast<Block::Face>(i), pos))
@@ -101,20 +99,14 @@ void Chunk::createBlockMesh(const Block::Coordinate& pos)
 void Chunk::prepareMesh()
 {
     MEASURE_SCOPE;
-    for (auto x = 0; x < BLOCKS_PER_X_DIMENSION; ++x)
+    for (const auto& [position, block]: *mChunkOfBlocks)
     {
-        for (auto y = 0; y < BLOCKS_PER_Y_DIMENSION; ++y)
+        if (block.id() == BlockId::Air)
         {
-            for (auto z = 0; z < BLOCKS_PER_Z_DIMENSION; ++z)
-            {
-                if (localBlock({x, y, z}).id() == BlockId::Air)
-                {
-                    continue;
-                }
-
-                createBlockMesh({x, y, z});
-            }
+            continue;
         }
+
+        createBlockMesh(position, block);
     }
 }
 
@@ -147,9 +139,9 @@ void Chunk::fixedUpdate(const float& deltaTime)
 
 bool Chunk::areLocalCoordinatesInsideChunk(const Block::Coordinate& localCoordinates)
 {
-    if (localCoordinates.x < BLOCKS_PER_X_DIMENSION && localCoordinates.x >= 0 &&
-        localCoordinates.y < BLOCKS_PER_Y_DIMENSION && localCoordinates.y >= 0 &&
-        localCoordinates.z < BLOCKS_PER_Z_DIMENSION && localCoordinates.z >= 0)
+    if (localCoordinates.x < ChunkBlocks::BLOCKS_PER_X_DIMENSION && localCoordinates.x >= 0 &&
+        localCoordinates.y < ChunkBlocks::BLOCKS_PER_Y_DIMENSION && localCoordinates.y >= 0 &&
+        localCoordinates.z < ChunkBlocks::BLOCKS_PER_Z_DIMENSION && localCoordinates.z >= 0)
     {
         return true;
     }
@@ -159,9 +151,9 @@ bool Chunk::areLocalCoordinatesInsideChunk(const Block::Coordinate& localCoordin
 
 bool Chunk::isLocalCoordinateOnChunkEdge(const Block::Coordinate& localCoordinates)
 {
-    if (localCoordinates.x == BLOCKS_PER_X_DIMENSION - 1 || localCoordinates.x == 0 ||
-        localCoordinates.y == BLOCKS_PER_Y_DIMENSION - 1 || localCoordinates.y == 0 ||
-        localCoordinates.z == BLOCKS_PER_Z_DIMENSION - 1 || localCoordinates.z == 0)
+    if (localCoordinates.x == ChunkBlocks::BLOCKS_PER_X_DIMENSION - 1 || localCoordinates.x == 0 ||
+        localCoordinates.y == ChunkBlocks::BLOCKS_PER_Y_DIMENSION - 1 || localCoordinates.y == 0 ||
+        localCoordinates.z == ChunkBlocks::BLOCKS_PER_Z_DIMENSION - 1 || localCoordinates.z == 0)
     {
         return true;
     }
@@ -180,9 +172,7 @@ void Chunk::rebuildMesh()
 
 void Chunk::removeLocalBlock(const Block::Coordinate& localCoordinates)
 {
-    (*mChunkOfBlocks)[localCoordinates.x][localCoordinates.y][localCoordinates.z]->setBlockType(
-        BlockId::Air);
-
+    mChunkOfBlocks->block(localCoordinates).setBlockType(BlockId::Air);
     rebuildMesh();
 }
 
@@ -204,7 +194,7 @@ Block& Chunk::localNearbyBlock(const Block::Coordinate& position, const Directio
 
 const Block& Chunk::localBlock(const Block::Coordinate& localCoordinates) const
 {
-    return *(*mChunkOfBlocks)[localCoordinates.x][localCoordinates.y][localCoordinates.z];
+    return mChunkOfBlocks->block(localCoordinates);
 }
 
 const Block& Chunk::localNearbyBlock(const Block::Coordinate& localCoordinates,
@@ -238,7 +228,7 @@ std::vector<Direction> Chunk::directionOfBlockFacesInContactWithOtherChunk(
 {
     std::vector<Direction> directions;
 
-    if (localCoordinates.x == BLOCKS_PER_X_DIMENSION - 1)
+    if (localCoordinates.x == ChunkBlocks::BLOCKS_PER_X_DIMENSION - 1)
     {
         directions.emplace_back(Direction::ToTheRight);
     }
@@ -246,7 +236,7 @@ std::vector<Direction> Chunk::directionOfBlockFacesInContactWithOtherChunk(
     {
         directions.emplace_back(Direction::ToTheLeft);
     }
-    if (localCoordinates.y == BLOCKS_PER_Y_DIMENSION - 1)
+    if (localCoordinates.y == ChunkBlocks::BLOCKS_PER_Y_DIMENSION - 1)
     {
         directions.emplace_back(Direction::Above);
     }
@@ -254,7 +244,7 @@ std::vector<Direction> Chunk::directionOfBlockFacesInContactWithOtherChunk(
     {
         directions.emplace_back(Direction::Below);
     }
-    if (localCoordinates.z == BLOCKS_PER_Z_DIMENSION - 1)
+    if (localCoordinates.z == ChunkBlocks::BLOCKS_PER_Z_DIMENSION - 1)
     {
         directions.emplace_back(Direction::InFront);
     }
@@ -385,12 +375,12 @@ void Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
                                            const Block::Coordinate& localCoordinates,
                                            std::vector<BlockId>& blocksThatMightBeOverplaced)
 {
-    auto& block = (*mChunkOfBlocks)[localCoordinates.x][localCoordinates.y][localCoordinates.z];
-    auto idOfTheBlockToOverplace = block->id();
+    auto& block = mChunkOfBlocks->block(localCoordinates);
+    auto idOfTheBlockToOverplace = block.id();
 
     if (canGivenBlockBeOverplaced(blocksThatMightBeOverplaced, idOfTheBlockToOverplace))
     {
-        block->setBlockType(blockId);
+        block.setBlockType(blockId);
         rebuildMesh();
     }
 }
