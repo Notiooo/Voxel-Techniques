@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "Resources/TexturePackArray.h"
 #include "Resources/TexturePackAtlas.h"
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
@@ -7,6 +8,7 @@
 #include "Utils/Mouse.h"
 #include "pch.h"
 
+#include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkNaive.h>
 
 namespace Voxino
@@ -88,9 +90,11 @@ Application::Application()
         State_ID::PolygonSingleChunkCullingState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<ChunkNaive, TexturePackAtlas>>(
         State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing, TexturePackArray>>(
+        State_ID::PolygonSingleChunkGreedyState, *mGameWindow, "ChunkGreedyMeshing");
 
     // Initial state of the statestack is TitleState
-    mAppStack.push(State_ID::PolygonSingleChunkCullingState);
+    mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
 }
 
 void Application::initializeTracyScreenCapture()
@@ -224,6 +228,7 @@ void Application::updateImGuiSelectScene()
     scene("Game State", State_ID::GameState);
     scene("Polygon Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
     scene("Polygon Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
+    scene("Polygon Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
     scene("Exit application", State_ID::ExitApplicationState);
     ImGui::End();
 }

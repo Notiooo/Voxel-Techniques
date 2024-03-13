@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         Renderer/Renderer.cpp
         Resources/TexturePack.cpp
         Resources/TexturePackAtlas.cpp
+        Resources/TexturePackArray.cpp
         States/State.cpp
         States/StateStack.cpp
         States/CustomStates/LogoState.cpp
@@ -36,14 +37,17 @@ set(PROJECT_SOURCES
         World/Polygons/Chunks/SimpleTerrainGenerator.cpp
         World/Polygons/Chunks/ChunkInterface.cpp
         World/Polygons/Chunks/Types/Chunk.cpp
+        World/Polygons/Chunks/Types/ChunkGreedyMeshing.cpp
         World/Polygons/Chunks/Types/ChunkCulling.cpp
         World/Polygons/Chunks/Types/ChunkNaive.cpp
         World/Polygons/Meshes/Mesh3D.cpp
-        World/Polygons/Meshes/ChunkAtlasMesh.cpp
         World/Polygons/Meshes/Model3D.cpp
-        World/Polygons/Meshes/Builders/MeshBuilder.cpp
+        World/Polygons/Meshes/ChunkAtlasMesh.cpp
+        World/Polygons/Meshes/ChunkArrayMesh.cpp
         World/Polygons/Meshes/Builders/ChunkMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkAtlasMeshBuilder.cpp
+        World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.cpp
+        World/Polygons/Meshes/Builders/MeshBuilder.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp
