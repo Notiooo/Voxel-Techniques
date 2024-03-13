@@ -1,5 +1,5 @@
 #include "SimpleTerrainGenerator.h"
-#include "World/Polygons/Chunks/Chunk.h"
+#include "World/Polygons/Chunks/Types/Chunk.h"
 #include "pch.h"
 
 namespace Voxino

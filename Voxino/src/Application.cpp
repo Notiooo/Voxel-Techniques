@@ -1,10 +1,13 @@
 #include "Application.h"
+#include "Resources/TexturePackAtlas.h"
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"
 #include "States/CustomStates/PolygonSingleChunkState.h"
 #include "Utils/Mouse.h"
 #include "pch.h"
+
+#include <World/Polygons/Chunks/Types/ChunkNaive.h>
 
 namespace Voxino
 {
@@ -81,10 +84,13 @@ Application::Application()
     mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
     mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
     mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState>(State_ID::PolygonSingleChunkState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling, TexturePackAtlas>>(
+        State_ID::PolygonSingleChunkCullingState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive, TexturePackAtlas>>(
+        State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
 
     // Initial state of the statestack is TitleState
-    mAppStack.push(State_ID::PolygonSingleChunkState);
+    mAppStack.push(State_ID::PolygonSingleChunkCullingState);
 }
 
 void Application::initializeTracyScreenCapture()
@@ -204,31 +210,21 @@ void Application::updateImGuiMiniTrace()
 void Application::updateImGuiSelectScene()
 {
     ImGui::Begin("Scene Selector", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    static auto changeScene = [this](State_ID state_id)
+
+    static auto scene = [this](std::string name, State_ID state_id)
     {
-        mAppStack.clear();
-        mAppStack.push(state_id);
+        if (ImGui::Button(name.c_str()))
+        {
+            mAppStack.clear();
+            mAppStack.push(state_id);
+        }
     };
 
-    if (ImGui::Button("Logo"))
-    {
-        changeScene(State_ID::LogoState);
-    }
-
-    if (ImGui::Button("Game State"))
-    {
-        changeScene(State_ID::GameState);
-    }
-
-    if (ImGui::Button("Polygon Single Chunk"))
-    {
-        changeScene(State_ID::PolygonSingleChunkState);
-    }
-
-    if (ImGui::Button("Exit Application"))
-    {
-        changeScene(State_ID::ExitApplicationState);
-    }
+    scene("Logo", State_ID::LogoState);
+    scene("Game State", State_ID::GameState);
+    scene("Polygon Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
+    scene("Polygon Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
+    scene("Exit application", State_ID::ExitApplicationState);
     ImGui::End();
 }
 

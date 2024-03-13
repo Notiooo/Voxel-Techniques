@@ -9,7 +9,7 @@ namespace Voxino
  * @brief This is the mesh of a typical block located inside the game. Such a block consists of
  * vertices, textures and shadows on each block face.
  */
-struct WorldBlockMesh : public Mesh3D
+struct ChunkAtlasMesh : public Mesh3D
 {
     /**
      * @brief Returns the Vertex Buffer that creates the mesh
@@ -33,6 +33,12 @@ struct WorldBlockMesh : public Mesh3D
      * @return Pointer to mesh copy
      */
     std::unique_ptr<Mesh3D> clone() override;
+
+    /**
+     * Returns the number of vertices.
+     * @return Number of vertices.
+     */
+    int numberOfVertices() override;
 
     /* ==== Members ===== */
     struct VertexData

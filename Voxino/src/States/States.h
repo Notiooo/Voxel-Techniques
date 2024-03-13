@@ -12,7 +12,8 @@ enum class State_ID
     None,
     LogoState,
     GameState,
-    PolygonSingleChunkState,
+    PolygonSingleChunkCullingState,
+    PolygonSingleChunkNaiveState,
     PauseState,
 
     ExitApplicationState
@@ -31,7 +32,8 @@ inline std::string toString(State_ID stateId)
         case State_ID::None: return "None";
         case State_ID::LogoState: return "LogoState";
         case State_ID::GameState: return "GameState";
-        case State_ID::PolygonSingleChunkState: return "PolygonSingleChunk";
+        case State_ID::PolygonSingleChunkCullingState: return "PolygonSingleChunkCullingState";
+        case State_ID::PolygonSingleChunkNaiveState: return "PolygonSingleChunkNaiveState";
         case State_ID::PauseState: return "PauseState";
         case State_ID::ExitApplicationState: return "ExitApplicationState";
         default:

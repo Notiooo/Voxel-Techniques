@@ -35,6 +35,12 @@ struct Mesh3D
      */
     virtual std::unique_ptr<Mesh3D> clone() = 0;
 
+    /**
+     * Returns the number of vertices.
+     * @return Number of vertices.
+     */
+    virtual int numberOfVertices() = 0;
+
     /* ==== Members ===== */
     std::vector<GLuint> indices;
 };

@@ -46,6 +46,19 @@ public:
      */
     void setLayout(const BufferLayout& bufferLayout);
 
+    /**
+     * Provides non-const access to the Mesh3D instance associated with this object.
+     * @return Reference to the Mesh3D instance.
+     */
+    [[nodiscard]] Mesh3D& mesh();
+
+    /**
+     * Provides const access to the Mesh3D instance associated with this object.
+     * @return Const reference to the Mesh3D instance.
+     */
+    [[nodiscard]] const Mesh3D& mesh() const;
+
+
 private:
     VertexArray mVertexArray;
     BufferLayout mBufferLayout;

@@ -3,7 +3,7 @@
 #include "World/Polygons/Block/Block.h"
 #include "World/Polygons/Chunks/ChunkInterface.h"
 #include "World/Polygons/Chunks/SimpleTerrainGenerator.h"
-#include "World/Polygons/Meshes/Builders/BlockMeshBuilder.h"
+#include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
 #include "World/Polygons/Meshes/Model3D.h"
 #include <memory>
 #include <optional>
@@ -11,6 +11,7 @@
 
 namespace Voxino
 {
+class ChunkBlocks;
 class SimpleTerrainGenerator;
 class Renderer;
 class Shader;
@@ -26,16 +27,6 @@ public:
     Chunk(Block::Coordinate blockPosition, const TexturePack& texturePack);
 
     Chunk(Chunk&& rhs) noexcept;
-
-    /**
-     * \brief Prepares/generates the mesh chunk, but does not replace it yet.
-     */
-    void prepareMesh() final;
-
-    /**
-     * \brief Swaps the current chunk mesh with the latest, most recently generated one
-     */
-    void updateMesh() final;
 
     /**
      * Updates the status/logic of the state at equal intervals independent of the frame rate.
@@ -130,11 +121,6 @@ public:
         const Block::Coordinate& localCoordinates) final;
 
     /**
-     * It is rebuilding this mesh fresh. Very expensive operation
-     */
-    void rebuildMesh() final;
-
-    /**
      * Returns information whether any chunk is in contact with the listed block. This is important
      * information when a given block has been destroyed and there is a need to rebuild the chunk
      * next to it so that it does not display an empty hole.
@@ -189,7 +175,13 @@ public:
     std::optional<Block> neighbourBlockInGivenDirection(const Block::Coordinate& blockPos,
                                                         const Direction& direction) final;
 
-private:
+    /**
+     * Returns the number of chunk vertices
+     * @return Number of vertices
+     */
+    int numberOfVertices();
+
+protected:
     /**
      * Generates natural world terrain on a given chunk
      */
@@ -221,12 +213,6 @@ private:
                                                            const BlockId& blockId);
 
     /**
-     * Creates a block mesh on the indicated local coordinates
-     * @param pos The indicated position of the block on which the mesh should be created
-     */
-    void createBlockMesh(const Block::Coordinate& pos, const Block& block);
-
-    /**
      * @brief Checks whether a block can be overwritten depending on the list of blocks that can be
      * overwritten and the id of the block that is trying to be overwritten.
      * @param blocksThatMightBeOverplaced List of blocks that can be overwritten
@@ -249,23 +235,16 @@ private:
                                         std::vector<BlockId>& blocksThatMightBeOverplaced);
 
 
-private:
+protected:
     std::unique_ptr<SimpleTerrainGenerator> mTerrainGenerator;
     Block::Coordinate mChunkPosition;
     const TexturePack& mTexturePack;
-
     ChunkContainer* mParentContainer;
-
-
-    // TODO: This system should be changed to a better one. Consider distance.
-    BlockMeshBuilder mTerrainMeshBuilder;
-    BlockMeshBuilder mFluidMeshBuilder;
-    BlockMeshBuilder mFloralMeshBuilder;
 
     std::unique_ptr<Model3D> mTerrainModel;
     std::unique_ptr<Model3D> mFluidModel;
     std::unique_ptr<Model3D> mFloralModel;
 
-    std::shared_ptr<ChunkBlocks> mChunkOfBlocks;
+    std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
 };
 }// namespace Voxino

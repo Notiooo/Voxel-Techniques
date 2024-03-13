@@ -1,8 +1,8 @@
 #pragma once
 
 #include "World/Polygons/Block/Block.h"
-#include "World/Polygons/Meshes/Builders/MeshBuilder.h"
-#include "World/Polygons/Meshes/WorldBlockMesh.h"
+#include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
+#include "World/Polygons/Meshes/ChunkAtlasMesh.h"
 #include "pch.h"
 
 
@@ -12,11 +12,11 @@ namespace Voxino
  * It can generate a mesh of typical block inside the game, which can then be projected onto the
  * screen as a 3D object.
  */
-class BlockMeshBuilder : public MeshBuilder
+class ChunkAtlasMeshBuilder : public ChunkMeshBuilder
 {
 public:
-    explicit BlockMeshBuilder(Block::Coordinate origin);
-    BlockMeshBuilder();
+    explicit ChunkAtlasMeshBuilder(Block::Coordinate origin);
+    ChunkAtlasMeshBuilder();
 
     /**
      * Resets the state of the mesh and returns to the initial values
@@ -30,12 +30,6 @@ public:
     [[nodiscard]] std::unique_ptr<Mesh3D> mesh3D() override;
 
     /**
-     * Sets the size of the face to be created
-     * @param faceSize Block face size
-     */
-    void setFaceSize(const float& faceSize);
-
-    /**
      * Adds a quad to the mesh in place of the designated face at the given coordinates and with the
      * given quad texture.
      * @param blockFace A block face to add
@@ -45,22 +39,7 @@ public:
     void addQuad(const Block::Face& blockFace, const std::vector<glm::vec2>& textureQuad,
                  const Block::Coordinate& blockPosition);
 
-protected:
-    /**
-     * Returns the vertices for a given block face
-     * @param blockFace The face of the block
-     * @return The vertices for a given block face
-     */
-    [[nodiscard]] std::vector<GLfloat> faceVertices(const Block::Face& blockFace) const;
-    float mBlockFaceSize = Block::BLOCK_SIZE;
-
 private:
-    /**
-     * @brief Adds indices of typical block face
-     * @param indices Indices to which new indices are to be added
-     */
-    void addBlockFaceIndices(std::vector<GLuint>& indices);
-
     /**
      * @brief For a given face block, it adds vertices building it up
      * @param blockFace Block face ID
@@ -70,14 +49,8 @@ private:
                                                  const Block::Coordinate& blockPosition,
                                                  int i) const;
 
-    /**
-     * @brief Adds false lighting to block wall
-     * @param blockFace Block face ID
-     */
-    [[nodiscard]] float addBlockFaceFakeLightning(const Block::Face& blockFace) const;
-
 protected:
     /* ==== Members ===== */
-    std::unique_ptr<WorldBlockMesh> mMesh;
+    std::unique_ptr<ChunkAtlasMesh> mMesh;
 };
 }// namespace Voxino

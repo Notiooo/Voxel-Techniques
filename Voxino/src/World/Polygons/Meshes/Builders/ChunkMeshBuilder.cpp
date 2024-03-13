@@ -1,39 +1,8 @@
-#include "BlockMeshBuilder.h"
+#include "ChunkMeshBuilder.h"
 namespace Voxino
 {
-BlockMeshBuilder::BlockMeshBuilder()
-    : MeshBuilder()
-    , mMesh(std::make_unique<WorldBlockMesh>())
-{
-}
 
-BlockMeshBuilder::BlockMeshBuilder(Block::Coordinate origin)
-    : MeshBuilder(origin)
-    , mMesh(std::make_unique<WorldBlockMesh>())
-{
-}
-
-void BlockMeshBuilder::setFaceSize(const float& faceSize)
-{
-    mBlockFaceSize = faceSize;
-}
-
-void BlockMeshBuilder::addQuad(const Block::Face& blockFace,
-                               const std::vector<glm::vec2>& textureQuad,
-                               const Block::Coordinate& blockPosition)
-{
-    auto& indices = mMesh->indices;
-    for (auto i = 0; i < 4; ++i)
-    {
-        auto& vertex = mMesh->vertices.emplace_back();
-        vertex.position = addBlockFaceVertices(blockFace, blockPosition, i);
-        vertex.textureCoordinates = textureQuad[i];
-        vertex.directionalLightning = addBlockFaceFakeLightning(blockFace);
-    }
-    addBlockFaceIndices(indices);
-}
-
-float BlockMeshBuilder::addBlockFaceFakeLightning(const Block::Face& blockFace) const
+float ChunkMeshBuilder::addBlockFaceFakeLightning(const Block::Face& blockFace) const
 {
     switch (blockFace)
     {
@@ -50,28 +19,7 @@ float BlockMeshBuilder::addBlockFaceFakeLightning(const Block::Face& blockFace) 
     return 1.0f;
 }
 
-glm::vec3 BlockMeshBuilder::addBlockFaceVertices(const Block::Face& blockFace,
-                                                 const Block::Coordinate& blockPosition,
-                                                 int i) const
-{
-    /*
-     * Some blocks are larger than others.
-     * It would be good if they were not just longer in one plane,
-     * but it was spread out among all of them -- increased relative to the center.
-     */
-    const auto blockSizeDifference = (mBlockFaceSize - Block::BLOCK_SIZE) / 2.f;
-
-    auto face = faceVertices(blockFace);
-    const auto& originPos = mOrigin.nonBlockMetric();
-    const auto& blockPos = blockPosition.nonBlockMetric();
-
-    i *= 3;
-    return {face[i] * mBlockFaceSize + originPos.x + blockPos.x - blockSizeDifference,
-            face[i + 1] * mBlockFaceSize + originPos.y + blockPos.y - blockSizeDifference,
-            face[i + 2] * mBlockFaceSize + originPos.z + blockPos.z - blockSizeDifference};
-}
-
-void BlockMeshBuilder::addBlockFaceIndices(std::vector<GLuint>& indices)
+void ChunkMeshBuilder::addBlockFaceIndices(std::vector<GLuint>& indices)
 {
     // clang-format off
     indices.insert(indices.end(),
@@ -88,7 +36,7 @@ void BlockMeshBuilder::addBlockFaceIndices(std::vector<GLuint>& indices)
     mIndex += 4;
 }
 
-std::vector<GLfloat> BlockMeshBuilder::faceVertices(const Block::Face& blockFace) const
+std::vector<GLfloat> ChunkMeshBuilder::faceVertices(const Block::Face& blockFace) const
 {
     switch (blockFace)
     {
@@ -149,14 +97,4 @@ std::vector<GLfloat> BlockMeshBuilder::faceVertices(const Block::Face& blockFace
     }
 }
 
-void BlockMeshBuilder::resetMesh()
-{
-    mMesh = std::make_unique<WorldBlockMesh>();
-    mIndex = 0;
-}
-
-std::unique_ptr<Mesh3D> BlockMeshBuilder::mesh3D()
-{
-    return mMesh->clone();
-}
 }// namespace Voxino

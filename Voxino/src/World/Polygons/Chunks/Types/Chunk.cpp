@@ -14,41 +14,28 @@ Chunk::Chunk(Block::Coordinate blockPosition, const TexturePack& texturePack,
     : mChunkPosition(std::move(blockPosition))
     , mTexturePack(texturePack)
     , mParentContainer(&parent)
-    , mTerrainMeshBuilder(mChunkPosition)
-    , mFluidMeshBuilder(mChunkPosition)
-    , mFloralMeshBuilder(mChunkPosition)
-    , mChunkOfBlocks(std::make_shared<ChunkBlocks>())
+    , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
 {
     auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
     generateChunkTerrain();
-    prepareMesh();
-    updateMesh();
 }
 
 Chunk::Chunk(Block::Coordinate blockPosition, const TexturePack& texturePack)
     : mChunkPosition(std::move(blockPosition))
     , mTexturePack(texturePack)
     , mParentContainer()
-    , mTerrainMeshBuilder(mChunkPosition)
-    , mFluidMeshBuilder(mChunkPosition)
-    , mFloralMeshBuilder(mChunkPosition)
-    , mChunkOfBlocks(std::make_shared<ChunkBlocks>())
+    , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
 {
     auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
     generateChunkTerrain();
-    prepareMesh();
-    updateMesh();
 }
 
 Chunk::Chunk(Chunk&& rhs) noexcept
     : mChunkPosition(std::move(rhs.mChunkPosition))
     , mTexturePack(rhs.mTexturePack)
     , mParentContainer(rhs.mParentContainer)
-    , mTerrainMeshBuilder(mChunkPosition)
-    , mFluidMeshBuilder(mChunkPosition)
-    , mFloralMeshBuilder(mChunkPosition)
     , mTerrainModel(std::move(rhs.mTerrainModel))
     , mChunkOfBlocks(std::move(rhs.mChunkOfBlocks))
     , mTerrainGenerator(std::move(rhs.mTerrainGenerator))
@@ -58,78 +45,6 @@ Chunk::Chunk(Chunk&& rhs) noexcept
 void Chunk::generateChunkTerrain()
 {
     mTerrainGenerator->generateTerrain(*this, *mChunkOfBlocks);
-}
-
-void Chunk::createBlockMesh(const Block::Coordinate& pos, const Block& block)
-{
-    for (auto i = 0; i < static_cast<int>(Block::Face::Counter); ++i)
-    {
-        if (doesBlockFaceHasTransparentNeighbor(static_cast<Block::Face>(i), pos))
-        {
-            if (block.id() == BlockId::Water)
-            {
-                if (!doesBlockFaceHasGivenBlockNeighbour(static_cast<Block::Face>(i), pos,
-                                                         BlockId::Water))
-                {
-                    mFluidMeshBuilder.addQuad(
-                        static_cast<Block::Face>(i),
-                        mTexturePack.normalizedCoordinates(
-                            block.blockTextureId(static_cast<Block::Face>(i))),
-                        pos);
-                }
-            }
-            else if (block.isFloral())
-            {
-                mFloralMeshBuilder.addQuad(static_cast<Block::Face>(i),
-                                           mTexturePack.normalizedCoordinates(
-                                               block.blockTextureId(static_cast<Block::Face>(i))),
-                                           pos);
-            }
-            else
-            {
-                mTerrainMeshBuilder.addQuad(static_cast<Block::Face>(i),
-                                            mTexturePack.normalizedCoordinates(
-                                                block.blockTextureId(static_cast<Block::Face>(i))),
-                                            pos);
-            }
-        }
-    }
-}
-
-void Chunk::prepareMesh()
-{
-    MEASURE_SCOPE;
-    for (const auto& [position, block]: *mChunkOfBlocks)
-    {
-        if (block.id() == BlockId::Air)
-        {
-            continue;
-        }
-
-        createBlockMesh(position, block);
-    }
-}
-
-void Chunk::updateMesh()
-{
-    MEASURE_SCOPE;
-    if (!mTerrainModel)
-    {
-        mTerrainModel = std::make_unique<Model3D>();
-    }
-    mTerrainModel->setMesh(mTerrainMeshBuilder.mesh3D());
-
-    if (!mFluidModel)
-    {
-        mFluidModel = std::make_unique<Model3D>();
-    }
-    mFluidModel->setMesh(mFluidMeshBuilder.mesh3D());
-
-    if (!mFloralModel)
-    {
-        mFloralModel = std::make_unique<Model3D>();
-    }
-    mFloralModel->setMesh(mFloralMeshBuilder.mesh3D());
 }
 
 void Chunk::fixedUpdate(const float& deltaTime)
@@ -161,18 +76,10 @@ bool Chunk::isLocalCoordinateOnChunkEdge(const Block::Coordinate& localCoordinat
     return false;
 }
 
-void Chunk::rebuildMesh()
-{
-    MEASURE_SCOPE;
-    mTerrainMeshBuilder.resetMesh();
-    mFluidMeshBuilder.resetMesh();
-    mFloralMeshBuilder.resetMesh();
-    prepareMesh();
-}
-
 void Chunk::removeLocalBlock(const Block::Coordinate& localCoordinates)
 {
     mChunkOfBlocks->block(localCoordinates).setBlockType(BlockId::Air);
+
     rebuildMesh();
 }
 
@@ -383,6 +290,12 @@ void Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
         block.setBlockType(blockId);
         rebuildMesh();
     }
+}
+
+int Chunk::numberOfVertices()
+{
+    return mTerrainModel->mesh().numberOfVertices() + mFloralModel->mesh().numberOfVertices() +
+           mFluidModel->mesh().numberOfVertices();
 }
 
 bool Chunk::canGivenBlockBeOverplaced(std::vector<BlockId>& blocksThatMightBeOverplaced,

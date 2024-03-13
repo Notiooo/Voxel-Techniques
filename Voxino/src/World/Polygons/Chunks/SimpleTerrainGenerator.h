@@ -1,7 +1,7 @@
 #pragma once
 #include "ChunkBlocks.h"
 #include "World/Polygons/Block/Block.h"
-#include "World/Polygons/Chunks/Chunk.h"
+#include "World/Polygons/Chunks/Types/Chunk.h"
 #include <set>
 
 namespace Voxino
