@@ -14,7 +14,7 @@ static void BM_ChunkCullingRebuildMesh(benchmark::State& state)
     initializeOpenGL();
 
     auto blockPosition = Block::Coordinate{0, 0, 0};
-    auto texturePack = TexturePackAtlas("default");
+    auto texturePack = TexturePackArray("default");
     auto chunk = ChunkCulling(blockPosition, texturePack);
     for (auto _: state)
     {
@@ -29,7 +29,7 @@ static void BM_ChunkNaiveRebuildMesh(benchmark::State& state)
     initializeOpenGL();
 
     auto blockPosition = Block::Coordinate{0, 0, 0};
-    auto texturePack = TexturePackAtlas("default");
+    auto texturePack = TexturePackArray("default");
     auto chunk = ChunkNaive(blockPosition, texturePack);
     for (auto _: state)
     {

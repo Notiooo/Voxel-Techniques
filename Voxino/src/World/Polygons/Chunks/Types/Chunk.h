@@ -5,6 +5,8 @@
 #include "World/Polygons/Chunks/SimpleTerrainGenerator.h"
 #include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
 #include "World/Polygons/Meshes/Model3D.h"
+#include <Resources/TexturePackArray.h>
+#include <World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.h>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -23,8 +25,9 @@ class ChunkContainer;
 class Chunk : public ChunkInterface
 {
 public:
-    Chunk(Block::Coordinate blockPosition, const TexturePack& texturePack, ChunkContainer& parent);
-    Chunk(Block::Coordinate blockPosition, const TexturePack& texturePack);
+    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+          ChunkContainer& parent);
+    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack);
 
     Chunk(Chunk&& rhs) noexcept;
 
@@ -181,6 +184,16 @@ public:
      */
     int numberOfVertices();
 
+    /**
+     * \brief Swaps the current chunk mesh with the latest, most recently generated one
+     */
+    void updateMesh() override;
+
+    /**
+     * It is rebuilding this mesh fresh. Very expensive operation
+     */
+    void rebuildMesh() override;
+
 protected:
     /**
      * Generates natural world terrain on a given chunk
@@ -238,12 +251,17 @@ protected:
 protected:
     std::unique_ptr<SimpleTerrainGenerator> mTerrainGenerator;
     Block::Coordinate mChunkPosition;
-    const TexturePack& mTexturePack;
+    const TexturePackArray& mTexturePack;
     ChunkContainer* mParentContainer;
 
     std::unique_ptr<Model3D> mTerrainModel;
     std::unique_ptr<Model3D> mFluidModel;
     std::unique_ptr<Model3D> mFloralModel;
+
+    // TODO: This system should be changed to a better one. Consider distance.
+    ChunkArrayMeshBuilder mTerrainMeshBuilder;
+    ChunkArrayMeshBuilder mFluidMeshBuilder;
+    ChunkArrayMeshBuilder mFloralMeshBuilder;
 
     std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
 };

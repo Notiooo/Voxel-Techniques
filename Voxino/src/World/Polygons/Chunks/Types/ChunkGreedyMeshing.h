@@ -15,24 +15,14 @@ namespace Voxino
 class ChunkGreedyMeshing : public Chunk
 {
 public:
-    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePack& texturePack,
+    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
                        ChunkContainer& parent);
-    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePack& texturePack);
+    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
 
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.
      */
     void prepareMesh() final;
-
-    /**
-     * \brief Swaps the current chunk mesh with the latest, most recently generated one
-     */
-    void updateMesh() final;
-
-    /**
-     * It is rebuilding this mesh fresh. Very expensive operation
-     */
-    void rebuildMesh() final;
 
 private:
     using ScanDirections = std::pair<glm::bvec3, glm::bvec3>;
@@ -123,11 +113,5 @@ private:
      * @param meshRegion The mesh region for which a block mesh is to be created.
      */
     void createBlockMesh(MeshRegion&& meshRegion);
-
-private:
-    // TODO: This system should be changed to a better one. Consider distance.
-    ChunkArrayMeshBuilder mTerrainMeshBuilder;
-    ChunkArrayMeshBuilder mFluidMeshBuilder;
-    ChunkArrayMeshBuilder mFloralMeshBuilder;
 };
 }// namespace Voxino

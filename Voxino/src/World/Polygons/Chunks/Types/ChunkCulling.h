@@ -13,23 +13,13 @@ namespace Voxino
 class ChunkCulling : public Chunk
 {
 public:
-    ChunkCulling(const Block::Coordinate& blockPosition, const TexturePack& texturePack,
+    ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
                  ChunkContainer& parent);
-    ChunkCulling(const Block::Coordinate& blockPosition, const TexturePack& texturePack);
+    ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.
      */
     void prepareMesh() final;
-
-    /**
-     * \brief Swaps the current chunk mesh with the latest, most recently generated one
-     */
-    void updateMesh() final;
-
-    /**
-     * It is rebuilding this mesh fresh. Very expensive operation
-     */
-    void rebuildMesh() final;
 
 private:
     /**
@@ -45,13 +35,5 @@ private:
      * @param block The block to be visually represented.
      */
     void createBlockMesh(const Block::Coordinate& pos, const Block& block);
-
-private:
-    const TexturePackAtlas& mTexturePack;
-
-    // TODO: This system should be changed to a better one. Consider distance.
-    ChunkAtlasMeshBuilder mTerrainMeshBuilder;
-    ChunkAtlasMeshBuilder mFluidMeshBuilder;
-    ChunkAtlasMeshBuilder mFloralMeshBuilder;
 };
 }// namespace Voxino

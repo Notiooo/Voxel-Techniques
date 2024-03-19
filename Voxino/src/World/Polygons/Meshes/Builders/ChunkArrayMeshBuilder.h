@@ -37,7 +37,26 @@ public:
      */
     void addQuad(const MeshRegion& move);
 
+    /**
+     * Adds a quad to the mesh in place of the designated face at the given coordinates and with the
+     * given quad texture.
+     * @param blockFace A block face to add
+     * @param blockId TODO: THIS
+     * @param blockPosition The position on which the quad will be added
+     */
+    void addQuad(const Block::Face& blockFace, Block::TextureId blockId,
+                 const Block::Coordinate& blockPosition);
+
+
 private:
+    /**
+     * @brief For a given face block, it adds vertices building it up
+     * @param blockFace Block face ID
+     * @param blockPosition Position of the block in space
+     */
+    [[nodiscard]] glm::vec3 addBlockFaceVertices(const Block::Face& blockFace,
+                                                 const Block::Coordinate& blockPosition,
+                                                 int i) const;
     /**
      * Calculates the vertices for a block face within the mesh.
      *

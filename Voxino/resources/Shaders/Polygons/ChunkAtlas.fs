@@ -3,14 +3,13 @@
 layout(location = 0) out vec4 FragColor;
 
 in vec2 v_TexCoord;
-in float TexIndex;
 in float v_DirectionalLightning;
 
-uniform sampler2DArray u_TextureArray;
+uniform sampler2D u_Texture;
 
 void main()
 {
-	FragColor = texture(u_TextureArray, vec3(v_TexCoord, TexIndex));
+	FragColor = texture(u_Texture, v_TexCoord);
 	FragColor.r *= v_DirectionalLightning;
 	FragColor.g *= v_DirectionalLightning;
 	FragColor.b *= v_DirectionalLightning;

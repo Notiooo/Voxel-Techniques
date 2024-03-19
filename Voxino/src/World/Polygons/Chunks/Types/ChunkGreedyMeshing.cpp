@@ -9,21 +9,15 @@ namespace Voxino
 
 
 ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
-                                       const TexturePack& texturePack, ChunkContainer& parent)
+                                       const TexturePackArray& texturePack, ChunkContainer& parent)
     : Chunk(blockPosition, texturePack, parent)
-    , mTerrainMeshBuilder(mChunkPosition)
-    , mFluidMeshBuilder(mChunkPosition)
-    , mFloralMeshBuilder(mChunkPosition)
 {
     initializeChunk();
 }
 
 ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
-                                       const TexturePack& texturePack)
+                                       const TexturePackArray& texturePack)
     : Chunk(blockPosition, texturePack)
-    , mTerrainMeshBuilder(mChunkPosition)
-    , mFluidMeshBuilder(mChunkPosition)
-    , mFloralMeshBuilder(mChunkPosition)
 {
     initializeChunk();
 }
@@ -68,37 +62,6 @@ void ChunkGreedyMeshing::prepareMesh()
 void ChunkGreedyMeshing::createBlockMesh(MeshRegion&& meshRegion)
 {
     mTerrainMeshBuilder.addQuad(meshRegion);
-}
-
-void ChunkGreedyMeshing::rebuildMesh()
-{
-    MEASURE_SCOPE;
-    mTerrainMeshBuilder.resetMesh();
-    mFluidMeshBuilder.resetMesh();
-    mFloralMeshBuilder.resetMesh();
-    prepareMesh();
-}
-
-void ChunkGreedyMeshing::updateMesh()
-{
-    MEASURE_SCOPE;
-    if (!mTerrainModel)
-    {
-        mTerrainModel = std::make_unique<Model3D>();
-    }
-    mTerrainModel->setMesh(mTerrainMeshBuilder.mesh3D());
-
-    if (!mFluidModel)
-    {
-        mFluidModel = std::make_unique<Model3D>();
-    }
-    mFluidModel->setMesh(mFluidMeshBuilder.mesh3D());
-
-    if (!mFloralModel)
-    {
-        mFloralModel = std::make_unique<Model3D>();
-    }
-    mFloralModel->setMesh(mFloralMeshBuilder.mesh3D());
 }
 
 

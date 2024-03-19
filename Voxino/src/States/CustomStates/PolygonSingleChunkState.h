@@ -17,7 +17,7 @@ class StateStack;
  * \brief The game state in which the game world is created,
  * all objects are placed and the processes inside the game world are controlled.
  */
-template<typename ChunkType, typename TexturePackType>
+template<typename ChunkType>
 class PolygonSingleChunkState : public State
 {
 public:
@@ -63,14 +63,15 @@ private:
     Player mPlayer;
     Renderer mRenderer;
     Shader mShader;
-    TexturePackType mTexturePack;
+    TexturePackArray mTexturePack;
     ChunkType mChunk;
     Skybox mSkybox;
 };
 
-template<typename ChunkType, typename TexturePackType>
-PolygonSingleChunkState<ChunkType, TexturePackType>::PolygonSingleChunkState(
-    StateStack& stack, WindowToRender& window, const std::string& shaderName)
+template<typename ChunkType>
+PolygonSingleChunkState<ChunkType>::PolygonSingleChunkState(StateStack& stack,
+                                                            WindowToRender& window,
+                                                            const std::string& shaderName)
     : State(stack)
     , mWindow(window)
     , mPlayer(window)
@@ -90,8 +91,8 @@ PolygonSingleChunkState<ChunkType, TexturePackType>::PolygonSingleChunkState(
     spdlog::info("Number of chunk vertices: {}", mChunk.numberOfVertices());
 }
 
-template<typename ChunkType, typename TexturePackType>
-void PolygonSingleChunkState<ChunkType, TexturePackType>::draw(sf::Window& target) const
+template<typename ChunkType>
+void PolygonSingleChunkState<ChunkType>::draw(sf::Window& target) const
 {
     MEASURE_SCOPE_WITH_GPU;
     {
@@ -111,8 +112,8 @@ void PolygonSingleChunkState<ChunkType, TexturePackType>::draw(sf::Window& targe
     mPlayer.draw(mRenderer);
 }
 
-template<typename ChunkType, typename TexturePackType>
-bool PolygonSingleChunkState<ChunkType, TexturePackType>::handleEvent(const sf::Event& event)
+template<typename ChunkType>
+bool PolygonSingleChunkState<ChunkType>::handleEvent(const sf::Event& event)
 {
     MEASURE_SCOPE;
     mPlayer.handleEvent(event);
@@ -131,8 +132,8 @@ bool PolygonSingleChunkState<ChunkType, TexturePackType>::handleEvent(const sf::
     return true;
 }
 
-template<typename ChunkType, typename TexturePackType>
-void PolygonSingleChunkState<ChunkType, TexturePackType>::switchWireframe()
+template<typename ChunkType>
+void PolygonSingleChunkState<ChunkType>::switchWireframe()
 {
     std::unique_ptr<int[]> rastMode(new int[2]);
     GLCall(glGetIntegerv(GL_POLYGON_MODE, rastMode.get()));
@@ -147,8 +148,8 @@ void PolygonSingleChunkState<ChunkType, TexturePackType>::switchWireframe()
     }
 }
 
-template<typename ChunkType, typename TexturePackType>
-bool PolygonSingleChunkState<ChunkType, TexturePackType>::fixedUpdate(const float& deltaTime)
+template<typename ChunkType>
+bool PolygonSingleChunkState<ChunkType>::fixedUpdate(const float& deltaTime)
 {
     MEASURE_SCOPE;
     mPlayer.fixedUpdate(deltaTime);
@@ -156,15 +157,15 @@ bool PolygonSingleChunkState<ChunkType, TexturePackType>::fixedUpdate(const floa
     return true;
 }
 
-template<typename ChunkType, typename TexturePackType>
-bool PolygonSingleChunkState<ChunkType, TexturePackType>::updateImGui(const float& deltaTime)
+template<typename ChunkType>
+bool PolygonSingleChunkState<ChunkType>::updateImGui(const float& deltaTime)
 {
     MEASURE_SCOPE;
     return true;
 }
 
-template<typename ChunkType, typename TexturePackType>
-bool PolygonSingleChunkState<ChunkType, TexturePackType>::update(const float& deltaTime)
+template<typename ChunkType>
+bool PolygonSingleChunkState<ChunkType>::update(const float& deltaTime)
 {
     MEASURE_SCOPE;
     mPlayer.update(deltaTime);

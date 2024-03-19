@@ -86,12 +86,12 @@ Application::Application()
     mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
     mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
     mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling, TexturePackAtlas>>(
+    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling>>(
         State_ID::PolygonSingleChunkCullingState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive, TexturePackAtlas>>(
-        State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing, TexturePackArray>>(
-        State_ID::PolygonSingleChunkGreedyState, *mGameWindow, "ChunkGreedyMeshing");
+    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive>>(State_ID::PolygonSingleChunkNaiveState,
+                                                             *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing>>(
+        State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
 
     // Initial state of the statestack is TitleState
     mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
