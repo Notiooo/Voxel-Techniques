@@ -1,8 +1,5 @@
 #pragma once
-
-#include "Resources/TexturePackAtlas.h"
-#include "World/Polygons/Chunks/Types/Chunk.h"
-#include "World/Polygons/Meshes/Builders/ChunkAtlasMeshBuilder.h"
+#include "World/Polygons/Chunks/Types/ChunkArray.h"
 
 namespace Voxino
 {
@@ -10,7 +7,7 @@ namespace Voxino
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
-class ChunkCulling : public Chunk
+class ChunkCulling : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
     ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,

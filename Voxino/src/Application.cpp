@@ -1,6 +1,4 @@
 #include "Application.h"
-#include "Resources/TexturePackArray.h"
-#include "Resources/TexturePackAtlas.h"
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"

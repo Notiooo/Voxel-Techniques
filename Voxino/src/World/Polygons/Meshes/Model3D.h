@@ -16,28 +16,30 @@ class Model3D
 public:
     Model3D() = default;
     Model3D(Model3D&&) noexcept = default;
+    virtual ~Model3D() = default;
 
     /**
      * \brief This function expects that mesh data
      * will be available through all Model3D existance
      * \param mesh Mesh to display
      */
-    void setMesh(std::unique_ptr<Mesh3D> mesh);
+    virtual void setMesh(std::unique_ptr<Mesh3D> mesh) = 0;
 
     /**
      * Draws this 3D Model to the game screen
      * @param renderer Renderer drawing the 3D game world onto the 2D screen
      * @param shader Shader with the help of which the object should be drawn
      */
-    void draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
+    virtual void draw(const Renderer& renderer, const Shader& shader,
+                      const Camera& camera) const = 0;
 
     /**
      * Draws this 3D Model to the game screen
      * @param renderer Renderer drawing the 3D game world onto the 2D screen
      * @param shader Shader with the help of which the object should be drawn
      */
-    void draw(const Renderer& renderer, const Shader& shader, const Camera& camera,
-              const Renderer::DrawMode& drawMode) const;
+    virtual void draw(const Renderer& renderer, const Shader& shader, const Camera& camera,
+                      const Renderer::DrawMode& drawMode) const = 0;
 
     /**
      * @brief Sets the given buffer layout for this model which represents the arrangement of data
@@ -58,12 +60,8 @@ public:
      */
     [[nodiscard]] const Mesh3D& mesh() const;
 
-
-private:
-    VertexArray mVertexArray;
+protected:
     BufferLayout mBufferLayout;
-    IndexBuffer mIndices;
-    VertexBuffer mVertexBuffer;
     std::unique_ptr<Mesh3D> mMesh;
 };
 }// namespace Voxino

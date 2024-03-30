@@ -40,6 +40,12 @@ struct ChunkArrayMesh : public Mesh3D
      */
     int numberOfVertices() override;
 
+    /**
+     * Returns the size in memory that the mesh occupies
+     * @return The size in memory in bytes that the mesh occupies
+     */
+    int memorySize() override;
+
     /* ==== Members ===== */
     struct VertexData
     {

@@ -58,7 +58,7 @@ public:
      * \param drawMode Specifies the drawing mode (e.g., points, lines).
      */
     static void draw3D(const VertexArray& vb, int numberOfVertices, const Shader& shader,
-                       const Camera& camera, const DrawMode& drawMode);
+                       const Camera& camera, const DrawMode& drawMode = DrawMode::Triangles);
 
 private:
     /**

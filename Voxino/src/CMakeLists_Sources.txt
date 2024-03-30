@@ -37,11 +37,14 @@ set(PROJECT_SOURCES
         World/Polygons/Chunks/SimpleTerrainGenerator.cpp
         World/Polygons/Chunks/ChunkInterface.cpp
         World/Polygons/Chunks/Types/Chunk.cpp
+        World/Polygons/Chunks/Types/ChunkArray.cpp
         World/Polygons/Chunks/Types/ChunkGreedyMeshing.cpp
         World/Polygons/Chunks/Types/ChunkCulling.cpp
         World/Polygons/Chunks/Types/ChunkNaive.cpp
         World/Polygons/Meshes/Mesh3D.cpp
         World/Polygons/Meshes/Model3D.cpp
+        World/Polygons/Meshes/Model3DIndexed.cpp
+        World/Polygons/Meshes/Model3DNoIndexes.cpp
         World/Polygons/Meshes/ChunkAtlasMesh.cpp
         World/Polygons/Meshes/ChunkArrayMesh.cpp
         World/Polygons/Meshes/Builders/ChunkMeshBuilder.cpp

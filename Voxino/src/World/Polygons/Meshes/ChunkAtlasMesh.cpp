@@ -32,5 +32,9 @@ int ChunkAtlasMesh::numberOfVertices()
 {
     return vertices.size();
 }
+int ChunkAtlasMesh::memorySize()
+{
+    return sizeof(VertexData) * vertices.size();
+}
 
 }// namespace Voxino

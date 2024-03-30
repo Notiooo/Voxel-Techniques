@@ -41,6 +41,11 @@ struct Mesh3D
      */
     virtual int numberOfVertices() = 0;
 
+    /**
+     * The size in memory that the mesh occupies
+     */
+    virtual int memorySize() = 0;
+
     /* ==== Members ===== */
     std::vector<GLuint> indices;
 };

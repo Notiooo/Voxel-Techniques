@@ -178,22 +178,6 @@ public:
     std::optional<Block> neighbourBlockInGivenDirection(const Block::Coordinate& blockPos,
                                                         const Direction& direction) final;
 
-    /**
-     * Returns the number of chunk vertices
-     * @return Number of vertices
-     */
-    int numberOfVertices();
-
-    /**
-     * \brief Swaps the current chunk mesh with the latest, most recently generated one
-     */
-    void updateMesh() override;
-
-    /**
-     * It is rebuilding this mesh fresh. Very expensive operation
-     */
-    void rebuildMesh() override;
-
 protected:
     /**
      * Generates natural world terrain on a given chunk
@@ -253,16 +237,10 @@ protected:
     Block::Coordinate mChunkPosition;
     const TexturePackArray& mTexturePack;
     ChunkContainer* mParentContainer;
+    std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
 
     std::unique_ptr<Model3D> mTerrainModel;
     std::unique_ptr<Model3D> mFluidModel;
     std::unique_ptr<Model3D> mFloralModel;
-
-    // TODO: This system should be changed to a better one. Consider distance.
-    ChunkArrayMeshBuilder mTerrainMeshBuilder;
-    ChunkArrayMeshBuilder mFluidMeshBuilder;
-    ChunkArrayMeshBuilder mFloralMeshBuilder;
-
-    std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
 };
 }// namespace Voxino

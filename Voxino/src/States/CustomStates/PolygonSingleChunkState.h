@@ -89,6 +89,7 @@ PolygonSingleChunkState<ChunkType>::PolygonSingleChunkState(StateStack& stack,
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     spdlog::info("Number of chunk vertices: {}", mChunk.numberOfVertices());
+    spdlog::info("Size in buffer: {} bytes", mChunk.memorySize());
 }
 
 template<typename ChunkType>

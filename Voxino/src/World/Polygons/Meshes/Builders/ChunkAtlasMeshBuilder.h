@@ -5,6 +5,7 @@
 #include "World/Polygons/Meshes/ChunkAtlasMesh.h"
 #include "pch.h"
 
+#include <World/Polygons/Meshes/Model3DIndexed.h>
 
 namespace Voxino
 {
@@ -15,6 +16,7 @@ namespace Voxino
 class ChunkAtlasMeshBuilder : public ChunkMeshBuilder
 {
 public:
+    using ModelType = Model3DIndexed;
     explicit ChunkAtlasMeshBuilder(Block::Coordinate origin);
     ChunkAtlasMeshBuilder();
 

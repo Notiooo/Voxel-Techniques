@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resources/TexturePackAtlas.h"
-#include "World/Polygons/Chunks/Types/Chunk.h"
+#include "World/Polygons/Chunks/Types/ChunkArray.h"
 
 #include <World/Polygons/Meshes/Builders/ChunkAtlasMeshBuilder.h>
 
@@ -12,7 +12,7 @@ class TexturePackAtlas;
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
-class ChunkNaive : public Chunk
+class ChunkNaive : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
     ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,

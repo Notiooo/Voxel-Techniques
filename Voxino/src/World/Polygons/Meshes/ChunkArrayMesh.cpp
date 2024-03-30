@@ -34,4 +34,9 @@ int ChunkArrayMesh::numberOfVertices()
     return vertices.size();
 }
 
+int ChunkArrayMesh::memorySize()
+{
+    return sizeof(VertexData) * vertices.size();
+}
+
 }// namespace Voxino

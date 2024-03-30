@@ -29,6 +29,18 @@ public:
     virtual void rebuildMesh() = 0;
 
     /**
+     * Returns the number of chunk vertices
+     * @return Number of vertices
+     */
+    virtual int numberOfVertices() = 0;
+
+    /**
+     * Returns the size in memory that the mesh occupies
+     * @return The size in memory in bytes that the chunk occupies
+     */
+    virtual int memorySize() = 0;
+
+    /**
      * Updates the status/logic of the state at equal intervals independent of the frame rate.
      * @param deltaTime Time interval
      */

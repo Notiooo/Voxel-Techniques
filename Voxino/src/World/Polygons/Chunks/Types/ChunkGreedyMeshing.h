@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Utils/Bitset3D.h"
-#include "World/Polygons/Chunks/Types/Chunk.h"
+#include "World/Polygons/Chunks/Types/ChunkArray.h"
 #include "World/Polygons/Meshes/MeshRegion.h"
-
-#include <World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.h>
 
 namespace Voxino
 {
@@ -12,7 +10,7 @@ namespace Voxino
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
-class ChunkGreedyMeshing : public Chunk
+class ChunkGreedyMeshing : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
     ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,

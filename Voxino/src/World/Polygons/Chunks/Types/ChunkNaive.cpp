@@ -7,13 +7,13 @@ namespace Voxino
 
 ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
                        ChunkContainer& parent)
-    : Chunk(blockPosition, texturePack, parent)
+    : ChunkArray(blockPosition, texturePack, parent)
 {
     initializeChunk();
 }
 
 ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack)
-    : Chunk(blockPosition, texturePack)
+    : ChunkArray(blockPosition, texturePack)
 {
     initializeChunk();
 }

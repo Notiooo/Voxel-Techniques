@@ -6,6 +6,7 @@
 #include "pch.h"
 
 #include <World/Polygons/Meshes/MeshRegion.h>
+#include <World/Polygons/Meshes/Model3DIndexed.h>
 
 
 namespace Voxino
@@ -17,6 +18,7 @@ namespace Voxino
 class ChunkArrayMeshBuilder : public ChunkMeshBuilder
 {
 public:
+    using ModelType = Model3DIndexed;
     explicit ChunkArrayMeshBuilder(Block::Coordinate origin);
     ChunkArrayMeshBuilder();
 

@@ -292,43 +292,6 @@ void Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
     }
 }
 
-int Chunk::numberOfVertices()
-{
-    return mTerrainModel->mesh().numberOfVertices() + mFloralModel->mesh().numberOfVertices() +
-           mFluidModel->mesh().numberOfVertices();
-}
-
-void Chunk::rebuildMesh()
-{
-    MEASURE_SCOPE;
-    mTerrainMeshBuilder.resetMesh();
-    mFluidMeshBuilder.resetMesh();
-    mFloralMeshBuilder.resetMesh();
-    prepareMesh();
-}
-
-void Chunk::updateMesh()
-{
-    MEASURE_SCOPE;
-    if (!mTerrainModel)
-    {
-        mTerrainModel = std::make_unique<Model3D>();
-    }
-    mTerrainModel->setMesh(mTerrainMeshBuilder.mesh3D());
-
-    if (!mFluidModel)
-    {
-        mFluidModel = std::make_unique<Model3D>();
-    }
-    mFluidModel->setMesh(mFluidMeshBuilder.mesh3D());
-
-    if (!mFloralModel)
-    {
-        mFloralModel = std::make_unique<Model3D>();
-    }
-    mFloralModel->setMesh(mFloralMeshBuilder.mesh3D());
-}
-
 bool Chunk::canGivenBlockBeOverplaced(std::vector<BlockId>& blocksThatMightBeOverplaced,
                                       const BlockId& idOfTheBlockToOverplace) const
 {
