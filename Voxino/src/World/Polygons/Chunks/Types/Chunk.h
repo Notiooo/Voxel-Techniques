@@ -43,7 +43,7 @@ public:
      * @param shader Shader with the help of which the object should be drawn
      */
     void drawTerrain(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const final;
+                     const Camera& camera) const override;
 
     /**
      * Draws this chunk liquids to the game screen
@@ -51,7 +51,7 @@ public:
      * @param shader Shader with the help of which the object should be drawn
      */
     void drawLiquids(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const final;
+                     const Camera& camera) const override;
 
     /**
      * Draws this chunk floral to the game screen
@@ -59,7 +59,7 @@ public:
      * @param shader Shader with the help of which the object should be drawn
      */
     void drawFlorals(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const final;
+                     const Camera& camera) const override;
 
     /**
      * \brief Returns the block according to the coordinates given relative to the chunk position.

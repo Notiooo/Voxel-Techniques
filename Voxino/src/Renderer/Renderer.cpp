@@ -76,6 +76,7 @@ unsigned Renderer::toOpenGl(const Renderer::DrawMode& drawMode)
 {
     switch (drawMode)
     {
+        case DrawMode::Points: return GL_POINTS;
         case DrawMode::Lines: return GL_LINES;
         case DrawMode::Triangles: return GL_TRIANGLES;
         case DrawMode::Quads: return GL_QUADS;

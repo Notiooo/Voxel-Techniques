@@ -6,6 +6,7 @@
 #include "Utils/Mouse.h"
 #include "pch.h"
 
+#include <World/Polygons/Chunks/Types/ChunkCullingGpu.h>
 #include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkNaive.h>
 
@@ -90,6 +91,9 @@ Application::Application()
                                                              *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing>>(
         State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
+
+    mAppStack.saveState<PolygonSingleChunkState<ChunkCullingGpu>>(
+        State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
     // Initial state of the statestack is TitleState
     mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
@@ -227,6 +231,7 @@ void Application::updateImGuiSelectScene()
     scene("Polygon Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
     scene("Polygon Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
     scene("Polygon Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
+    scene("Polygon Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
     scene("Exit application", State_ID::ExitApplicationState);
     ImGui::End();
 }

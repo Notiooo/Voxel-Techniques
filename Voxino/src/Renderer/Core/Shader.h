@@ -10,6 +10,7 @@ enum class ShaderType
 {
     VertexShader,
     FragmentShader,
+    GeometryShader,
     // more types can be supported later on...
 };
 
@@ -157,6 +158,7 @@ inline unsigned int toOpenGl(const ShaderType& shaderType)
     {
         case ShaderType::VertexShader: return GL_VERTEX_SHADER;
         case ShaderType::FragmentShader: return GL_FRAGMENT_SHADER;
+        case ShaderType::GeometryShader: return GL_GEOMETRY_SHADER;
     }
     spdlog::error("Undefined shader! Returning invalid value");
     return GL_INVALID_VALUE;
@@ -173,6 +175,7 @@ inline std::string toString(const ShaderType& shaderType)
     {
         case ShaderType::VertexShader: return "VertexShader";
         case ShaderType::FragmentShader: return "FragmentShader";
+        case ShaderType::GeometryShader: return "GeometryShader";
         default: spdlog::error("Undefined shader! Returning invalid value"); return "Undefined";
     }
 }

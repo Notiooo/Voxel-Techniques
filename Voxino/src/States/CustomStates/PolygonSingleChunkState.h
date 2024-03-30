@@ -77,7 +77,8 @@ PolygonSingleChunkState<ChunkType>::PolygonSingleChunkState(StateStack& stack,
     , mPlayer(window)
     , mRenderer(mWindow)
     , mShader{{ShaderType::VertexShader, "resources/Shaders/Polygons/" + shaderName + ".vs"},
-              {ShaderType::FragmentShader, "resources/Shaders/Polygons/" + shaderName + ".fs"}}
+              {ShaderType::FragmentShader, "resources/Shaders/Polygons/" + shaderName + ".fs"},
+              {ShaderType::GeometryShader, "resources/Shaders/Polygons/" + shaderName + ".gs"}}
     , mTexturePack("default")
     , mChunk({0, -72, 0}, mTexturePack)
 {

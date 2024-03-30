@@ -130,6 +130,11 @@ std::vector<Shader::ShaderSourceCode> Shader::parseShaders(const std::vector<Sha
 
             shaderSourceCode.push_back(ShaderSourceCode{shader, sourceCode});
         }
+        else
+        {
+            spdlog::error("Can not open given shader file: {} of type {}. Ignoring it.",
+                          shader.filePath, toString(shader.shaderType));
+        }
     }
     return shaderSourceCode;
 }

@@ -41,15 +41,18 @@ set(PROJECT_SOURCES
         World/Polygons/Chunks/Types/ChunkGreedyMeshing.cpp
         World/Polygons/Chunks/Types/ChunkCulling.cpp
         World/Polygons/Chunks/Types/ChunkNaive.cpp
+        World/Polygons/Chunks/Types/ChunkCullingGpu.cpp
         World/Polygons/Meshes/Mesh3D.cpp
         World/Polygons/Meshes/Model3D.cpp
         World/Polygons/Meshes/Model3DIndexed.cpp
         World/Polygons/Meshes/Model3DNoIndexes.cpp
         World/Polygons/Meshes/ChunkAtlasMesh.cpp
         World/Polygons/Meshes/ChunkArrayMesh.cpp
+        World/Polygons/Meshes/ChunkArrayCullingGpuMesh.cpp
         World/Polygons/Meshes/Builders/ChunkMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkAtlasMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.cpp
+        World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.cpp
         World/Polygons/Meshes/Builders/MeshBuilder.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp

@@ -15,6 +15,7 @@ enum class State_ID
     PolygonSingleChunkCullingState,
     PolygonSingleChunkNaiveState,
     PolygonSingleChunkGreedyState,
+    PolygonSingleChunkCullingGpuState,
     PauseState,
 
     ExitApplicationState

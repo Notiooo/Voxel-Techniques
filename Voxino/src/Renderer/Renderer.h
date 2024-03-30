@@ -17,6 +17,7 @@ class Renderer
 public:
     enum class DrawMode
     {
+        Points,
         Lines,
         Triangles,
         Quads
