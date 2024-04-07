@@ -8,6 +8,7 @@ FetchContent_Declare(
 
 # No need to build network modules
 set(SFML_BUILD_NETWORK FALSE)
+set(SFML_BUILD_GRAPHICS FALSE)
 
 FetchContent_MakeAvailable(sfml)
 

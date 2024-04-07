@@ -43,8 +43,9 @@ set_target_properties(sfml-audio PROPERTIES CXX_STANDARD 98 CXX_STANDARD_REQUIRE
 
 target_link_libraries(VoxinoSrc
         PUBLIC
-        sfml-graphics
         sfml-audio
+        sfml-window
+        sfml-system
         ImGui-SFML::ImGui-SFML
         glew_s
         glm
@@ -59,7 +60,6 @@ target_link_libraries(VoxinoSrc
 add_custom_command(TARGET VoxinoSrc POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:ImGui-SFML::ImGui-SFML>
-        $<TARGET_FILE:sfml-graphics>
         $<TARGET_FILE:sfml-window>
         $<TARGET_FILE:sfml-system>
         $<TARGET_FILE:sfml-audio>
@@ -77,7 +77,7 @@ if (WIN32 AND SFML_BUILD_AUDIO)
             ${FETCHCONTENT_BASE_DIR}/sfml-src/extlibs/bin/x64/openal32.dll
             $<TARGET_FILE_DIR:VoxinoSrc>
     )
-endif()
+endif ()
 
 # Remove previous engine resources
 

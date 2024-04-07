@@ -2,8 +2,8 @@ message(STATUS "Fetching ImGui-SFML...")
 
 FetchContent_Declare(
         imgui-sfml
-        GIT_REPOSITORY https://github.com/eliasdaler/imgui-sfml
-        GIT_TAG d75897c5170c878c941ca22b132e724829341a90
+        GIT_REPOSITORY https://github.com/Notiooo/imgui-sfml-opengl3
+        GIT_TAG a9de4a076ce5e67a940ca1e7a79b9a1819d6ce95
 )
 
 set(IMGUI_DIR ${imgui_SOURCE_DIR})

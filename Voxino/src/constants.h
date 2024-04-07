@@ -8,7 +8,6 @@
 /**
  * \brief This will remove 2D drawn by SFML and also the ImGUI
  */
-// #define DISABLE_SFML_GRAPHICS_MODULE
 // #define DISABLE_IMGUI
 #define IS_TRACY_ENABLED TRUE
 #define IS_MINITRACE_ENABLED FALSE

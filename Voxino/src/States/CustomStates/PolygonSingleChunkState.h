@@ -66,6 +66,7 @@ private:
     TexturePackArray mTexturePack;
     ChunkType mChunk;
     Skybox mSkybox;
+    bool mIsWireframe{false};
 };
 
 template<typename ChunkType>
@@ -97,15 +98,9 @@ template<typename ChunkType>
 void PolygonSingleChunkState<ChunkType>::draw(sf::Window& target) const
 {
     MEASURE_SCOPE_WITH_GPU;
+    if (not mIsWireframe)
     {
-        // do not draw skybox in wireframe mode
-        std::unique_ptr<int[]> rastMode(new int[2]);
-        GLCall(glGetIntegerv(GL_POLYGON_MODE, rastMode.get()));
-
-        if (rastMode[1] == GL_FILL)
-        {
-            mSkybox.draw(mPlayer.camera());
-        }
+        mSkybox.draw(mPlayer.camera());
     }
 
     mChunk.drawTerrain(mRenderer, mShader, mPlayer.camera());
@@ -136,17 +131,15 @@ bool PolygonSingleChunkState<ChunkType>::handleEvent(const sf::Event& event)
 template<typename ChunkType>
 void PolygonSingleChunkState<ChunkType>::switchWireframe()
 {
-    std::unique_ptr<int[]> rastMode(new int[2]);
-    GLCall(glGetIntegerv(GL_POLYGON_MODE, rastMode.get()));
-
-    if (rastMode[1] == GL_FILL)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    else
+    if (mIsWireframe)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    mIsWireframe = !mIsWireframe;
 }
 
 template<typename ChunkType>

@@ -1,16 +1,8 @@
 #pragma once
 
-#ifndef DISABLE_SFML_GRAPHICS_MODULE
-    #include <SFML/Graphics/RenderWindow.hpp>
-using WindowToRender = sf::RenderWindow;
-#else
-    #include <SFML/Window.hpp>
-using WindowToRender = sf::Window;
-#endif
 
-#ifdef DISABLE_SFML_GRAPHICS_MODULE
-    #define DISABLE_IMGUI
-#endif
+#include <SFML/Window.hpp>
+using WindowToRender = sf::Window;
 
 #include "Resources/Resources.h"
 #include "States/StateStack.h"

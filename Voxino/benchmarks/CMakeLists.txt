@@ -12,21 +12,21 @@ enable_testing()
 configure_file("CMakeLists.txt.in" "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
 execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download"
-        )
+)
 execute_process(COMMAND "${CMAKE_COMMAND}" --build .
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download"
-        )
+)
 
 #set(benchmark_force_shared_crt ON CACHE BOOL "" FORCE)
 
 add_subdirectory("${CMAKE_BINARY_DIR}/googlebenchmark-src"
         "${CMAKE_BINARY_DIR}/googlebenchmark-build"
-        )
+)
 
 if (CMAKE_VERSION VERSION_LESS 2.8.11)
     include_directories("${benchmark_SOURCE_DIR}/include"
             "${gmock_SOURCE_DIR}/include"
-            )
+    )
 endif ()
 
 include(benchmarks/CMakeLists.txt)
@@ -44,7 +44,7 @@ add_executable(VoxinoBenchmarks
         ${Mocks_Sources}
         ${Utils_Sources}
         main.cpp
-        )
+)
 
 #target_compile_definitions(VoxinoBenchmarks PUBLIC BENCHMARK_LINKED_AS_SHARED_LIBRARY)
 target_link_libraries(VoxinoBenchmarks PRIVATE VoxinoSrc glew_s glm)
@@ -65,7 +65,6 @@ add_custom_command(TARGET VoxinoBenchmarks POST_BUILD
         $<TARGET_FILE:benchmark_main>
         $<TARGET_FILE:gmock_main>
         $<TARGET_FILE:ImGui-SFML::ImGui-SFML>
-        $<TARGET_FILE:sfml-graphics>
         $<TARGET_FILE:sfml-window>
         $<TARGET_FILE:sfml-system>
         $<TARGET_FILE:sfml-audio>
@@ -73,18 +72,18 @@ add_custom_command(TARGET VoxinoBenchmarks POST_BUILD
         $<TARGET_FILE:TracyClient>
         $<TARGET_FILE:yaml-cpp::yaml-cpp>
         $<TARGET_FILE_DIR:VoxinoBenchmarks>
-        )
+)
 
 # Remove previous application resources
 
 add_custom_command(TARGET VoxinoBenchmarks PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory
         $<TARGET_FILE_DIR:VoxinoBenchmarks>/resources
-        )
+)
 
 # Copy application resources
 
 add_custom_command(TARGET VoxinoBenchmarks POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:VoxinoBenchmarks>/resources
-        )
+)

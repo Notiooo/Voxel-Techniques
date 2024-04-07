@@ -50,7 +50,7 @@ void Application::configureImGui()
 {
 #ifndef DISABLE_IMGUI
     configureImGuiSinks();
-    ImGui::SFML::Init(*mGameWindow, sf::Vector2f(mGameWindow->getSize()), true);
+    ImGui::SFML::Init(*mGameWindow);
     setupImGuiStyle();
     ImGuiIO& io = ImGui::GetIO();
     if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
@@ -96,17 +96,7 @@ Application::Application()
     settings.minorVersion = 3;
     settings.depthBits = 24;
     settings.stencilBits = 8;
-#ifndef _DEBUG
     settings.attributeFlags = sf::ContextSettings::Core;
-#endif
-
-    // settings.attributeFlags = sf::ContextSettings::Core;
-
-    // If Core should be used, then there is
-    // a need to change the way ImGui is plugged in. For the moment ImGui-SFML uses the SFML
-    // graphics module - so ImGui will not draw on Core setting. This project is developed without
-    // the SFML graphics module and works without it. In the future, it would be useful to plug in
-    // ImGui in such a way that it no longer relies on the SFML graphics module.
 
     mGameWindow =
         std::make_unique<WindowToRender>(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Voxino",
@@ -351,8 +341,7 @@ void Application::updateImGui(const sf::Time& deltaTime)
 {
 #ifndef DISABLE_IMGUI
 
-    ImGui::SFML::Update(sf::Mouse::getPosition(*mGameWindow), sf::Vector2f(mGameWindow->getSize()),
-                        deltaTime);
+    ImGui::SFML::Update(*mGameWindow, deltaTime);
     if (not mIsImGuiDisplayDisabled)
     {
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(),
@@ -454,9 +443,7 @@ void Application::render()
     mAppStack.draw(*mGameWindow);
 
 #ifndef DISABLE_IMGUI
-    mGameWindow->pushGLStates();
     ImGui::SFML::Render();
-    mGameWindow->popGLStates();
 #endif
 
     performScreenCaptureTracyProfiler();
