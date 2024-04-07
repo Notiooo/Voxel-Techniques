@@ -1,10 +1,12 @@
 #include "Player.h"
+#include "Utils/Mouse.h"
 #include "pch.h"
 
 namespace Voxino
 {
 Player::Player(WindowToRender& window)
     : mCamera(window)
+    , mGameWindow(window)
     , mCrosshairTexture("resources/Textures/crosshair.png")
     , mCrosshair(mCrosshairTexture)
 {
@@ -68,7 +70,11 @@ void Player::fixedUpdate(const float& deltaTime)
 
 void Player::handleMovementKeyboardInputs(const float& deltaTime)
 {
-    auto ACCELERATION_RATIO = 0.1f;
+    if (not mGameWindow.hasFocus() or not Mouse::isMouseLocked())
+    {
+        return;
+    }
+    constexpr auto ACCELERATION_RATIO = 0.1f;
     auto direction = glm::vec3(0.0f, 0.0f, 0.0f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))

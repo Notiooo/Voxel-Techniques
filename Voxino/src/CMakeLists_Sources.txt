@@ -59,5 +59,6 @@ set(PROJECT_SOURCES
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp
+        Utils/ImGuiLog.cpp
         Utils/IteratorRanges.cpp
         )

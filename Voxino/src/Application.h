@@ -14,6 +14,7 @@ using WindowToRender = sf::Window;
 
 #include "Resources/Resources.h"
 #include "States/StateStack.h"
+#include "Utils/ImGuiLog.h"
 
 namespace Voxino
 {
@@ -58,6 +59,11 @@ private:
     void initializeTracyScreenCapture();
 
     /**
+     * \brief Toggles the display of the ImGui menu.
+     */
+    void toggleImGuiDisplay();
+
+    /**
      * \brief Intercepts user inputs and passes them to processes inside the application.
      */
     void processEvents();
@@ -84,6 +90,11 @@ private:
      * where, due to high lag, a character is moved off the wall avoiding collision checking.
      */
     void fixedUpdateAtEqualIntervals();
+
+    /**
+     * \brief Updates the display of the imgui menu for the application logger
+     */
+    void updateImGuiLogger();
 
     /**
      * \brief Updates ImGui window displaying start and stop panel for trace collection
@@ -119,7 +130,6 @@ private:
      */
     void update(const sf::Time& deltaTime);
 
-
     /**
      * \brief Retrieves image frame for Tracy Profiler
      */
@@ -147,6 +157,28 @@ private:
      * \brief Sets the ImGui style
      */
     static void setupImGuiStyle();
+
+    /**
+     * Initializes spdlog with two sinks:
+     * - ImGuiLogSink: Displays logs in an ImGui window, formatting timestamps and log levels.
+     * - stdout_color_sink_mt: Outputs logs to the console with color formatting.
+     */
+    void configureImGuiSinks();
+
+    /**
+     * \brief Configures the ImGui library
+     */
+    void configureImGui();
+
+    /**
+     * \brief Configures the Glew library
+     */
+    void setupGlew();
+
+    /**
+     * \brief Sets the flow states of the application inside of statestack
+     */
+    void setupFlowStates();
 
     /**
      * @brief The time it takes for one game frame to be generated.
@@ -199,6 +231,11 @@ private:
      */
     StateStack mAppStack;
 
+    /**
+     * \brief The ImGui log object that stores the logs displayed in the application.
+     */
+    ImGuiLog mImguiLog;
+    bool mIsImGuiDisplayDisabled{false};
 
     // Tracy Profiler Screen capture variables
     GLuint m_fiTexture[4];

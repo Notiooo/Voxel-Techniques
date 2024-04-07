@@ -12,6 +12,7 @@
 #include <World/Polygons/Chunks/Types/ChunkCullingGpu.h>
 #include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkNaive.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Voxino
 {
@@ -32,6 +33,60 @@ const sf::Time Application::TIME_PER_FIXED_UPDATE_CALLS =
 const int Application::SCREEN_WIDTH = 1280;
 const int Application::SCREEN_HEIGHT = 720;
 
+
+void Application::configureImGuiSinks()
+{
+    auto imguiSink = std::make_shared<ImGuiLogSink<std::mutex>>(&mImguiLog);
+    imguiSink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    consoleSink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    auto logger = std::make_shared<spdlog::logger>("multi_sink",
+                                                   spdlog::sinks_init_list{imguiSink, consoleSink});
+    spdlog::register_logger(logger);
+    spdlog::set_default_logger(logger);
+}
+
+void Application::configureImGui()
+{
+#ifndef DISABLE_IMGUI
+    configureImGuiSinks();
+    ImGui::SFML::Init(*mGameWindow, sf::Vector2f(mGameWindow->getSize()), true);
+    setupImGuiStyle();
+    ImGuiIO& io = ImGui::GetIO();
+    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
+    {
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    }
+#endif
+}
+
+void Application::setupGlew()
+{
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK)
+    {
+        throw std::runtime_error("Failed to initialize GLEW");
+    }
+}
+
+void Application::setupFlowStates()
+{
+    mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
+    mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
+    mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling>>(
+        State_ID::PolygonSingleChunkCullingState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive>>(State_ID::PolygonSingleChunkNaiveState,
+                                                             *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing>>(
+        State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
+
+    mAppStack.saveState<PolygonSingleChunkState<ChunkCullingGpu>>(
+        State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
+
+    mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
+                                                         *mGameWindow);
+}
 
 Application::Application()
 {
@@ -60,47 +115,14 @@ Application::Application()
     mGameWindow->setFramerateLimit(FRAMES_PER_SECOND);
     mGameWindow->setActive(true);
     loadResources();
-
-#ifndef DISABLE_IMGUI
-    ImGui::SFML::Init(*mGameWindow, sf::Vector2f(mGameWindow->getSize()), true);
-    setupImGuiStyle();
-    ImGuiIO& io = ImGui::GetIO();
-    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
-    {
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    }
-#endif
-
-    // GLEW setup
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
-        throw std::runtime_error("Failed to initialize GLEW");
-    }
-    TracyGpuContext;
-
+    configureImGui();
+    setupGlew();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    TracyGpuContext;
     initializeTracyScreenCapture();
-
-    // Setup all application-flow states
-    mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
-    mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
-    mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling>>(
-        State_ID::PolygonSingleChunkCullingState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive>>(State_ID::PolygonSingleChunkNaiveState,
-                                                             *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing>>(
-        State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
-
-    mAppStack.saveState<PolygonSingleChunkState<ChunkCullingGpu>>(
-        State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
-
-    mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
-                                                         *mGameWindow);
-    // Initial state of the statestack is TitleState
+    setupFlowStates();
     mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
 }
 
@@ -121,6 +143,11 @@ void Application::initializeTracyScreenCapture()
         glBindBuffer(GL_PIXEL_PACK_BUFFER, m_fiPbo[i]);
         glBufferData(GL_PIXEL_PACK_BUFFER, 320 * 180 * 4, nullptr, GL_STREAM_READ);
     }
+}
+
+void Application::toggleImGuiDisplay()
+{
+    mIsImGuiDisplayDisabled = !mIsImGuiDisplayDisabled;
 }
 
 void Application::initializeMinitraceProfiler()
@@ -186,6 +213,28 @@ void Application::fixedUpdateAtEqualIntervals()
         }
         while (mTimeSinceLastFixedUpdate > TIME_PER_FIXED_UPDATE_CALLS);
     }
+}
+
+void Application::updateImGuiLogger()
+{
+    if (ImGui::Begin("Log Console"))
+    {
+        if (ImGui::Button("Clear"))
+        {
+            mImguiLog.clear();
+        }
+
+        ImGui::BeginChild("scrolling");
+        std::lock_guard lock(mImguiLog.mutex);
+        for (const auto& [message, level]: mImguiLog.entry)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGuiLog::toColor(level));
+            ImGui::TextUnformatted(message.c_str());
+            ImGui::PopStyleColor();
+        }
+        ImGui::EndChild();
+    }
+    ImGui::End();
 }
 
 void Application::updateImGuiMiniTrace()
@@ -281,18 +330,10 @@ void Application::displayFPS(float deltaTime)
 {
     static float fpsValues[100] = {};
     static int fpsIndex = 0;
-    static float accumDeltaTime = 0.0f;
     float fps = 1.0f / deltaTime;
 
     fpsValues[fpsIndex] = fps;
     fpsIndex = (fpsIndex + 1) % IM_ARRAYSIZE(fpsValues);
-
-    accumDeltaTime += deltaTime;
-    if (fpsIndex == 0)
-    {
-        float averageFPS = IM_ARRAYSIZE(fpsValues) / accumDeltaTime;
-        accumDeltaTime = 0.0f;
-    }
 
     ImGui::Begin("Performance");
     float contentWidth = ImGui::GetContentRegionAvail().x;
@@ -312,10 +353,16 @@ void Application::updateImGui(const sf::Time& deltaTime)
 
     ImGui::SFML::Update(sf::Mouse::getPosition(*mGameWindow), sf::Vector2f(mGameWindow->getSize()),
                         deltaTime);
-    updateImGuiMiniTrace();
-    updateImGuiSelectScene();
-    displayFPS(deltaTime.asSeconds());
-    mAppStack.updateImGui(deltaTime.asSeconds());
+    if (not mIsImGuiDisplayDisabled)
+    {
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(),
+                                     ImGuiDockNodeFlags_PassthruCentralNode);
+        updateImGuiLogger();
+        updateImGuiMiniTrace();
+        updateImGuiSelectScene();
+        displayFPS(deltaTime.asSeconds());
+        mAppStack.updateImGui(deltaTime.asSeconds());
+    }
 #endif
 }
 
@@ -331,9 +378,16 @@ void Application::processEvents()
         }
 
 #ifndef DISABLE_IMGUI
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F1)
+        {
+            toggleImGuiDisplay();
+        }
         ImGui::SFML::ProcessEvent(event);
 #endif
-
+        if (not mGameWindow->hasFocus())
+        {
+            return;
+        }
         mAppStack.handleEvent(event);
     }
 }
@@ -422,7 +476,7 @@ void Application::setupImGuiStyle()
     // Thank you Trippasch
     // https://github.com/ocornut/imgui/issues/707
     auto& colors = ImGui::GetStyle().Colors;
-    colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.1f, 0.13f, 1.0f};
+    colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.1f, 0.13f, 0.8f};
     colors[ImGuiCol_MenuBarBg] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
 
     // Border

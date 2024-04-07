@@ -100,6 +100,7 @@ private:
     void limitVelocity(const float& deltaTime);
 
 private:
+    WindowToRender& mGameWindow;
     Camera mCamera;
     glm::vec3 mPosition{0, 0, 0};
     glm::vec3 mVelocity{0, 0, 0};

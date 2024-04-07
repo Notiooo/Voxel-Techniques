@@ -123,9 +123,8 @@ bool PolygonSingleChunkState<ChunkType>::handleEvent(const sf::Event& event)
     {
         switch (event.key.code)
         {
-            // case sf::Keyboard::Escape: requestPush(State_ID::PauseState); break;
             case sf::Keyboard::Escape: Mouse::unlockMouse(mWindow); break;
-            case sf::Keyboard::F1: switchWireframe(); break;
+            case sf::Keyboard::F2: switchWireframe(); break;
             default:;// nothing
         }
     }
