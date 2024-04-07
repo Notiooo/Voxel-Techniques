@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
         States/CustomStates/PolygonSingleChunkState.cpp
         States/CustomStates/ExitApplicationState.cpp
         States/CustomStates/GameState.cpp
+        States/CustomStates/RaycastSingleChunkColoredVoxels.cpp
         Player/Player.cpp
         World/Camera.cpp
         World/Skybox.cpp
@@ -54,6 +55,7 @@ set(PROJECT_SOURCES
         World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.cpp
         World/Polygons/Meshes/Builders/MeshBuilder.cpp
+        World/Raycasting/Chunks/VoxelsGpu.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp

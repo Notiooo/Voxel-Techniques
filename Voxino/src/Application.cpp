@@ -1,4 +1,7 @@
 #include "Application.h"
+
+#include <States/CustomStates/RaycastSingleChunkColoredVoxels.h>
+
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"
@@ -95,6 +98,8 @@ Application::Application()
     mAppStack.saveState<PolygonSingleChunkState<ChunkCullingGpu>>(
         State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
+    mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
+                                                         *mGameWindow);
     // Initial state of the statestack is TitleState
     mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
 }
@@ -226,13 +231,49 @@ void Application::updateImGuiSelectScene()
         }
     };
 
+    static auto splitLineText = [this](std::string text)
+    {
+        float availableWidth = ImGui::GetContentRegionAvail().x;
+        ImVec2 textSize = ImGui::CalcTextSize(text.c_str());
+        float spaceForLines = availableWidth - textSize.x;
+        float lineLength = spaceForLines / 2.0f - ImGui::GetStyle().ItemSpacing.x;
+
+        ImGui::NewLine();
+
+        // Start of custom drawing
+        float currentPos = ImGui::GetCursorPosX();
+        ImGui::SetCursorPosX(currentPos + lineLength);
+
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        ImGui::TextUnformatted("");
+        ImGui::GetWindowDrawList()->AddLine(ImVec2(p.x - lineLength, p.y + textSize.y / 2),
+                                            ImVec2(p.x, p.y + textSize.y / 2),
+                                            IM_COL32(255, 255, 255, 255));
+
+        ImGui::SameLine();
+        ImGui::Text("%s", text.c_str());
+
+        ImGui::SameLine();
+        p = ImGui::GetCursorScreenPos();
+        ImGui::TextUnformatted("");
+        ImGui::GetWindowDrawList()->AddLine(ImVec2(p.x, p.y + textSize.y / 2),
+                                            ImVec2(p.x + lineLength, p.y + textSize.y / 2),
+                                            IM_COL32(255, 255, 255, 255));
+    };
+
+    splitLineText("Game related");
     scene("Logo", State_ID::LogoState);
     scene("Game State", State_ID::GameState);
-    scene("Polygon Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
-    scene("Polygon Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
-    scene("Polygon Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
-    scene("Polygon Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
     scene("Exit application", State_ID::ExitApplicationState);
+
+    splitLineText("Polygons");
+    scene("Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
+    scene("Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
+    scene("Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
+    scene("Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
+
+    splitLineText("Raycast");
+    scene("Single Chunk Colored Voxels", State_ID::RaycastSingleChunkColoredVoxels);
     ImGui::End();
 }
 

@@ -16,6 +16,7 @@ enum class State_ID
     PolygonSingleChunkNaiveState,
     PolygonSingleChunkGreedyState,
     PolygonSingleChunkCullingGpuState,
+    RaycastSingleChunkColoredVoxels,
     PauseState,
 
     ExitApplicationState
@@ -38,6 +39,10 @@ inline std::string toString(State_ID stateId)
         case State_ID::PolygonSingleChunkNaiveState: return "PolygonSingleChunkNaiveState";
         case State_ID::PauseState: return "PauseState";
         case State_ID::ExitApplicationState: return "ExitApplicationState";
+        case State_ID::PolygonSingleChunkGreedyState: return "PolygonSingleChunkGreedyState";
+        case State_ID::PolygonSingleChunkCullingGpuState:
+            return "PolygonSingleChunkCullingGpuState";
+        case State_ID::RaycastSingleChunkColoredVoxels: return "RaycastSingleChunkColoredVoxels";
         default:
             spdlog::warn("I was unable to perform the ID to text conversion.");
             return "Unknown State_ID";

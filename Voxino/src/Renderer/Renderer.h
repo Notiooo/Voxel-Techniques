@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Buffers/BufferLayout.h"
 #include "Renderer/Core/Buffers/IndexBuffer.h"
 #include "Renderer/Core/Shader.h"
 #include "Renderer/Core/VertexArray.h"
@@ -61,6 +62,14 @@ public:
     static void draw3D(const VertexArray& vb, int numberOfVertices, const Shader& shader,
                        const Camera& camera, const DrawMode& drawMode = DrawMode::Triangles);
 
+
+    /**
+     * @brief Draws the raycast using the provided shader and camera.
+     * @param shader Shader program to use during rendering.
+     * @param camera Camera object for view and projection.
+     */
+    void drawRaycast(const Shader& shader, const Camera& camera) const;
+
 private:
     /**
      * \brief Convert a DrawMode enum value to the corresponding OpenGL mode.
@@ -69,7 +78,18 @@ private:
      */
     [[nodiscard]] static unsigned toOpenGl(const DrawMode& drawMode);
 
+    /**
+     * @brief Initializes the raycast buffers.
+     */
+    void initializeRaycastBuffers();
+
     sf::Window& mWindow;
+
+    // Raycasting
+    VertexBuffer mRaycastVBO;
+    VertexArray mRaycastVAO;
+    IndexBuffer mRaycastEBO;
+    BufferLayout mRaycastBufferLayout;
 };
 
 }// namespace Voxino

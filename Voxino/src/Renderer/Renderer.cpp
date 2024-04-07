@@ -1,4 +1,5 @@
 #include "Renderer/Renderer.h"
+#include "Core/Buffers/BufferLayout.h"
 #include "World/Camera.h"
 #include "pch.h"
 
@@ -8,6 +9,7 @@ namespace Voxino
 Renderer::Renderer(sf::Window& window)
     : mWindow(window)
 {
+    initializeRaycastBuffers();
 }
 
 void Renderer::draw2D(const VertexArray& va, const IndexBuffer& ib, const Shader& shader,
@@ -39,10 +41,8 @@ void Renderer::draw3D(const VertexArray& va, const IndexBuffer& ib, const Shader
     va.bind();
     ib.bind();
 
-    const auto view = camera.view();
-    const auto projection = camera.projection();
-    shader.setUniform("view", view);
-    shader.setUniform("projection", projection);
+    shader.setUniform("view", camera.view());
+    shader.setUniform("projection", camera.projection());
     shader.setUniform("cameraPosition", camera.cameraPosition());
     GLCall(glDrawElements(toOpenGl(drawMode), ib.size(), GL_UNSIGNED_INT, nullptr));
 
@@ -59,16 +59,35 @@ void Renderer::draw3D(const VertexArray& va, int numberOfVertices, const Shader&
     shader.bind();
     va.bind();
 
-    const auto view = camera.view();
-    const auto projection = camera.projection();
-    shader.setUniform("view", view);
-    shader.setUniform("projection", projection);
+    shader.setUniform("view", camera.view());
+    shader.setUniform("projection", camera.projection());
     shader.setUniform("cameraPosition", camera.cameraPosition());
     GLCall(glDrawArrays(toOpenGl(drawMode), 0, numberOfVertices));
 
 #ifdef _DEBUG
     shader.unbind();
     va.unbind();
+#endif
+}
+
+
+void Renderer::drawRaycast(const Shader& shader, const Camera& camera) const
+{
+    shader.bind();
+    mRaycastVAO.bind();
+    mRaycastEBO.bind();
+
+    shader.setUniform("u_View", glm::mat4(glm::mat3(camera.view())));// eliminates translation
+    shader.setUniform("u_Projection", camera.projection());
+    shader.setUniform("u_CameraPosition", camera.cameraPosition());
+
+    GLCall(glDrawElements(toOpenGl(DrawMode::Triangles), mRaycastEBO.size(), GL_UNSIGNED_INT,
+                          nullptr));
+
+#ifdef _DEBUG
+    shader.unbind();
+    mRaycastVAO.unbind();
+    mRaycastEBO.unbind();
 #endif
 }
 
@@ -84,4 +103,25 @@ unsigned Renderer::toOpenGl(const Renderer::DrawMode& drawMode)
     }
 }
 
+void Renderer::initializeRaycastBuffers()
+{
+    float vertices[] = {
+        // vertex coords   / texture coords
+        -1.0f, 1.0f,  0.0f, 0.0f, 1.0f,//
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,//
+        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,//
+        1.0f,  1.0f,  0.0f, 1.0f, 1.0f //
+    };
+
+    unsigned int indices[] = {0, 1, 2, 0, 2, 3};
+
+    mRaycastVBO.setBuffer(vertices, sizeof(vertices));
+    mRaycastEBO.setBuffer(indices, sizeof(indices));
+
+    mRaycastBufferLayout.push<float>(3);
+    mRaycastBufferLayout.push<float>(2);
+
+    mRaycastVAO.setBuffer(mRaycastVBO, mRaycastBufferLayout);
+    mRaycastVAO.unbind();
+}
 }// namespace Voxino

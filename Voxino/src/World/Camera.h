@@ -112,6 +112,12 @@ public:
      */
     void shake();
 
+    /**
+     * @brief Retrieves the current field of view (FOV) of the camera.
+     * @return The current field of view of the camera, in degrees.
+     */
+    float fov() const;
+
 private:
     /**
      * Handle keyboard behavior such as moving the camera inside the application

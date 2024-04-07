@@ -179,6 +179,11 @@ void Camera::shake()
     mTargetShakeValues = {0.f, 4.f, 0.f};
 }
 
+float Camera::fov() const
+{
+    return mFovCamera;
+}
+
 glm::vec3 Camera::direction() const
 {
     return mCameraFront;

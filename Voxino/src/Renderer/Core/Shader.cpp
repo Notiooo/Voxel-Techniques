@@ -59,6 +59,21 @@ void Shader::setUniform(const std::string& name, glm::vec3 vec) const
     GLCall(glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(vec)));
 }
 
+void Shader::setUniform(const std::string& name, glm::ivec3 vec) const
+{
+    GLCall(glUniform3iv(getUniformLocation(name), 1, glm::value_ptr(vec)));
+}
+
+void Shader::setUniform(const std::string& name, glm::vec2 vec) const
+{
+    GLCall(glUniform2fv(getUniformLocation(name), 1, glm::value_ptr(vec)));
+}
+
+void Shader::setUniform(const std::string& name, glm::ivec2 vec) const
+{
+    GLCall(glUniform2iv(getUniformLocation(name), 1, glm::value_ptr(vec)));
+}
+
 void Shader::setUniform(const std::string& name, float f1, float f2, float f3, float f4) const
 {
     GLCall(glUniform4f(getUniformLocation(name), f1, f2, f3, f4));
