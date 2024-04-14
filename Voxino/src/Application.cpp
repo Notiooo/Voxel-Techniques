@@ -1,6 +1,7 @@
 #include "Application.h"
 
 #include <States/CustomStates/RaycastSingleChunkColoredVoxels.h>
+#include <States/CustomStates/RaycastSingleChunkTexturedVoxels.h>
 
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
@@ -80,12 +81,13 @@ void Application::setupFlowStates()
         State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkGreedyMeshing>>(
         State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
-
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCullingGpu>>(
         State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
     mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
                                                          *mGameWindow);
+    mAppStack.saveState<RaycastSingleChunkTexturedVoxels>(
+        State_ID::RaycastSingleChunkTexturedVoxels, *mGameWindow);
 }
 
 Application::Application()
@@ -318,6 +320,7 @@ void Application::updateImGuiSelectScene()
 
     splitLineText("Raycast");
     scene("Single Chunk Colored Voxels", State_ID::RaycastSingleChunkColoredVoxels);
+    scene("Single Chunk Textured Voxels", State_ID::RaycastSingleChunkTexturedVoxels);
     ImGui::End();
 }
 
