@@ -1,4 +1,5 @@
 #pragma once
+#include "Renderer/Graphics/Texture.h"
 #include "Resources/TexturePack.h"
 
 namespace Voxino

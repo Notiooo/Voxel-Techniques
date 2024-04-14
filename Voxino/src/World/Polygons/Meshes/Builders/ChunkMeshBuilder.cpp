@@ -1,5 +1,5 @@
 #include "ChunkMeshBuilder.h"
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 float ChunkMeshBuilder::addBlockFaceFakeLightning(const Block::Face& blockFace) const
@@ -97,4 +97,4 @@ std::vector<GLfloat> ChunkMeshBuilder::faceVertices(const Block::Face& blockFace
     }
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

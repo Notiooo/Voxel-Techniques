@@ -1,78 +1,67 @@
 #pragma once
+#include "Renderer/Renderer.h"
+#include "World/Block/Block.h"
+#include "World/Chunks/SimpleTerrainGenerator.h"
 
-#include "World/Polygons/Block/Block.h"
-#include "World/Polygons/Chunks/ChunkInterface.h"
-#include "World/Polygons/Chunks/SimpleTerrainGenerator.h"
-#include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
-#include "World/Polygons/Meshes/Model3D.h"
-#include <Resources/TexturePackArray.h>
-#include <World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.h>
 #include <memory>
-#include <optional>
-#include <vector>
 
 namespace Voxino
 {
+class TexturePackArray;
 class ChunkBlocks;
-class SimpleTerrainGenerator;
-class Renderer;
-class Shader;
-class ChunkContainer;
 
 /**
- * It is a large object consisting of a multitude of individual blocks contained within it.
+ * Chunk interface through which it is possible to mock chunk.
  */
-class Chunk : public ChunkInterface
+class Chunk
 {
 public:
-    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
-          ChunkContainer& parent);
+    //    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+    //          ChunkContainer& parent);
     Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack);
 
     Chunk(Chunk&& rhs) noexcept;
+    virtual ~Chunk() = default;
+
+    /**
+     * Returns the number of chunk vertices
+     * @return Number of vertices
+     */
+    virtual int numberOfVertices() = 0;
+
+    /**
+     * Returns the size in memory that the mesh occupies
+     * @return The size in memory in bytes that the chunk occupies
+     */
+    virtual int memorySize() = 0;
 
     /**
      * Updates the status/logic of the state at equal intervals independent of the frame rate.
      * @param deltaTime Time interval
      */
-    void fixedUpdate(const float& deltaTime) final;
+    virtual void fixedUpdate(const float& deltaTime);
 
     /**
-     * Draws this chunk terrain to the game screen
+     * Draws the terrain of the chunk to the game screen
      * @param renderer Renderer drawing the 3D game world onto the 2D screen
      * @param shader Shader with the help of which the object should be drawn
+     * @param camera Camera that shows the game world
      */
-    void drawTerrain(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const override;
-
-    /**
-     * Draws this chunk liquids to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawLiquids(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const override;
-
-    /**
-     * Draws this chunk floral to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawFlorals(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const override;
+    virtual void draw(const Renderer& renderer, const Shader& shader,
+                      const Camera& camera) const = 0;
 
     /**
      * \brief Returns the block according to the coordinates given relative to the chunk position.
      * \param localCoordinates Position in relation to the chunk
      * \return Block reference inside chunk
      */
-    Block& localBlock(const Block::Coordinate& localCoordinates) final;
+    Block& localBlock(const Block::Coordinate& localCoordinates);
 
     /**
      * \brief Removes a block on coordinates given relatively to the position of the chunk
      * \param localCoordinates Coordinates relative to the position of the chunk
      */
-    void removeLocalBlock(const Block::Coordinate& localCoordinates) final;
+    virtual void removeLocalBlock(const Block::Coordinate& localCoordinates);
 
     /**
      * \brief It tries to insert the indicated block in the indicated place in the chunk.
@@ -80,32 +69,10 @@ public:
      * \param localCoordinates Coordinates relative to the position of the chunk
      * \param blocksThatMightBeOverplaced Blocks that can be overwritten by a function. Others
      * cannot be overwritten.
+     * \return True if the block was placed, false otherwise
      */
-    void tryToPlaceBlock(const BlockId& blockId, const Block::Coordinate& localCoordinates,
-                         std::vector<BlockId> blocksThatMightBeOverplaced) final;
-
-    /**
-     * \brief Returns the block according to the coordinates given relative to the chunk position.
-     * \param localCoordinates Position in relation to the chunk
-     * \return Block reference inside chunk
-     */
-    [[nodiscard]] const Block& localBlock(const Block::Coordinate& localCoordinates) const final;
-
-    /**
-     * \brief Changes global world coordinates to local ones relative to chunk
-     * \param worldCoordinates World coordinates of the block
-     * \return Local coordinates of block relative to chunk
-     */
-    [[nodiscard]] Block::Coordinate globalToLocalCoordinates(
-        const Block::Coordinate& worldCoordinates) const final;
-
-    /**
-     * \brief Changes local chunk coordinates to global ones inside the world
-     * \param localCoordinates Local coordinates of the block
-     * \return World coordinates of block inside the world
-     */
-    [[nodiscard]] Block::Coordinate localToGlobalCoordinates(
-        const Block::Coordinate& localCoordinates) const final;
+    bool tryToPlaceBlock(const BlockId& blockId, const Block::Coordinate& localCoordinates,
+                         std::vector<BlockId> blocksThatMightBeOverplaced = {BlockId::Air});
 
     /**
      * \brief Checks whether the local coordinates relative to the chunk are inside it
@@ -116,12 +83,34 @@ public:
         const Block::Coordinate& localCoordinates);
 
     /**
+     * \brief Returns the block according to the coordinates given relative to the chunk position.
+     * \param localCoordinates Position in relation to the chunk
+     * \return Block reference inside chunk
+     */
+    [[nodiscard]] const Block& localBlock(const Block::Coordinate& localCoordinates) const;
+
+    /**
+     * \brief Changes global world coordinates to local ones relative to chunk
+     * \param worldCoordinates World coordinates of the block
+     * \return Local coordinates of block relative to chunk
+     */
+    [[nodiscard]] Block::Coordinate globalToLocalCoordinates(
+        const Block::Coordinate& worldCoordinates) const;
+
+    /**
+     * \brief Changes local chunk coordinates to global ones inside the world
+     * \param localCoordinates Local coordinates of the block
+     * \return World coordinates of block inside the world
+     */
+    [[nodiscard]] Block::Coordinate localToGlobalCoordinates(
+        const Block::Coordinate& localCoordinates) const;
+
+    /**
      * \brief Checks that the given local coordinates relative to the chunk are at its extremity.
      * \param localCoordinates Local coordinates relative to chunk
      * \return True if the coordinates are on the edge of the chunk, false otherwise
      */
-    [[nodiscard]] bool isLocalCoordinateOnChunkEdge(
-        const Block::Coordinate& localCoordinates) final;
+    [[nodiscard]] bool isLocalCoordinateOnChunkEdge(const Block::Coordinate& localCoordinates);
 
     /**
      * Returns information whether any chunk is in contact with the listed block. This is important
@@ -131,7 +120,7 @@ public:
      * @return Information on whether the block is in contact with another chunk
      */
     std::vector<Direction> directionOfBlockFacesInContactWithOtherChunk(
-        const Block::Coordinate& localCoordinates) final;
+        const Block::Coordinate& localCoordinates);
 
     /**
      * Returns the position of the local block, located right next to the local block in the
@@ -140,8 +129,8 @@ public:
      * @param direction Direction next to which the block you are looking for is located
      * @return Block coordinate inside chunk
      */
-    [[nodiscard]] Block::Coordinate localNearbyBlockPosition(
-        const Block::Coordinate& position, const Direction& direction) const final;
+    [[nodiscard]] Block::Coordinate localNearbyBlockPosition(const Block::Coordinate& position,
+                                                             const Direction& direction) const;
 
     /**
      * Returns the block that is close to it, in the direction determined relative to the
@@ -151,23 +140,23 @@ public:
      * @return Block reference inside chunk
      */
     [[nodiscard]] Block& localNearbyBlock(const Block::Coordinate& position,
-                                          const Direction& direction) final;
+                                          const Direction& direction);
 
     /**
      * Returns the block that is close to it, in the direction determined relative to the block on
      * the local coordinates.
-     * @param position Local block coordinates inside the chunk
+     * @param localCoordinates Local block coordinates inside the chunk
      * @param direction Direction next to which the block are looking for is located
      * @return Block reference inside chunk
      */
     [[nodiscard]] const Block& localNearbyBlock(const Block::Coordinate& localCoordinates,
-                                                const Direction& direction) const final;
+                                                const Direction& direction) const;
 
     /**
      * @brief Returns the position on the block scale.
      * @return Coordinates of the block of the beginning of the chunk.
      */
-    const Block::Coordinate& positionInBlocks() const final;
+    [[nodiscard]] const Block::Coordinate& positionInBlocks() const;
 
     /**
      * @brief Finds a neighboring block located in the indicated direction
@@ -176,15 +165,9 @@ public:
      * @return Block if it exists, or nullopt if no such block exists.
      */
     std::optional<Block> neighbourBlockInGivenDirection(const Block::Coordinate& blockPos,
-                                                        const Direction& direction) final;
+                                                        const Direction& direction);
 
 protected:
-    /**
-     * Generates natural world terrain on a given chunk
-     */
-    void generateChunkTerrain();
-
-
     /**
      * It checks whether a given block face has an "air" or other transparent face next to it
      * through which it can be seen at all.
@@ -226,21 +209,23 @@ protected:
      * @param localCoordinates Local coordinates of the chunk in place of which trying to insert a
      * block.
      * @param blocksThatMightBeOverplaced List of blocks that can be overwritten.
+     * @return True if the block was placed, false otherwise.
      */
-    void tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
-                                        const Block::Coordinate& localCoordinates,
-                                        std::vector<BlockId>& blocksThatMightBeOverplaced);
+    virtual bool tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
+                                                const Block::Coordinate& localCoordinates,
+                                                std::vector<BlockId>& blocksThatMightBeOverplaced);
 
+    /**
+     * Generates natural world terrain on a given chunk
+     */
+    void generateChunkTerrain();
 
 protected:
-    std::unique_ptr<SimpleTerrainGenerator> mTerrainGenerator;
+    std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
     Block::Coordinate mChunkPosition;
     const TexturePackArray& mTexturePack;
-    ChunkContainer* mParentContainer;
-    std::unique_ptr<ChunkBlocks> mChunkOfBlocks;
-
-    std::unique_ptr<Model3D> mTerrainModel;
-    std::unique_ptr<Model3D> mFluidModel;
-    std::unique_ptr<Model3D> mFloralModel;
+    std::unique_ptr<SimpleTerrainGenerator> mTerrainGenerator;
+    // ChunkContainer* mParentContainer;
 };
+
 }// namespace Voxino

@@ -1,7 +1,7 @@
 #include "Model3DNoIndexes.h"
 #include "pch.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 void Model3DNoIndexes::setMesh(std::unique_ptr<Mesh3D> mesh)
@@ -28,4 +28,4 @@ void Model3DNoIndexes::draw(const Renderer& renderer, const Shader& shader, cons
     renderer.draw3D(mVertexArray, mMesh->numberOfVertices(), shader, camera, drawMode);
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

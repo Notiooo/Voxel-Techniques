@@ -1,13 +1,13 @@
 #pragma once
 
-#include "World/Polygons/Block/Block.h"
+#include "World/Block/Block.h"
 #include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
 #include "World/Polygons/Meshes/ChunkAtlasMesh.h"
 #include "pch.h"
 
 #include <World/Polygons/Meshes/Model3DIndexed.h>
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * It can generate a mesh of typical block inside the game, which can then be projected onto the
@@ -55,4 +55,4 @@ protected:
     /* ==== Members ===== */
     std::unique_ptr<ChunkAtlasMesh> mMesh;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

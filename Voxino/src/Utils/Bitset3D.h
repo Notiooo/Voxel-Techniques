@@ -1,6 +1,5 @@
 #pragma once
 
-#include "World/Polygons/Chunks/ChunkBlocks.h"
 #include <bitset>
 
 namespace Voxino

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utils/MultiDimensionalArray.h"
-#include "World/Polygons/Block/Block.h"
+#include "World/Block/Block.h"
 
 namespace Voxino
 {

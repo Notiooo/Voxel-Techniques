@@ -30,14 +30,14 @@ set(PROJECT_SOURCES
         World/Camera.cpp
         World/Skybox.cpp
         World/InfiniteGridFloor.cpp
-        World/Polygons/Block/Block.cpp
-        World/Polygons/Block/BlockMap.cpp
-        World/Polygons/Block/BlockType.cpp
-        World/Polygons/Chunks/ChunkBlocks.cpp
-        World/Polygons/Chunks/ChunkContainer.cpp
-        World/Polygons/Chunks/SimpleTerrainGenerator.cpp
-        World/Polygons/Chunks/ChunkInterface.cpp
-        World/Polygons/Chunks/Types/Chunk.cpp
+        World/Chunks/Chunk.cpp
+        World/Chunks/ChunkBlocks.cpp
+        World/Chunks/ChunkContainer.cpp
+        World/Chunks/SimpleTerrainGenerator.cpp
+        World/Block/Block.cpp
+        World/Block/BlockMap.cpp
+        World/Block/BlockType.cpp
+        World/Polygons/Chunks/Types/PolygonChunk.cpp
         World/Polygons/Chunks/Types/ChunkArray.cpp
         World/Polygons/Chunks/Types/ChunkGreedyMeshing.cpp
         World/Polygons/Chunks/Types/ChunkCulling.cpp
@@ -55,10 +55,11 @@ set(PROJECT_SOURCES
         World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.cpp
         World/Polygons/Meshes/Builders/MeshBuilder.cpp
-        World/Raycasting/Chunks/VoxelsGpu.cpp
+        World/Raycast/Chunks/VoxelsGpu.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp
         Utils/ImGuiLog.cpp
         Utils/IteratorRanges.cpp
+        Utils/RGBA.cpp
         )

@@ -7,7 +7,7 @@
 #include "World/Polygons/Meshes/Mesh3D.h"
 #include "World/Polygons/Meshes/Model3D.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * 3D model consisting of a mesh, which allows to directly draw on the screen.
@@ -41,4 +41,4 @@ private:
     VertexArray mVertexArray;
     VertexBuffer mVertexBuffer;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

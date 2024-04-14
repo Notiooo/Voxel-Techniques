@@ -1,6 +1,6 @@
 #include "ChunkAtlasMeshBuilder.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 ChunkAtlasMeshBuilder::ChunkAtlasMeshBuilder()
     : ChunkMeshBuilder()
@@ -61,4 +61,4 @@ std::unique_ptr<Mesh3D> ChunkAtlasMeshBuilder::mesh3D()
 {
     return mMesh->clone();
 }
-}// namespace Voxino
+}// namespace Voxino::Polygons

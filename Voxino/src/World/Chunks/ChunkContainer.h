@@ -1,15 +1,7 @@
 #pragma once
 #include "Renderer/Renderer.h"
 #include "World/Camera.h"
-#include "World/Polygons/Chunks/ChunkInterface.h"
-
-
-#define DRAW_DEBUG_COLLISIONS false
-
-#if DRAW_DEBUG_COLLISIONS
-    #include <Physics/AABB.h>
-    #include <deque>
-#endif
+#include "World/Chunks/Chunk.h"
 
 namespace Voxino
 {
@@ -46,31 +38,19 @@ public:
             const Block::Coordinate& worldBlockCoordinate);
     };
 
-    using Chunks = std::unordered_map<ChunkContainer::Coordinate, std::shared_ptr<ChunkInterface>,
+    using Chunks = std::unordered_map<ChunkContainer::Coordinate, std::shared_ptr<Chunk>,
                                       std::hash<CoordinateBase>>;
 
     ChunkContainer() = default;
 
-    /**
-     * Draws terrain of chunks in the container to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawTerrain(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
 
     /**
-     * Draws liquids of chunks in the container to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
+     * \brief Draws the terrain of all chunks in the container.
+     * \param renderer Renderer drawing the 3D game world onto the 2D screen
+     * \param shader Shader with the help of which the object should be drawn
+     * \param camera Camera through which the game world is viewed
      */
-    void drawLiquids(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
-
-    /**
-     * Draws florals of chunks in the container to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawFlorals(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
+    void draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
 
     /**
      * \brief Updates the chunkcontainer logic dependent, or independent of time, every rendered
@@ -111,7 +91,7 @@ public:
      * contains it. \param worldBlockCoordinates Block coordinates in the game world \return Chunk,
      * which contains this block. Nullptr if the block is not present.
      */
-    [[nodiscard]] std::shared_ptr<ChunkInterface> blockPositionToChunk(
+    [[nodiscard]] std::shared_ptr<Chunk> blockPositionToChunk(
         const Block::Coordinate& worldBlockCoordinates);
 
     /**
@@ -119,8 +99,8 @@ public:
      * @param direction Direction next to which the chunk you are looking for is located
      * @return Pointer to chunk found
      */
-    [[nodiscard]] std::shared_ptr<ChunkInterface> chunkNearby(const ChunkInterface& baseChunk,
-                                                              const Direction& direction);
+    [[nodiscard]] std::shared_ptr<Chunk> chunkNearby(const Chunk& baseChunk,
+                                                     const Direction& direction);
 
     /**
      * @brief Rebuilds chunks around a given chunk.
@@ -131,7 +111,7 @@ public:
     /**
      * @brief Checks if the chunk is inside the container.
      */
-    bool isChunkPresentInTheContainer(const ChunkInterface& chunk) const;
+    bool isChunkPresentInTheContainer(const Chunk& chunk) const;
 
     /**
      * @brief Returns the map in which the chunks are located.
@@ -151,14 +131,14 @@ public:
      * @return Shared_ptr to the chunk in the container, or nullptr if the chunk is not in the
      * container.
      */
-    std::shared_ptr<ChunkInterface> findChunk(const ChunkInterface& chunk);
+    std::shared_ptr<Chunk> findChunk(const Chunk& chunk);
 
     /**
      * @brief Returns a chunk on a given block.
      * @param chunkCoordinate Coordinate the chunk to get.
      * @return Pointer to chunk with given coordinates
      */
-    std::shared_ptr<ChunkInterface> at(const ChunkContainer::Coordinate& chunkCoordinate);
+    std::shared_ptr<Chunk> at(const ChunkContainer::Coordinate& chunkCoordinate);
 
     /**
      * @brief Erases the chunk with the indicated coordinates
@@ -216,41 +196,11 @@ private:
      * contains it. \param worldBlockCoordinates Block coordinates in the game world \return Chunk,
      * which contains this block. Nullptr if the block is not present.
      */
-    [[nodiscard]] std::shared_ptr<const ChunkInterface> blockPositionToChunk(
+    [[nodiscard]] std::shared_ptr<const Chunk> blockPositionToChunk(
         const Block::Coordinate& worldBlockCoordinates) const;
-
-    /**
-     * @brief It checks if a new chunk appeared that has queued blocks to be inserted instead of air
-     * blocks.
-     */
-    void tryToPlaceScheduledBlocksForPresentChunks();
-
-    /**
-     * @brief It checks if a new chunk appeared that has queued blocks to be inserted instead of air
-     * blocks.
-     */
-    void tryToPlaceScheduledBlocksForNewAppearingChunks();
 
 
 private:
-    /**
-     * @brief Stores information on a block to appear in one of the newly created chunks in the
-     * future
-     */
-    struct BlockToBePlaced
-    {
-        ChunkContainer::Coordinate chunkCoordinates;
-        BlockId blockid;
-        Block::Coordinate worldBlockCoordinates;
-        std::vector<BlockId> blocksThatMightBeOverplaced;
-    };
-
-    /**
-     * @brief A queue of blocks that might replace air block with new block in a chunk that has not
-     * yet been created.
-     */
-    std::list<BlockToBePlaced> mBlockMightBePlacedInFutureChunks;
-
     /**
      * @brief Unordered map storing chunks inside this container.
      */

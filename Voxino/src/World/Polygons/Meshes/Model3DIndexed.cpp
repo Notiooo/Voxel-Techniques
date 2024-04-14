@@ -1,7 +1,7 @@
 #include "Model3DIndexed.h"
 #include "pch.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 void Model3DIndexed::setMesh(std::unique_ptr<Mesh3D> mesh)
@@ -30,4 +30,4 @@ void Model3DIndexed::draw(const Renderer& renderer, const Shader& shader, const 
     renderer.draw3D(mVertexArray, mIndices, shader, camera, drawMode);
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

@@ -1,18 +1,19 @@
 #pragma once
 
-#include "World/Polygons/Chunks/Types/Chunk.h"
+#include "World/Polygons/Chunks/Types/PolygonChunk.h"
+#include "World/Polygons/Meshes/Model3D.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
 template<typename MeshBuilder>
-class ChunkArray : public Chunk
+class ChunkArray : public PolygonChunk
 {
 public:
-    using Chunk::Chunk;
+    using PolygonChunk::PolygonChunk;
 
 
     /**
@@ -90,4 +91,4 @@ void ChunkArray<MeshBuilder>::updateMesh()
     mFloralModel->setMesh(mFloralMeshBuilder.mesh3D());
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

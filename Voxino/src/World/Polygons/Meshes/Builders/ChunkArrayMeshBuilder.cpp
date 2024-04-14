@@ -1,5 +1,5 @@
 #include "ChunkArrayMeshBuilder.h"
-namespace Voxino
+namespace Voxino::Polygons
 {
 ChunkArrayMeshBuilder::ChunkArrayMeshBuilder()
     : ChunkMeshBuilder()
@@ -131,4 +131,4 @@ std::unique_ptr<Mesh3D> ChunkArrayMeshBuilder::mesh3D()
 {
     return mMesh->clone();
 }
-}// namespace Voxino
+}// namespace Voxino::Polygons

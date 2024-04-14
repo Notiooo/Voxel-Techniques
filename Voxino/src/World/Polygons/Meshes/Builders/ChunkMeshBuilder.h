@@ -1,11 +1,11 @@
 #pragma once
 
-#include "World/Polygons/Block/Block.h"
+#include "World/Block/Block.h"
 #include "World/Polygons/Meshes/Builders/MeshBuilder.h"
 #include "World/Polygons/Meshes/ChunkAtlasMesh.h"
 #include "pch.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * It can generate a mesh of typical block inside the game, which can then be projected onto the
@@ -35,4 +35,4 @@ protected:
      */
     [[nodiscard]] float addBlockFaceFakeLightning(const Block::Face& blockFace) const;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

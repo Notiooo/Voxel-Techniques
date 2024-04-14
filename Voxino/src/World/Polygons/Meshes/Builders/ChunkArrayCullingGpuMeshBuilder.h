@@ -1,13 +1,13 @@
 #pragma once
 
-#include "World/Polygons/Block/Block.h"
+#include "World/Block/Block.h"
 #include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
 #include "World/Polygons/Meshes/ChunkArrayCullingGpuMesh.h"
 
 #include <World/Polygons/Meshes/Model3DNoIndexes.h>
 
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 /**
@@ -47,4 +47,4 @@ protected:
     /* ==== Members ===== */
     std::unique_ptr<ChunkArrayCullingGpuMesh> mMesh;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

@@ -3,7 +3,7 @@
 #include "Renderer/Core/Buffers/VertexBuffer.h"
 #include <vector>
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * Mesh3D is the abstract concept of a 3D mesh that can be projected onto the screen by a model.
@@ -49,4 +49,4 @@ struct Mesh3D
     /* ==== Members ===== */
     std::vector<GLuint> indices;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

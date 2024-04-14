@@ -1,72 +1,18 @@
-#include "World/Polygons/Chunks/ChunkContainer.h"
+#include "ChunkContainer.h"
 #include "CoordinatesAroundOriginGetter.h"
 #include "Utils/IteratorRanges.h"
-#include "World/Polygons/Block/BlockMap.h"
+#include "World/Block/BlockMap.h"
+#include "World/Chunks/ChunkBlocks.h"
 
 namespace Voxino
 {
 
-void ChunkContainer::drawTerrain(const Renderer& renderer, const Shader& shader,
-                                 const Camera& camera) const
+void ChunkContainer::draw(const Renderer& renderer, const Shader& shader,
+                          const Camera& camera) const
 {
     for (auto& [coordinate, chunk]: data())
     {
-        chunk->drawTerrain(renderer, shader, camera);
-    }
-}
-
-void ChunkContainer::drawLiquids(const Renderer& renderer, const Shader& shader,
-                                 const Camera& camera) const
-{
-    for (auto& [coordinate, chunk]: data())
-    {
-        chunk->drawLiquids(renderer, shader, camera);
-    }
-}
-
-void ChunkContainer::drawFlorals(const Renderer& renderer, const Shader& shader,
-                                 const Camera& camera) const
-{
-    for (auto& [coordinate, chunk]: data())
-    {
-        chunk->drawFlorals(renderer, shader, camera);
-    }
-}
-
-void ChunkContainer::update(const float& deltaTime)
-{
-    tryToPlaceScheduledBlocksForNewAppearingChunks();
-}
-
-void ChunkContainer::tryToPlaceScheduledBlocksForNewAppearingChunks()
-{
-    if (!mBlockMightBePlacedInFutureChunks.empty())
-    {
-        tryToPlaceScheduledBlocksForPresentChunks();
-    }
-}
-
-void ChunkContainer::tryToPlaceScheduledBlocksForPresentChunks()
-{
-    for (auto [begIter, endIter] = iterator_range(mBlockMightBePlacedInFutureChunks);
-         begIter != endIter;)
-    {
-        auto& blockToBePlaced = *begIter;
-        if (isPresent(blockToBePlaced.chunkCoordinates))
-        {
-            auto chunk = blockPositionToChunk(blockToBePlaced.worldBlockCoordinates);
-            auto blockLocalCoordinates =
-                chunk->globalToLocalCoordinates(blockToBePlaced.worldBlockCoordinates);
-
-            chunk->tryToPlaceBlock(blockToBePlaced.blockid, blockLocalCoordinates,
-                                   blockToBePlaced.blocksThatMightBeOverplaced);
-
-            begIter = mBlockMightBePlacedInFutureChunks.erase(begIter);
-        }
-        else
-        {
-            ++begIter;
-        }
+        chunk->draw(renderer, shader, camera);
     }
 }
 
@@ -120,7 +66,7 @@ bool ChunkContainer::doesWorldBlockExist(const Block::Coordinate& worldBlockCoor
     return foundChunk != data().cend();
 }
 
-std::shared_ptr<const ChunkInterface> ChunkContainer::blockPositionToChunk(
+std::shared_ptr<const Chunk> ChunkContainer::blockPositionToChunk(
     const Block::Coordinate& worldBlockCoordinates) const
 {
     const auto foundChunk =
@@ -132,10 +78,10 @@ std::shared_ptr<const ChunkInterface> ChunkContainer::blockPositionToChunk(
     return nullptr;
 }
 
-std::shared_ptr<ChunkInterface> ChunkContainer::blockPositionToChunk(
+std::shared_ptr<Chunk> ChunkContainer::blockPositionToChunk(
     const Block::Coordinate& worldBlockCoordinates)
 {
-    return std::const_pointer_cast<ChunkInterface>(
+    return std::const_pointer_cast<Chunk>(
         static_cast<const ChunkContainer&>(*this).blockPositionToChunk(worldBlockCoordinates));
 }
 
@@ -163,14 +109,14 @@ void ChunkContainer::removeWorldBlock(const Block::Coordinate& worldBlockCoordin
 
             if (const auto neighboringChunk = blockPositionToChunk(neighboringBlockInOtherChunk))
             {
-                neighboringChunk->rebuildMesh();
+                // neighboringChunk->rebuildMesh(); // TODO
             }
         }
     }
 }
 
-std::shared_ptr<ChunkInterface> ChunkContainer::chunkNearby(const ChunkInterface& baseChunk,
-                                                            const Direction& direction)
+std::shared_ptr<Chunk> ChunkContainer::chunkNearby(const Chunk& baseChunk,
+                                                   const Direction& direction)
 {
     switch (direction)
     {
@@ -206,13 +152,13 @@ const ChunkContainer::Chunks& ChunkContainer::data() const
     return mData;
 }
 
-bool ChunkContainer::isChunkPresentInTheContainer(const ChunkInterface& chunk) const
+bool ChunkContainer::isChunkPresentInTheContainer(const Chunk& chunk) const
 {
     return data().find(ChunkContainer::Coordinate::blockToChunkMetric(chunk.positionInBlocks())) !=
            data().cend();
 }
 
-std::shared_ptr<ChunkInterface> ChunkContainer::findChunk(const ChunkInterface& chunk)
+std::shared_ptr<Chunk> ChunkContainer::findChunk(const Chunk& chunk)
 {
     auto foundChunk =
         data().find(ChunkContainer::Coordinate::blockToChunkMetric(chunk.positionInBlocks()));
@@ -228,12 +174,11 @@ void ChunkContainer::rebuildChunksAround(ChunkContainer::Coordinate chunkCoordin
     {
         if (const auto chunkClose = chunkNearby(*chunk, direction))
         {
-            chunkClose->rebuildMesh();
+            // chunkClose->rebuildMesh(); // TODO
         }
     }
 }
-std::shared_ptr<ChunkInterface> ChunkContainer::at(
-    const ChunkContainer::Coordinate& chunkCoordinate)
+std::shared_ptr<Chunk> ChunkContainer::at(const ChunkContainer::Coordinate& chunkCoordinate)
 {
     return data().at(chunkCoordinate);
 }
@@ -256,14 +201,6 @@ void ChunkContainer::tryToPlaceBlock(const BlockId& id, Block::Coordinate worldC
     {
         auto localChunkCoordinates = chunk->globalToLocalCoordinates(worldCoordinate);
         chunk->tryToPlaceBlock(id, localChunkCoordinates, blocksThatMightBeOverplaced);
-    }
-    else
-    {
-        const auto& chunkCoordinates =
-            ChunkContainer::Coordinate::blockToChunkMetric(worldCoordinate);
-
-        mBlockMightBePlacedInFutureChunks.push_back(
-            BlockToBePlaced{chunkCoordinates, id, worldCoordinate, blocksThatMightBeOverplaced});
     }
 }
 

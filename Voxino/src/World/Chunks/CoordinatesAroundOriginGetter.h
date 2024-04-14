@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils/Direction.h"
-#include "World/Polygons/Chunks/Types/Chunk.h"
+#include "World/Chunks/Chunk.h"
 
 
 namespace Voxino

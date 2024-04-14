@@ -1,6 +1,6 @@
 #include "ChunkArrayCullingGpuMesh.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 VertexBuffer ChunkArrayCullingGpuMesh::vertexBuffer()
 {
@@ -39,4 +39,4 @@ int ChunkArrayCullingGpuMesh::memorySize()
     return sizeof(VertexData) * vertices.size();
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

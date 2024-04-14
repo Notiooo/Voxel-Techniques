@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 struct MeshRegion
@@ -13,4 +13,4 @@ struct MeshRegion
     unsigned height{0};
 };
 
-};// namespace Voxino
+};// namespace Voxino::Polygons

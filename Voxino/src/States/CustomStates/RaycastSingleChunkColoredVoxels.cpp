@@ -1,9 +1,28 @@
 #include "RaycastSingleChunkColoredVoxels.h"
+#include "Utils/RGBA.h"
 #include "pch.h"
 
 namespace Voxino
 {
 
+void RaycastSingleChunkColoredVoxels::fillVoxels()
+{
+    std::vector<RGBA> voxels(128 * 128 * 128);
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_int_distribution<> distr(0, 255);
+    std::uniform_int_distribution<> alphaDistr(0, 99);
+
+    for (auto& voxel: voxels)
+    {
+        voxel.r = static_cast<GLubyte>(distr(eng));
+        voxel.g = static_cast<GLubyte>(distr(eng));
+        voxel.b = static_cast<GLubyte>(distr(eng));
+        voxel.a = alphaDistr(eng) < 5 ? 255 : 0;// 5% chance for 255
+    }
+
+    mVoxelsGpu.fill(voxels);
+}
 RaycastSingleChunkColoredVoxels::RaycastSingleChunkColoredVoxels(StateStack& stack,
                                                                  WindowToRender& window,
                                                                  const std::string& shaderName)
@@ -11,9 +30,9 @@ RaycastSingleChunkColoredVoxels::RaycastSingleChunkColoredVoxels(StateStack& sta
     , mWindow(window)
     , mPlayer(window)
     , mRenderer(mWindow)
-    , mShader{{ShaderType::VertexShader, "resources/Shaders/Raycasting/" + shaderName + ".vs"},
-              {ShaderType::FragmentShader, "resources/Shaders/Raycasting/" + shaderName + ".fs"},
-              {ShaderType::GeometryShader, "resources/Shaders/Raycasting/" + shaderName + ".gs"}}
+    , mShader{{ShaderType::VertexShader, "resources/Shaders/Raycast/" + shaderName + ".vs"},
+              {ShaderType::FragmentShader, "resources/Shaders/Raycast/" + shaderName + ".fs"},
+              {ShaderType::GeometryShader, "resources/Shaders/Raycast/" + shaderName + ".gs"}}
     , mTexturePack("default")
     , mVoxelsGpu(128, 128, 128)
 {
@@ -22,6 +41,7 @@ RaycastSingleChunkColoredVoxels::RaycastSingleChunkColoredVoxels(StateStack& sta
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    fillVoxels();
 }
 
 
@@ -64,7 +84,6 @@ bool RaycastSingleChunkColoredVoxels::fixedUpdate(const float& deltaTime)
 bool RaycastSingleChunkColoredVoxels::updateImGui(const float& deltaTime)
 {
     MEASURE_SCOPE;
-    mPlayer.camera().updateImGui();
     return true;
 }
 

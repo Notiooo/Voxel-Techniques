@@ -1,6 +1,6 @@
 #include "ChunkAtlasMesh.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 VertexBuffer ChunkAtlasMesh::vertexBuffer()
 {
@@ -37,4 +37,4 @@ int ChunkAtlasMesh::memorySize()
     return sizeof(VertexData) * vertices.size();
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

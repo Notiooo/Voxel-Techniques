@@ -1,11 +1,14 @@
 #pragma once
 
-#include "World/Polygons/Block/Block.h"
+#include "World/Block/Block.h"
 #include "World/Polygons/Meshes/Mesh3D.h"
 
 namespace Voxino
 {
 class Chunk;
+
+namespace Polygons
+{
 
 /**
  * It can generate a mesh, which can then be projected onto the screen as a 3D object.
@@ -33,4 +36,6 @@ protected:
     GLuint mIndex = 0;
     Block::Coordinate mOrigin;
 };
+
+}// namespace Polygons
 }// namespace Voxino

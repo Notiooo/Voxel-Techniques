@@ -74,14 +74,14 @@ void Application::setupFlowStates()
     mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
     mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
     mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkCulling>>(
+    mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCulling>>(
         State_ID::PolygonSingleChunkCullingState, *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkNaive>>(State_ID::PolygonSingleChunkNaiveState,
-                                                             *mGameWindow);
-    mAppStack.saveState<PolygonSingleChunkState<ChunkGreedyMeshing>>(
+    mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkNaive>>(
+        State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkGreedyMeshing>>(
         State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
 
-    mAppStack.saveState<PolygonSingleChunkState<ChunkCullingGpu>>(
+    mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCullingGpu>>(
         State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
     mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
@@ -216,11 +216,16 @@ void Application::updateImGuiLogger()
 
         ImGui::BeginChild("scrolling");
         std::lock_guard lock(mImguiLog.mutex);
+        auto scrollToBottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY();
         for (const auto& [message, level]: mImguiLog.entry)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGuiLog::toColor(level));
             ImGui::TextUnformatted(message.c_str());
             ImGui::PopStyleColor();
+        }
+        if (scrollToBottom)
+        {
+            ImGui::SetScrollHereY(1.0f);
         }
         ImGui::EndChild();
     }

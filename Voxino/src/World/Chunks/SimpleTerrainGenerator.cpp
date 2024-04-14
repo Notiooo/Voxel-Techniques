@@ -1,5 +1,5 @@
 #include "SimpleTerrainGenerator.h"
-#include "World/Polygons/Chunks/Types/Chunk.h"
+#include "Chunk.h"
 #include "pch.h"
 
 namespace Voxino
@@ -15,14 +15,13 @@ SimpleTerrainGenerator::SimpleTerrainGenerator(int seed)
     mBasicTerrain.SetSeed(seed);
 }
 
-void SimpleTerrainGenerator::generateTerrain(ChunkInterface& chunk, ChunkBlocks& chunkBlocks)
+void SimpleTerrainGenerator::generateTerrain(Chunk& chunk, ChunkBlocks& chunkBlocks)
 {
     generateTerrainForChunk(chunk, chunkBlocks);
 }
 
 
-void SimpleTerrainGenerator::generateTerrainForChunk(const ChunkInterface& chunk,
-                                                     ChunkBlocks& chunkBlocks)
+void SimpleTerrainGenerator::generateTerrainForChunk(const Chunk& chunk, ChunkBlocks& chunkBlocks)
 {
     for (auto x = 0; x < ChunkBlocks::BLOCKS_PER_X_DIMENSION; ++x)
     {

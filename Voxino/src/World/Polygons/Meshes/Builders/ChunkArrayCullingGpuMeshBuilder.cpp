@@ -1,5 +1,5 @@
 #include "ChunkArrayCullingGpuMeshBuilder.h"
-namespace Voxino
+namespace Voxino::Polygons
 {
 ChunkArrayCullingGpuMeshBuilder::ChunkArrayCullingGpuMeshBuilder()
     : ChunkMeshBuilder()
@@ -38,4 +38,4 @@ std::unique_ptr<Mesh3D> ChunkArrayCullingGpuMeshBuilder::mesh3D()
 {
     return mMesh->clone();
 }
-}// namespace Voxino
+}// namespace Voxino::Polygons

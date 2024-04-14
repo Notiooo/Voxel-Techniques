@@ -1,16 +1,18 @@
 #include "ChunkNaive.h"
+#include "World/Chunks/ChunkBlocks.h"
 #include "pch.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 
-ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-                       ChunkContainer& parent)
-    : ChunkArray(blockPosition, texturePack, parent)
-{
-    initializeChunk();
-}
+// ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray&
+// texturePack,
+//                        ChunkContainer& parent)
+//     : ChunkArray(blockPosition, texturePack, parent)
+// {
+//     initializeChunk();
+// } // TODO
 
 ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack)
     : ChunkArray(blockPosition, texturePack)
@@ -60,4 +62,4 @@ void ChunkNaive::initializeChunk()
     updateMesh();
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

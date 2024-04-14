@@ -1,6 +1,6 @@
 #pragma once
 
-#include <World/Raycasting/Chunks/VoxelsGpu.h>
+#include <World/Raycast/Chunks/VoxelsGpu.h>
 #include <World/Skybox.h>
 
 #include "Player/Player.h"
@@ -55,6 +55,11 @@ public:
      */
     bool handleEvent(const sf::Event& event) override;
 
+    /**
+     * \brief Fills the voxels with random colors
+     */
+    void fillVoxels();
+
 private:
     WindowToRender& mWindow;
     Player mPlayer;
@@ -62,7 +67,7 @@ private:
     Shader mShader;
     TexturePackArray mTexturePack;
     Skybox mSkybox;
-    VoxelsGpu mVoxelsGpu;
+    Raycast::VoxelsGpu mVoxelsGpu;
 };
 
 }// namespace Voxino

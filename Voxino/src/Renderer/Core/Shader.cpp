@@ -147,8 +147,8 @@ std::vector<Shader::ShaderSourceCode> Shader::parseShaders(const std::vector<Sha
         }
         else
         {
-            spdlog::error("Can not open given shader file: {} of type {}. Ignoring it.",
-                          shader.filePath, toString(shader.shaderType));
+            spdlog::warn("Can not open given shader file: {} of type {}. Ignoring it.",
+                         shader.filePath, toString(shader.shaderType));
         }
     }
     return shaderSourceCode;

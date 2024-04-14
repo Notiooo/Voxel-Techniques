@@ -55,6 +55,9 @@ public:
     bool handleEvent(const sf::Event& event) override;
 
 private:
+    /**
+     * \brief Switches (turn off/on) the wireframe mode
+     */
     void switchWireframe();
 
 
@@ -131,15 +134,16 @@ bool PolygonSingleChunkState<ChunkType>::handleEvent(const sf::Event& event)
 template<typename ChunkType>
 void PolygonSingleChunkState<ChunkType>::switchWireframe()
 {
+    mIsWireframe = !mIsWireframe;
+    spdlog::info("Wireframe mode is {}", (mIsWireframe ? "enabled" : "disabled"));
     if (mIsWireframe)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-    else
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
-    mIsWireframe = !mIsWireframe;
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 }
 
 template<typename ChunkType>

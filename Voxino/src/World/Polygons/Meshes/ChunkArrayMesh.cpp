@@ -1,6 +1,6 @@
 #include "ChunkArrayMesh.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 VertexBuffer ChunkArrayMesh::vertexBuffer()
 {
@@ -39,4 +39,4 @@ int ChunkArrayMesh::memorySize()
     return sizeof(VertexData) * vertices.size();
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

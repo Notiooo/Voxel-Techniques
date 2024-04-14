@@ -1,6 +1,5 @@
 #pragma once
-#include "World/Polygons/Block/Block.h"
-#include <Renderer/Graphics/Texture.h>
+#include "World/Block/Block.h"
 
 namespace Voxino
 {

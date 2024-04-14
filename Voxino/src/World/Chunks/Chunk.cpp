@@ -1,30 +1,29 @@
 #include "Chunk.h"
+#include "World/Block/Block.h"
+#include "World/Chunks/ChunkContainer.h"
+#include "World/Chunks/SimpleTerrainGenerator.h"
 #include "pch.h"
 
-#include "Resources/TexturePack.h"
-#include "World/Polygons/Chunks/ChunkContainer.h"
-#include "World/Polygons/Chunks/SimpleTerrainGenerator.h"
 
 namespace Voxino
 {
 
-
-Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
-             ChunkContainer& parent)
-    : mChunkPosition(std::move(blockPosition))
-    , mTexturePack(texturePack)
-    , mParentContainer(&parent)
-    , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
-    , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
-{
-    auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
-    generateChunkTerrain();
-}
+// Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+//              ChunkContainer& parent)
+//     : mChunkPosition(std::move(blockPosition))
+//     , mTexturePack(texturePack)
+//     , mParentContainer(&parent)
+//     , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
+//     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
+// {
+//     auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
+//     generateChunkTerrain();
+// } // TODO
 
 Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack)
     : mChunkPosition(std::move(blockPosition))
     , mTexturePack(texturePack)
-    , mParentContainer()
+    // , mParentContainer()
     , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
 {
@@ -35,22 +34,13 @@ Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePac
 Chunk::Chunk(Chunk&& rhs) noexcept
     : mChunkPosition(std::move(rhs.mChunkPosition))
     , mTexturePack(rhs.mTexturePack)
-    , mParentContainer(rhs.mParentContainer)
-    , mTerrainModel(std::move(rhs.mTerrainModel))
+    // , mParentContainer(rhs.mParentContainer)
+    // , mTerrainModel(std::move(rhs.mTerrainModel)) // TODO
     , mChunkOfBlocks(std::move(rhs.mChunkOfBlocks))
     , mTerrainGenerator(std::move(rhs.mTerrainGenerator))
 {
 }
 
-void Chunk::generateChunkTerrain()
-{
-    mTerrainGenerator->generateTerrain(*this, *mChunkOfBlocks);
-}
-
-void Chunk::fixedUpdate(const float& deltaTime)
-{
-    MEASURE_SCOPE;
-}
 
 bool Chunk::areLocalCoordinatesInsideChunk(const Block::Coordinate& localCoordinates)
 {
@@ -80,12 +70,16 @@ void Chunk::removeLocalBlock(const Block::Coordinate& localCoordinates)
 {
     mChunkOfBlocks->block(localCoordinates).setBlockType(BlockId::Air);
 
-    rebuildMesh();
+    // rebuildMesh(); // TODO
 }
 
 Block::Coordinate Chunk::globalToLocalCoordinates(const Block::Coordinate& worldCoordinates) const
 {
     return static_cast<Block::Coordinate>(worldCoordinates - mChunkPosition);
+}
+
+void Chunk::fixedUpdate(const float& deltaTime)
+{
 }
 
 Block& Chunk::localBlock(const Block::Coordinate& localCoordinates)
@@ -216,46 +210,16 @@ std::optional<Block> Chunk::neighbourBlockInGivenDirection(const Block::Coordina
         return std::optional<Block>(localBlock(blockNeighborPosition).id());
     }
 
-    if (mParentContainer)
-    {
-        if (const auto& neighborBlock =
-                mParentContainer->worldBlock(localToGlobalCoordinates(blockNeighborPosition)))
-        {
-            return std::optional<Block>(neighborBlock->id());
-        }
-    }
+    // if (mParentContainer)
+    // {
+    //     if (const auto& neighborBlock =
+    //             mParentContainer->worldBlock(localToGlobalCoordinates(blockNeighborPosition)))
+    //     {
+    //         return std::optional<Block>(neighborBlock->id());
+    //     }
+    // } // TODO
 
     return std::nullopt;
-}
-
-void Chunk::drawTerrain(const Renderer& renderer, const Shader& shader, const Camera& camera) const
-{
-    MEASURE_SCOPE_WITH_GPU;
-    mTexturePack.bind(TexturePack::Spritesheet::Blocks);
-    if (mTerrainModel)
-    {
-        mTerrainModel->draw(renderer, shader, camera);
-    }
-}
-
-void Chunk::drawLiquids(const Renderer& renderer, const Shader& shader, const Camera& camera) const
-{
-    MEASURE_SCOPE_WITH_GPU;
-    mTexturePack.bind(TexturePack::Spritesheet::Blocks);
-    if (mFluidModel)
-    {
-        mFluidModel->draw(renderer, shader, camera);
-    }
-}
-
-void Chunk::drawFlorals(const Renderer& renderer, const Shader& shader, const Camera& camera) const
-{
-    MEASURE_SCOPE_WITH_GPU;
-    mTexturePack.bind(TexturePack::Spritesheet::Blocks);
-    if (mFloralModel)
-    {
-        mFloralModel->draw(renderer, shader, camera);
-    }
 }
 
 const Block::Coordinate& Chunk::positionInBlocks() const
@@ -263,22 +227,25 @@ const Block::Coordinate& Chunk::positionInBlocks() const
     return mChunkPosition;
 }
 
-void Chunk::tryToPlaceBlock(const BlockId& blockId, const Block::Coordinate& localCoordinates,
+bool Chunk::tryToPlaceBlock(const BlockId& blockId, const Block::Coordinate& localCoordinates,
                             std::vector<BlockId> blocksThatMightBeOverplaced)
 {
     MEASURE_SCOPE;
     if (areLocalCoordinatesInsideChunk(localCoordinates))
     {
-        tryToPlaceBlockInsideThisChunk(blockId, localCoordinates, blocksThatMightBeOverplaced);
+        return tryToPlaceBlockInsideThisChunk(blockId, localCoordinates,
+                                              blocksThatMightBeOverplaced);
     }
-    else if (mParentContainer)
-    {
-        auto globalCoordinates = localToGlobalCoordinates(localCoordinates);
-        mParentContainer->tryToPlaceBlock(blockId, globalCoordinates, blocksThatMightBeOverplaced);
-    }
+    // else if (mParentContainer)
+    // {
+    //     auto globalCoordinates = localToGlobalCoordinates(localCoordinates);
+    //     mParentContainer->tryToPlaceBlock(blockId, globalCoordinates,
+    //     blocksThatMightBeOverplaced);
+    // } // TODO
+    return false;
 }
 
-void Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
+bool Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
                                            const Block::Coordinate& localCoordinates,
                                            std::vector<BlockId>& blocksThatMightBeOverplaced)
 {
@@ -288,8 +255,16 @@ void Chunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
     if (canGivenBlockBeOverplaced(blocksThatMightBeOverplaced, idOfTheBlockToOverplace))
     {
         block.setBlockType(blockId);
-        rebuildMesh();
+        // rebuildMesh(); // TODO
+        return true;
     }
+    return false;
+}
+
+void Chunk::generateChunkTerrain()
+{
+    MEASURE_SCOPE;
+    mTerrainGenerator->generateTerrain(*this, *mChunkOfBlocks);
 }
 
 bool Chunk::canGivenBlockBeOverplaced(std::vector<BlockId>& blocksThatMightBeOverplaced,

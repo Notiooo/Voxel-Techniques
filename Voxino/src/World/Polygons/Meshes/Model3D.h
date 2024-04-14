@@ -6,7 +6,7 @@
 #include "Renderer/Renderer.h"
 #include "World/Polygons/Meshes/Mesh3D.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * 3D model consisting of a mesh, which allows to directly draw on the screen.
@@ -64,4 +64,4 @@ protected:
     BufferLayout mBufferLayout;
     std::unique_ptr<Mesh3D> mMesh;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

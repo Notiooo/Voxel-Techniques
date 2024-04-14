@@ -1,18 +1,18 @@
 #include "ChunkCulling.h"
+#include "Resources/TexturePack.h"
+#include "World/Chunks/ChunkBlocks.h"
 #include "pch.h"
 
-#include <Resources/TexturePack.h>
-
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 
-ChunkCulling::ChunkCulling(const Block::Coordinate& blockPosition,
-                           const TexturePackArray& texturePack, ChunkContainer& parent)
-    : ChunkArray(blockPosition, texturePack, parent)
-{
-    initializeChunk();
-}
+// ChunkCulling::ChunkCulling(const Block::Coordinate& blockPosition,
+//                            const TexturePackArray& texturePack, ChunkContainer& parent)
+//     : ChunkArray(blockPosition, texturePack, parent)
+// {
+//     initializeChunk();
+// } // TODO
 
 ChunkCulling::ChunkCulling(const Block::Coordinate& blockPosition,
                            const TexturePackArray& texturePack)
@@ -71,4 +71,4 @@ void ChunkCulling::createBlockMesh(const Block::Coordinate& pos, const Block& bl
     }
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons

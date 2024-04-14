@@ -33,6 +33,11 @@ public:
      */
     void log(const std::string& msg, spdlog::level::level_enum lvl);
 
+    /**
+     * \brief Converts a log level to an ImGui color.
+     * \param level The log level to convert.
+     * \return The ImGui color corresponding to the log level.
+     */
     static ImVec4 toColor(const spdlog::level::level_enum& level);
 
 private:

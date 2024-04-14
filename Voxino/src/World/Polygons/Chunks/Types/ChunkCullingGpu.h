@@ -2,7 +2,7 @@
 #include "World/Polygons/Chunks/Types/ChunkArray.h"
 #include "World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 /**
@@ -11,8 +11,8 @@ namespace Voxino
 class ChunkCullingGpu : public ChunkArray<ChunkArrayCullingGpuMeshBuilder>
 {
 public:
-    ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-                    ChunkContainer& parent);
+    // ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+    //                 ChunkContainer& parent); // TODO
     ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.
@@ -58,4 +58,4 @@ private:
      */
     void createBlockMesh(const Block::Coordinate& pos, const Block& block);
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

@@ -1,20 +1,22 @@
 #pragma once
 
 #include "Utils/Bitset3D.h"
+#include "World/Chunks/ChunkBlocks.h"
 #include "World/Polygons/Chunks/Types/ChunkArray.h"
+#include "World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.h"
 #include "World/Polygons/Meshes/MeshRegion.h"
 
-namespace Voxino
+namespace Voxino::Polygons
 {
-
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
 class ChunkGreedyMeshing : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
-    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-                       ChunkContainer& parent);
+    // ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray&
+    // texturePack,
+    //                    ChunkContainer& parent); // TODO
     ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
 
     /**
@@ -112,4 +114,5 @@ private:
      */
     void createBlockMesh(MeshRegion&& meshRegion);
 };
-}// namespace Voxino
+
+}// namespace Voxino::Polygons

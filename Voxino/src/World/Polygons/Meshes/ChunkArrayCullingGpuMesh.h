@@ -3,7 +3,7 @@
 #include "World/Polygons/Meshes/Mesh3D.h"
 #include <memory>
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 /**
  * @brief This is the mesh of a typical block located inside the game. Such a block consists of
@@ -56,4 +56,4 @@ struct ChunkArrayCullingGpuMesh : public Mesh3D
     };
     std::vector<VertexData> vertices;
 };
-}// namespace Voxino
+}// namespace Voxino::Polygons

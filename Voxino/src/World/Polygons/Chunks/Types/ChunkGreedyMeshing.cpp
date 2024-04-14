@@ -4,16 +4,17 @@
 #include "Utils/Bitset3D.h"
 #include <Resources/TexturePack.h>
 
-namespace Voxino
+namespace Voxino::Polygons
 {
 
 
-ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
-                                       const TexturePackArray& texturePack, ChunkContainer& parent)
-    : ChunkArray(blockPosition, texturePack, parent)
-{
-    initializeChunk();
-}
+// ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
+//                                        const TexturePackArray& texturePack, ChunkContainer&
+//                                        parent)
+//     : ChunkArray(blockPosition, texturePack, parent)
+// {
+//     initializeChunk();
+// } // TODO
 
 ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
                                        const TexturePackArray& texturePack)
@@ -185,4 +186,4 @@ ChunkGreedyMeshing::ScanDirections ChunkGreedyMeshing::getScanDirectionsForFace(
     }
 }
 
-}// namespace Voxino
+}// namespace Voxino::Polygons
