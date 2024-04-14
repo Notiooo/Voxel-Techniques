@@ -1,12 +1,11 @@
 #include "Application.h"
 
-#include <States/CustomStates/RaycastSingleChunkColoredVoxels.h>
-#include <States/CustomStates/RaycastSingleChunkTexturedVoxels.h>
-
 #include "States/CustomStates/ExitApplicationState.h"
 #include "States/CustomStates/GameState.h"
 #include "States/CustomStates/LogoState.h"
-#include "States/CustomStates/PolygonSingleChunkState.h"
+#include "States/CustomStates/Polygons/PolygonSingleChunkState.h"
+#include "States/CustomStates/Raycast/RaycastSingleChunkColoredVoxels.h"
+#include "States/CustomStates/Raycast/RaycastSingleChunkTexturedVoxels.h"
 #include "Utils/Mouse.h"
 #include "pch.h"
 

@@ -22,11 +22,11 @@ set(PROJECT_SOURCES
         States/State.cpp
         States/StateStack.cpp
         States/CustomStates/LogoState.cpp
-        States/CustomStates/PolygonSingleChunkState.cpp
         States/CustomStates/ExitApplicationState.cpp
         States/CustomStates/GameState.cpp
-        States/CustomStates/RaycastSingleChunkColoredVoxels.cpp
-        States/CustomStates/RaycastSingleChunkTexturedVoxels.cpp
+        States/CustomStates/Polygons/PolygonSingleChunkState.cpp
+        States/CustomStates/Raycast/RaycastSingleChunkColoredVoxels.cpp
+        States/CustomStates/Raycast/RaycastSingleChunkTexturedVoxels.cpp
         Player/Player.cpp
         World/Camera.cpp
         World/Skybox.cpp
