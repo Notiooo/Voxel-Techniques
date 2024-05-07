@@ -93,6 +93,16 @@ add_custom_command(TARGET VoxinoSrc POST_BUILD
         ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:VoxinoSrc>/resources
 )
 
+# Copy imgui config
+add_custom_command(
+        TARGET VoxinoSrc POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E env SOURCE_FILE="${CMAKE_SOURCE_DIR}/imgui.ini"
+        DEST_DIR="$<TARGET_FILE_DIR:VoxinoSrc>"
+        ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/copy_file_if_not_exist.cmake
+        COMMENT "Ensure imgui.ini exists in the target directory."
+)
+
+
 add_executable(VoxinoApp main.cpp)
 
 add_custom_command(TARGET VoxinoApp POST_BUILD
