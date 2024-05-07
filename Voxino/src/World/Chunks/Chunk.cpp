@@ -69,6 +69,13 @@ Block::Coordinate Chunk::globalToLocalCoordinates(const Block::Coordinate& world
 void Chunk::fixedUpdate(const float& deltaTime)
 {
 }
+void Chunk::update(const float& deltaTime)
+{
+}
+
+void Chunk::updateImGui()
+{
+}
 
 Block& Chunk::localBlock(const Block::Coordinate& localCoordinates)
 {

@@ -1,6 +1,7 @@
 set(PROJECT_SOURCES
         Application.cpp
         pch.cpp
+        Renderer/Core/Buffers/AtomicCounter.cpp
         Renderer/Core/Buffers/Buffer.cpp
         Renderer/Core/Buffers/BufferElement.cpp
         Renderer/Core/Buffers/BufferLayout.cpp

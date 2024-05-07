@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Renderer/Core/Buffers/AtomicCounter.h"
 #include "World/Polygons/Meshes/Builders/ChunkMeshBuilder.h"
 #include "World/Polygons/Meshes/Model3D.h"
+
 #include <vector>
 
 namespace Voxino
@@ -40,6 +42,11 @@ public:
      * \param camera The camera to draw with.
      */
     void draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
+
+    /**
+     * \brief Updates the counters.
+     */
+    void updateCounters();
 
     /**
      * \brief Fills the 3D texture with data.
@@ -96,6 +103,12 @@ public:
      */
     void resize(int width, int height, int depth);
 
+    /**
+     * \brief Returns the number of ray iterations.
+     * \return The number of ray iterations.
+     */
+    int lastNumberOfRayIterations();
+
 private:
     /**
      * \brief Creates a 3D texture.
@@ -110,6 +123,8 @@ private:
     int mDepth{};
     bool mIsDataFilled{false};
     mutable bool mWasDataFiledLogPrinted{false};
+    int mLastNumberOfRayIterations{};
+    AtomicCounter mAtomicCounter;
 };
 
 }// namespace Raycast

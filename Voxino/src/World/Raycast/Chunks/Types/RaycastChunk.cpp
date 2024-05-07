@@ -54,6 +54,18 @@ void RaycastChunk::draw(const Renderer& renderer, const Shader& shader, const Ca
     mVoxels.draw(renderer, shader, camera);
 }
 
+void RaycastChunk::update(const float& deltaTime)
+{
+    mVoxels.updateCounters();
+}
+void RaycastChunk::updateImGui()
+{
+    ImGui::Begin("Ray Iterations");
+    int lastIterations = mVoxels.lastNumberOfRayIterations();
+    ImGui::Text("Rays: %d", lastIterations);
+    ImGui::End();
+}
+
 bool RaycastChunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
                                                   const Block::Coordinate& localCoordinates,
                                                   std::vector<BlockId>& blocksThatMightBeOverplaced)

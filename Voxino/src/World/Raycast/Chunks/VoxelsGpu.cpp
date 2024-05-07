@@ -95,6 +95,11 @@ void VoxelsGpu::resize(int width, int height, int depth)
     create3DTexture();
 }
 
+int VoxelsGpu::lastNumberOfRayIterations()
+{
+    return mLastNumberOfRayIterations;
+}
+
 void VoxelsGpu::draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const
 {
     MEASURE_SCOPE_WITH_GPU;
@@ -105,10 +110,17 @@ void VoxelsGpu::draw(const Renderer& renderer, const Shader& shader, const Camer
     }
 
     shader.bind();
+    mAtomicCounter.bind();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, mTextureId);
     shader.setUniform("u_VoxelWorld", 0);
     shader.setUniform("u_WorldSize", glm::ivec3(mWidth, mHeight, mDepth));
     renderer.drawRaycast(shader, camera);
+}
+
+void VoxelsGpu::updateCounters()
+{
+    mLastNumberOfRayIterations = mAtomicCounter.read();
+    mAtomicCounter.reset();
 }
 }// namespace Voxino::Raycast

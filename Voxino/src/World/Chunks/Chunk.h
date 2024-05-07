@@ -36,10 +36,21 @@ public:
     virtual int memorySize() = 0;
 
     /**
-     * Updates the status/logic of the state at equal intervals independent of the frame rate.
+     * Updates the status/logic of the chunk at equal intervals independent of the frame rate.
      * @param deltaTime Time interval
      */
     virtual void fixedUpdate(const float& deltaTime);
+
+    /**
+     * \brief Updates the chunk logic dependent, or independent of time, every rendered frame.
+     * \param deltaTime the time that has passed since the game was last updated.
+     */
+    virtual void update(const float& deltaTime);
+
+    /**
+     * \brief Updates the status/logic of the ImGui Debug Menu
+     */
+    virtual void updateImGui();
 
     /**
      * Draws the terrain of the chunk to the game screen

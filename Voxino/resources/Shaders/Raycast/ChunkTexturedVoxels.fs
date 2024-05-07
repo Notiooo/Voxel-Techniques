@@ -1,6 +1,7 @@
-#version 330 core
+#version 430 core
 
 layout(location = 0) out vec4 FragColor;
+layout(binding = 0) uniform atomic_uint rayIterationCounter;
 
 in vec2 v_TexCoord;
 
@@ -134,6 +135,7 @@ bool traverseWorld(vec3 rayOrigin, vec3 rayDirection, float tNear, float tFar, o
     while (isInWorldBounds(currentVoxel))
     {
         ++numIterations;
+        atomicCounterIncrement(rayIterationCounter);
 
         // Sample world and return if data.z == 0
         vec4 voxelData;

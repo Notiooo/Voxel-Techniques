@@ -68,6 +68,7 @@ bool RaycastSingleChunkTexturedVoxels::fixedUpdate(const float& deltaTime)
 bool RaycastSingleChunkTexturedVoxels::updateImGui(const float& deltaTime)
 {
     MEASURE_SCOPE;
+    mChunk.updateImGui();
     return true;
 }
 
@@ -76,6 +77,7 @@ bool RaycastSingleChunkTexturedVoxels::update(const float& deltaTime)
 {
     MEASURE_SCOPE;
     mPlayer.update(deltaTime);
+    mChunk.update(deltaTime);
     return true;
 }
 

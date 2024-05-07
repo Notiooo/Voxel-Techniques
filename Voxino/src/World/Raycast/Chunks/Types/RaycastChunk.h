@@ -4,6 +4,8 @@
 #include "World/Chunks/Chunk.h"
 #include "World/Raycast/Chunks/VoxelsGpu.h"
 
+#include <deque>
+
 namespace Voxino::Raycast
 {
 
@@ -41,6 +43,16 @@ public:
      */
     void draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const override;
 
+    /**
+     * \brief Updates the state logic at equal intervals independent of the frame rate.
+     * \param deltaTime Time interval
+     */
+    void update(const float& deltaTime) override;
+
+    /**
+     * \brief Updates the status/logic of the ImGui Debug Menu
+     */
+    void updateImGui() override;
 
 protected:
     /**
