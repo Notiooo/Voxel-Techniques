@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
         World/Polygons/Chunks/Types/PolygonChunk.cpp
         World/Polygons/Chunks/Types/ChunkArray.cpp
         World/Polygons/Chunks/Types/ChunkGreedyMeshing.cpp
+        World/Polygons/Chunks/Types/ChunkBinaryGreedyMeshing.cpp
         World/Polygons/Chunks/Types/ChunkCulling.cpp
         World/Polygons/Chunks/Types/ChunkNaive.cpp
         World/Polygons/Chunks/Types/ChunkCullingGpu.cpp

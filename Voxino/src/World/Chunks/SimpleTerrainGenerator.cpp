@@ -29,7 +29,7 @@ void SimpleTerrainGenerator::generateTerrainForChunk(const Chunk& chunk, ChunkBl
         {
             auto globalCoord = chunk.localToGlobalCoordinates({x, 0, z});
             auto surfaceLevel = surfaceLevelAtGivenPosition(globalCoord.x, globalCoord.z);
-            generateColumnOfBlocks(chunkBlocks, surfaceLevel, x, z);
+            generateColumnOfBlocks(chunkBlocks, surfaceLevel, x, globalCoord.y, z);
         }
     }
 }
@@ -51,26 +51,28 @@ int SimpleTerrainGenerator::surfaceLevelAtGivenPosition(int blockCoordinateX, in
 }
 
 void SimpleTerrainGenerator::generateColumnOfBlocks(ChunkBlocks& chunkBlocks, int surfaceLevel,
-                                                    int blockCoordinateX, int blockCoordinateZ)
+                                                    int blockCoordinateX, int globalCoordinateY,
+                                                    int blockCoordinateZ)
 {
     auto& x = blockCoordinateX;
     auto& z = blockCoordinateZ;
 
     for (auto y = 0; y < ChunkBlocks::BLOCKS_PER_Y_DIMENSION; ++y)
     {
-        if (y == surfaceLevel)
+        auto globalY = globalCoordinateY + y;
+        if (globalY == surfaceLevel)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Grass);
         }
-        else if (y < surfaceLevel - 5)
+        else if (globalY < surfaceLevel - 5)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Stone);
         }
-        else if (y < surfaceLevel)
+        else if (globalY < surfaceLevel)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Dirt);
         }
-        else if (y < SEA_LEVEL + 1 && y < surfaceLevel + 2)
+        else if (globalY < SEA_LEVEL + 1 && globalY < surfaceLevel + 2)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Sand);
 
@@ -80,7 +82,7 @@ void SimpleTerrainGenerator::generateColumnOfBlocks(ChunkBlocks& chunkBlocks, in
                 chunkBlocks.block(x, y - 1, z).setBlockType(BlockId::Sand);
             }
         }
-        else if (y < SEA_LEVEL)
+        else if (globalY < SEA_LEVEL)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Water);
         }

@@ -26,7 +26,7 @@ private:
     static constexpr auto SEA_LEVEL = 60;
     static constexpr auto MINIMAL_TERRAIN_LEVEL = 20;
     static constexpr auto BASIC_TERRAIN_SQUASHING_FACTOR = 0.25f;
-    static constexpr int MAX_HEIGHT_MAP = ChunkBlocks::BLOCKS_PER_Y_DIMENSION - 10;
+    static constexpr int MAX_HEIGHT_MAP = 256;
 
     /**
      * @brief Generates terrain on the indicated chunk using the indicated biome.
@@ -36,7 +36,8 @@ private:
     void generateTerrainForChunk(const Chunk& chunk, ChunkBlocks& chunkBlocks);
 
     static void generateColumnOfBlocks(ChunkBlocks& chunkBlocks, int surfaceLevel,
-                                       int blockCoordinateX, int blockCoordinateZ);
+                                       int blockCoordinateX, int globalCoordinateY,
+                                       int blockCoordinateZ);
 
     int surfaceLevelAtGivenPosition(int blockCoordinateX, int blockCoordinateZ);
 

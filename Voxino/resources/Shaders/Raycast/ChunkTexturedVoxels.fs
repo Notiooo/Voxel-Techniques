@@ -232,22 +232,22 @@ vec4 calculateColor(vec4 voxelData, vec3 rayDirection, vec3 hitPoint, vec3 hitNo
 
     if (hitNormal.x > 0.5)
     {
-        side = 2; // Right
+        side = 3; // Right
         texCoords = hitPoint.zy;
     }
     else if (hitNormal.x < -0.5)
     {
-        side = 1; // Left
+        side = 2; // Left
         texCoords = hitPoint.zy;
     }
     else if (hitNormal.y > 0.5)
     {
-        side = 0; // Top
+        side = 1; // Top
         texCoords = hitPoint.xz;
     }
     else if (hitNormal.y < -0.5)
     {
-        side = 3; // Bottom
+        side = 0; // Bottom
         texCoords = hitPoint.xz;
     }
     else if (hitNormal.z > 0.5)

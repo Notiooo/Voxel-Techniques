@@ -19,33 +19,34 @@ uniform mat4 projection = mat4(1.0);
 
 void faceVertices(int blockFace, out vec3 vertices[4]) {
     switch (blockFace) {
-        case 0: // top
+        case 0: // bottom
+            vertices[0] = vec3(0, 0, 0); // bottom left close
+            vertices[1] = vec3(1, 0, 0); // bottom right close
+            vertices[2] = vec3(0, 0, 1); // bottom left far
+            vertices[3] = vec3(1, 0, 1); // bottom right far
+            break;
+
+        case 1: // top
             vertices[0] = vec3(0, 1, 1); // top far left
             vertices[1] = vec3(1, 1, 1); // top far right
             vertices[2] = vec3(0, 1, 0); // top close left
             vertices[3] = vec3(1, 1, 0); // top close right
             break;
 
-        case 1: // left
+        case 2: // left
             vertices[0] = vec3(0, 0, 0); // left bottom close
             vertices[1] = vec3(0, 0, 1); // left bottom far
             vertices[2] = vec3(0, 1, 0); // left top close
             vertices[3] = vec3(0, 1, 1); // left top far
             break;
 
-        case 2: // right
+        case 3: // right
             vertices[0] = vec3(1, 0, 1); // right bottom far
             vertices[1] = vec3(1, 0, 0); // right bottom close
             vertices[2] = vec3(1, 1, 1); // right top far
             vertices[3] = vec3(1, 1, 0); // right top close
             break;
 
-        case 3: // bottom
-            vertices[0] = vec3(0, 0, 0); // bottom left close
-            vertices[1] = vec3(1, 0, 0); // bottom right close
-            vertices[2] = vec3(0, 0, 1); // bottom left far
-            vertices[3] = vec3(1, 0, 1); // bottom right far
-            break;
 
         case 4: // front
             vertices[0] = vec3(0, 0, 1); // front left bottom

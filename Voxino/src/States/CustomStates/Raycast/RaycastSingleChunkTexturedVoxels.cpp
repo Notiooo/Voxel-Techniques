@@ -16,7 +16,7 @@ RaycastSingleChunkTexturedVoxels::RaycastSingleChunkTexturedVoxels(StateStack& s
               {ShaderType::FragmentShader, "resources/Shaders/Raycast/" + shaderName + ".fs"},
               {ShaderType::GeometryShader, "resources/Shaders/Raycast/" + shaderName + ".gs"}}
     , mTexturePack("default")
-    , mChunk({0, 0, 0}, mTexturePack)
+    , mChunk({0, 128, 0}, mTexturePack)
 {
     Mouse::lockMouseAtCenter(mWindow);
 

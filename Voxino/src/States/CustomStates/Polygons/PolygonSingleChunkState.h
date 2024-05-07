@@ -84,7 +84,7 @@ PolygonSingleChunkState<ChunkType>::PolygonSingleChunkState(StateStack& stack,
               {ShaderType::FragmentShader, "resources/Shaders/Polygons/" + shaderName + ".fs"},
               {ShaderType::GeometryShader, "resources/Shaders/Polygons/" + shaderName + ".gs"}}
     , mTexturePack("default")
-    , mChunk({0, -72, 0}, mTexturePack)
+    , mChunk({0, 128, 0}, mTexturePack)
 {
     Mouse::lockMouseAtCenter(mWindow);
 

@@ -9,6 +9,7 @@
 #include "Utils/Mouse.h"
 #include "pch.h"
 
+#include <World/Polygons/Chunks/Types/ChunkBinaryGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkCullingGpu.h>
 #include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkNaive.h>
@@ -80,6 +81,8 @@ void Application::setupFlowStates()
         State_ID::PolygonSingleChunkNaiveState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkGreedyMeshing>>(
         State_ID::PolygonSingleChunkGreedyState, *mGameWindow);
+    mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkBinaryGreedyMeshing>>(
+        State_ID::PolygonSingleChunkBinaryGreedyState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCullingGpu>>(
         State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
@@ -315,6 +318,7 @@ void Application::updateImGuiSelectScene()
     scene("Single Chunk Culling", State_ID::PolygonSingleChunkCullingState);
     scene("Single Chunk Naive", State_ID::PolygonSingleChunkNaiveState);
     scene("Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
+    scene("Single Chunk Binary Greedy", State_ID::PolygonSingleChunkBinaryGreedyState);
     scene("Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
 
     splitLineText("Raycast");

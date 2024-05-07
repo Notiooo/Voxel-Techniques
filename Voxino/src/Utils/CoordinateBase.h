@@ -13,7 +13,7 @@ struct CoordinateBase
     using IntegerUnit = int;
 
     CoordinateBase(IntegerUnit x, IntegerUnit y, IntegerUnit z);
-    explicit CoordinateBase(sf::Vector3i blockCoordinates);
+    CoordinateBase(sf::Vector3i blockCoordinates);
     CoordinateBase(glm::ivec3 blockCoordinates);
 
     CoordinateBase(CoordinateBase&&) noexcept;

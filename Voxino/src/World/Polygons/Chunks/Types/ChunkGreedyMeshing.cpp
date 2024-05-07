@@ -7,15 +7,6 @@
 namespace Voxino::Polygons
 {
 
-
-// ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
-//                                        const TexturePackArray& texturePack, ChunkContainer&
-//                                        parent)
-//     : ChunkArray(blockPosition, texturePack, parent)
-// {
-//     initializeChunk();
-// } // TODO
-
 ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
                                        const TexturePackArray& texturePack)
     : ChunkArray(blockPosition, texturePack)

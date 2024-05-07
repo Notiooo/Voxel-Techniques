@@ -103,10 +103,10 @@ public:
      */
     enum class Face
     {
-        Top = 0,
+        Bottom = 0,
+        Top,
         Left,
         Right,
-        Bottom,
         Front,
         Back,
 

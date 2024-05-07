@@ -8,18 +8,6 @@
 namespace Voxino
 {
 
-// Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
-//              ChunkContainer& parent)
-//     : mChunkPosition(std::move(blockPosition))
-//     , mTexturePack(texturePack)
-//     , mParentContainer(&parent)
-//     , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
-//     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
-// {
-//     auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
-//     generateChunkTerrain();
-// } // TODO
-
 Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack)
     : mChunkPosition(std::move(blockPosition))
     , mTexturePack(texturePack)
