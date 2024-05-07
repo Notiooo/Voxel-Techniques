@@ -1,7 +1,5 @@
 #pragma once
 
-#include <World/Skybox.h>
-
 #include "Player/Player.h"
 #include "Renderer/Renderer.h"
 #include "Resources/TexturePackArray.h"
@@ -10,6 +8,7 @@
 #include "World/InfiniteGridFloor.h"
 
 #include <World/Raycast/Chunks/Types/RaycastChunk.h>
+#include <World/Skybox.h>
 
 namespace Voxino
 {
@@ -61,6 +60,8 @@ private:
      */
     void switchVisiblitySphere();
 
+    void switchRayIterations();
+
 private:
     WindowToRender& mWindow;
     Player mPlayer;
@@ -70,6 +71,7 @@ private:
     Raycast::RaycastChunk mChunk;
     Skybox mSkybox;
     bool mVisibilitySphereEnabled = true;
+    bool mRayIterationsEnabled = false;
 };
 
 }// namespace Voxino

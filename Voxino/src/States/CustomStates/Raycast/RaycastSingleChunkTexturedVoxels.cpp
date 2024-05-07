@@ -47,6 +47,7 @@ bool RaycastSingleChunkTexturedVoxels::handleEvent(const sf::Event& event)
         {
             case sf::Keyboard::Escape: Mouse::unlockMouse(mWindow); break;
             case sf::Keyboard::F2: switchVisiblitySphere(); break;
+            case sf::Keyboard::F3: switchRayIterations(); break;
             default:;// nothing
         }
     }
@@ -84,6 +85,15 @@ void RaycastSingleChunkTexturedVoxels::switchVisiblitySphere()
     mVisibilitySphereEnabled = !mVisibilitySphereEnabled;
     spdlog::info("Visibility sphere is {}", (mVisibilitySphereEnabled ? "enabled" : "disabled"));
     mShader.setUniform("u_VisibilitySphereEnabled", mVisibilitySphereEnabled);
+    mShader.unbind();
+}
+
+void RaycastSingleChunkTexturedVoxels::switchRayIterations()
+{
+    mShader.bind();
+    mRayIterationsEnabled = !mRayIterationsEnabled;
+    spdlog::info("Ray iterations are {}", (mRayIterationsEnabled ? "enabled" : "disabled"));
+    mShader.setUniform("u_DrawRayIterations", mRayIterationsEnabled);
     mShader.unbind();
 }
 

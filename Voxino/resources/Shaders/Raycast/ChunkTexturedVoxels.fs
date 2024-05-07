@@ -11,12 +11,14 @@ uniform mat4 u_View;
 uniform mat4 u_Projection;
 uniform float u_CameraRadius = 5.f;
 uniform bool u_VisibilitySphereEnabled = true;
+uniform bool u_DrawRayIterations = false;
+uniform float u_IntensityMultiplier = 0.01;
 
 uniform sampler2DArray u_TextureArray;
 
 ///////// Constants //////////
 const vec3 LIGHT_POSITION = vec3(-100, 200, 8);
-const float SHADOW_SHADE = 0.6;
+const float SHADOW_SHADE = 0.3;
 
 
 int decodeTextureID(float channel, bool highPart)
@@ -62,7 +64,7 @@ bool sampleWorld(vec3 worldCoord, out vec4 worldData)
 
 bool intersectsWorld(vec3 rayOrigin, vec3 rayDirectionInv, out float tNear, out float tFar, out int outerSideNormalAxis)
 {
-    vec3 tMin = -rayOrigin              * rayDirectionInv;
+    vec3 tMin = -rayOrigin                * rayDirectionInv;
     vec3 tMax = (u_WorldSize - rayOrigin) * rayDirectionInv;
     vec3 t1 = min(tMin, tMax);
     vec3 t2 = max(tMin, tMax);
@@ -92,7 +94,7 @@ vec3 calculateNormal(int normalAxis, vec3 step) {
 // Implementation based on "A Fast Voxel Traversal Algorithm for Ray Tracing"
 // by John Amanatides and Andrew Woo.
 // Paper: http://www.cse.yorku.ca/~amana/research/grid.pdf
-bool traverseWorld(vec3 rayOrigin, vec3 rayDirection, float tNear, float tFar, out vec4 color, int outerSideNormalAxis, out vec3 normal, out float distance)
+bool traverseWorld(vec3 rayOrigin, vec3 rayDirection, float tNear, float tFar, out vec4 color, int outerSideNormalAxis, out vec3 normal, out float distance, out int numIterations)
 {
     // Increase tNear by small amount to start *inside* the world
     // If we are inside the bounding box of the world, start at the ray origin
@@ -131,6 +133,8 @@ bool traverseWorld(vec3 rayOrigin, vec3 rayDirection, float tNear, float tFar, o
     int normalAxis = outerSideNormalAxis;
     while (isInWorldBounds(currentVoxel))
     {
+        ++numIterations;
+
         // Sample world and return if data.z == 0
         vec4 voxelData;
         if (sampleWorld(currentVoxel, voxelData))
@@ -190,7 +194,7 @@ bool traverseWorld(vec3 rayOrigin, vec3 rayDirection, float tNear, float tFar, o
     return false;
 }
 
-bool intersectWorld(vec3 rayOrigin, vec3 rayDirection, out vec4 voxelData, out float distance, out vec3 normal)
+bool intersectWorld(vec3 rayOrigin, vec3 rayDirection, out vec4 voxelData, out float distance, out vec3 normal, out int numIterations)
 {
     float tNear, tFar;
     int outerSideNormalAxis;
@@ -199,7 +203,7 @@ bool intersectWorld(vec3 rayOrigin, vec3 rayDirection, out vec4 voxelData, out f
         return false;
     }
 
-    return traverseWorld(rayOrigin, rayDirection, tNear, tFar, voxelData, outerSideNormalAxis, normal, distance);
+    return traverseWorld(rayOrigin, rayDirection, tNear, tFar, voxelData, outerSideNormalAxis, normal, distance, numIterations);
 }
 
 vec4 calculateDiffuseMultiplier(vec3 lightVector, vec3 normal)
@@ -213,10 +217,11 @@ vec4 calculateDiffuseMultiplier(vec3 lightVector, vec3 normal)
 vec4 calculateShadingMultiplier(vec3 hitPoint, vec3 normal, vec3 rayDirection) {
     vec3 lightVector = normalize(LIGHT_POSITION - hitPoint);
 
+    int numIterations = 0;
     vec4 voxelData2;
     float distance2;
     vec3 normal2;
-    bool hasIntersection2 = intersectWorld(hitPoint, lightVector, voxelData2, distance2, normal2);
+    bool hasIntersection2 = intersectWorld(hitPoint, lightVector, voxelData2, distance2, normal2, numIterations);
     if (hasIntersection2)
     {
         return vec4(SHADOW_SHADE, SHADOW_SHADE, SHADOW_SHADE, 1.);
@@ -265,6 +270,7 @@ vec4 calculateColor(vec4 voxelData, vec3 rayDirection, vec3 hitPoint, vec3 hitNo
 
     int textureID = decodeTextureID(voxelData[side / 2], side % 2 == 0);
     vec4 texColor = texture(u_TextureArray, vec3(texCoords, textureID));
+
     return shadingMultiplier * texColor;
 }
 
@@ -273,8 +279,15 @@ vec4 castRay(vec3 rayOrigin, vec3 rayDirection)
     vec4 voxelData;
     float distance;
     vec3 normal;
-    bool hasIntersection = intersectWorld(rayOrigin, rayDirection, voxelData, distance, normal);
-    if (!hasIntersection)
+    int numIterations = 0;
+    bool hasIntersection = intersectWorld(rayOrigin, rayDirection, voxelData, distance, normal, numIterations);
+    if (u_DrawRayIterations)
+    {
+        float normalizedIterations = clamp(float(numIterations) / 50.0, 0.0, 1.0);
+        vec3 colorGradient = mix(vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0), normalizedIterations);
+        return vec4(colorGradient, 1.0);
+    }
+    else if (!hasIntersection)
     {
         discard;
     }
