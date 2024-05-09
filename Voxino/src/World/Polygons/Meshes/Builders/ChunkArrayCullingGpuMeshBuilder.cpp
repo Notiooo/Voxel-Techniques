@@ -25,7 +25,7 @@ void ChunkArrayCullingGpuMeshBuilder::addPoint(const Block::Face& blockFace,
     vertex.position = {position.x, position.y, position.z};
     vertex.textureId = static_cast<int>(blockTextureId);
     vertex.face = static_cast<int>(blockFace);
-    vertex.directionalLightning = addBlockFaceFakeLightning(blockFace);
+    // vertex.directionalLightning = addBlockFaceFakeLightning(blockFace);
 }
 
 void ChunkArrayCullingGpuMeshBuilder::resetMesh()

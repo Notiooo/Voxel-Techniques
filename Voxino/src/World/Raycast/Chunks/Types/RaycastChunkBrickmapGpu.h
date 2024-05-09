@@ -23,6 +23,9 @@ public:
     RaycastChunkBrickmapGpu(const Block::Coordinate& blockPosition,
                             const TexturePackArray& texturePack);
 
+    RaycastChunkBrickmapGpu(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+                            ChunkContainerBase& parent);
+
     /**
      * Returns the number of chunk vertices
      * @return Number of vertices
@@ -33,7 +36,7 @@ public:
      * Returns the size in memory that the mesh occupies
      * @return The size in memory in bytes that the chunk occupies
      */
-    int memorySize() override;
+    unsigned long memorySize() override;
 
     /**
      * Draws this chunk to the game screen
@@ -53,6 +56,11 @@ public:
      * \brief Updates the status/logic of the ImGui Debug Menu
      */
     void updateImGui() override;
+
+    unsigned long lastNumberOfRayIterations() const
+    {
+        return mBrickgrid.lastNumberOfRayIterations();
+    }
 
 private:
     void fillData();

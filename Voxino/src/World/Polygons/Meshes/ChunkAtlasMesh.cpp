@@ -19,7 +19,7 @@ BufferLayout ChunkAtlasMesh::bufferLayout()
     BufferLayout bl;
     bl.push<float>(3);
     bl.push<float>(2);
-    bl.push<float>(1);
+    // bl.push<float>(1); // directionalLightning
     return bl;
 }
 
@@ -32,7 +32,7 @@ int ChunkAtlasMesh::numberOfVertices()
 {
     return vertices.size();
 }
-int ChunkAtlasMesh::memorySize()
+unsigned long ChunkAtlasMesh::memorySize()
 {
     return sizeof(VertexData) * vertices.size();
 }

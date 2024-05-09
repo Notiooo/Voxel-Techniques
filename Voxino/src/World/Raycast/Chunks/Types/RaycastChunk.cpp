@@ -14,19 +14,34 @@ RaycastChunk::RaycastChunk(const Block::Coordinate& blockPosition,
     fillData();
 }
 
+RaycastChunk::RaycastChunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+                           ChunkContainerBase& parent)
+    : Chunk(blockPosition, texturePack, parent)
+    , mVoxels(ChunkBlocks::BLOCKS_PER_X_DIMENSION, ChunkBlocks::BLOCKS_PER_Y_DIMENSION,
+              ChunkBlocks::BLOCKS_PER_Z_DIMENSION)
+{
+    fillData();
+}
+
 int RaycastChunk::numberOfVertices()
 {
     return 0;
 }
 
-int RaycastChunk::memorySize()
+unsigned long RaycastChunk::memorySize()
 {
-    return 0;
+    return mVoxels.allocatedBytes();
+}
+
+unsigned long RaycastChunk::lastNumberOfRayIterations() const
+{
+    return mVoxels.lastNumberOfRayIterations();
 }
 
 void RaycastChunk::fillData()
 {
     MEASURE_SCOPE;
+    // sf::Clock buildingTime;
     std::vector<RGBA> data;
     for (const auto& [position, block]: *mChunkOfBlocks)
     {
@@ -40,6 +55,9 @@ void RaycastChunk::fillData()
         }
     }
     mVoxels.fill(data);
+    // auto buildingTimeElapsed = buildingTime.getElapsedTime().asMicroseconds();
+    // spdlog::info("Building took: {} us, {} ms, {} s", buildingTimeElapsed,
+    //              buildingTimeElapsed / 1000.f, buildingTimeElapsed / 1000000.f);
 }
 
 void RaycastChunk::removeLocalBlock(const Block::Coordinate& localCoordinates)
@@ -50,13 +68,19 @@ void RaycastChunk::removeLocalBlock(const Block::Coordinate& localCoordinates)
 
 void RaycastChunk::draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const
 {
+    shader.bind();
+    shader.setUniform("u_VoxelWorldPosition",
+                      glm::vec3(mChunkPosition.x, mChunkPosition.y, mChunkPosition.z));
     mVoxels.draw(renderer, shader, camera);
 }
 
 void RaycastChunk::update(const float& deltaTime)
 {
     mVoxels.updateCounters();
+    auto lastIterations = static_cast<int64_t>(mVoxels.lastNumberOfRayIterations());
+    TracyPlot("Ray Count", lastIterations);
 }
+
 void RaycastChunk::updateImGui()
 {
     ImGui::Begin("Ray Iterations");

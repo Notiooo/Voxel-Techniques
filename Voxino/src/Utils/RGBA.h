@@ -16,4 +16,9 @@ struct RGBA
     {
         return {r, g, b, a};
     }
+
+    bool operator==(const RGBA& other) const
+    {
+        return r == other.r && g == other.g && b == other.b && a == other.a;
+    }
 };

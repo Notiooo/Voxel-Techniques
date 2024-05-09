@@ -44,14 +44,14 @@ struct ChunkAtlasMesh : public Mesh3D
      * Returns the size in memory that the mesh occupies
      * @return The size in bytes in memory that the mesh occupies
      */
-    int memorySize() override;
+    unsigned long memorySize() override;
 
     /* ==== Members ===== */
     struct VertexData
     {
         glm::vec3 position{};
         glm::vec2 textureCoordinates{};
-        float directionalLightning{};
+        // float directionalLightning{};
     };
     std::vector<VertexData> vertices;
 };

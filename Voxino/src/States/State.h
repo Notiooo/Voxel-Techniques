@@ -73,6 +73,12 @@ protected:
      */
     void requestClear() const noexcept;
 
+    /**
+     * \brief Returns the current state identifier
+     * \return Current state identifier
+     */
+    State_ID requestStateOnTop() const noexcept;
+
 private:
     StateStack& mStack;//!< Pointer to the stack containing this state
 };

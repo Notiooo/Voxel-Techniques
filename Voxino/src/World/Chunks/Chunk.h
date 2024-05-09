@@ -7,6 +7,8 @@
 
 namespace Voxino
 {
+
+class ChunkContainerBase;
 class TexturePackArray;
 class ChunkBlocks;
 
@@ -16,8 +18,8 @@ class ChunkBlocks;
 class Chunk
 {
 public:
-    //    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
-    //          ChunkContainer& parent);
+    Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+          ChunkContainerBase& parent);
     Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack);
 
     Chunk(Chunk&& rhs) noexcept;
@@ -33,7 +35,7 @@ public:
      * Returns the size in memory that the mesh occupies
      * @return The size in memory in bytes that the chunk occupies
      */
-    virtual int memorySize() = 0;
+    virtual unsigned long memorySize() = 0;
 
     /**
      * Updates the status/logic of the chunk at equal intervals independent of the frame rate.
@@ -236,7 +238,7 @@ protected:
     Block::Coordinate mChunkPosition;
     const TexturePackArray& mTexturePack;
     std::unique_ptr<SimpleTerrainGenerator> mTerrainGenerator;
-    // ChunkContainer* mParentContainer;
+    ChunkContainerBase* mParentContainer;
 };
 
 }// namespace Voxino

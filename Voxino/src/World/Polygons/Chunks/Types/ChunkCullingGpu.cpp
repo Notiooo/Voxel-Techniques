@@ -7,12 +7,12 @@ namespace Voxino::Polygons
 {
 
 
-// ChunkCullingGpu::ChunkCullingGpu(const Block::Coordinate& blockPosition,
-//                                  const TexturePackArray& texturePack, ChunkContainer& parent)
-//     : ChunkArray(blockPosition, texturePack, parent)
-// {
-//     initializeChunk();
-// } // TODO
+ChunkCullingGpu::ChunkCullingGpu(const Block::Coordinate& blockPosition,
+                                 const TexturePackArray& texturePack, ChunkContainerBase& parent)
+    : ChunkArray(blockPosition, texturePack, parent)
+{
+    initializeChunk();
+}
 
 ChunkCullingGpu::ChunkCullingGpu(const Block::Coordinate& blockPosition,
                                  const TexturePackArray& texturePack)
@@ -23,8 +23,11 @@ ChunkCullingGpu::ChunkCullingGpu(const Block::Coordinate& blockPosition,
 
 void ChunkCullingGpu::initializeChunk()
 {
+    MEASURE_SCOPE;
+    TracyMessageAuto("Initializing ChunkCullingGpu");
     prepareMesh();
     updateMesh();
+    TracyMessageAuto("End of ChunkCullingGpu initialization");
 }
 
 void ChunkCullingGpu::drawTerrain(const Renderer& renderer, const Shader& shader,
@@ -35,28 +38,6 @@ void ChunkCullingGpu::drawTerrain(const Renderer& renderer, const Shader& shader
     if (mTerrainModel)
     {
         mTerrainModel->draw(renderer, shader, camera, Renderer::DrawMode::Points);
-    }
-}
-
-void ChunkCullingGpu::drawLiquids(const Renderer& renderer, const Shader& shader,
-                                  const Camera& camera) const
-{
-    MEASURE_SCOPE_WITH_GPU;
-    mTexturePack.bind(TexturePack::Spritesheet::Blocks);
-    if (mFluidModel)
-    {
-        mFluidModel->draw(renderer, shader, camera, Renderer::DrawMode::Points);
-    }
-}
-
-void ChunkCullingGpu::drawFlorals(const Renderer& renderer, const Shader& shader,
-                                  const Camera& camera) const
-{
-    MEASURE_SCOPE_WITH_GPU;
-    mTexturePack.bind(TexturePack::Spritesheet::Blocks);
-    if (mFloralModel)
-    {
-        mFloralModel->draw(renderer, shader, camera, Renderer::DrawMode::Points);
     }
 }
 
@@ -80,27 +61,8 @@ void ChunkCullingGpu::createBlockMesh(const Block::Coordinate& pos, const Block&
     {
         if (doesBlockFaceHasTransparentNeighbor(static_cast<Block::Face>(i), pos))
         {
-            if (block.id() == BlockId::Water)
-            {
-                if (!doesBlockFaceHasGivenBlockNeighbour(static_cast<Block::Face>(i), pos,
-                                                         BlockId::Water))
-                {
-                    mFluidMeshBuilder.addPoint(static_cast<Block::Face>(i),
-                                               block.blockTextureId(static_cast<Block::Face>(i)),
-                                               pos);
-                }
-            }
-            else if (block.isFloral())
-            {
-                mFloralMeshBuilder.addPoint(static_cast<Block::Face>(i),
-                                            block.blockTextureId(static_cast<Block::Face>(i)), pos);
-            }
-            else
-            {
-                mTerrainMeshBuilder.addPoint(static_cast<Block::Face>(i),
-                                             block.blockTextureId(static_cast<Block::Face>(i)),
-                                             pos);
-            }
+            mTerrainMeshBuilder.addPoint(static_cast<Block::Face>(i),
+                                         block.blockTextureId(static_cast<Block::Face>(i)), pos);
         }
     }
 }

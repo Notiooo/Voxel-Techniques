@@ -12,30 +12,19 @@ Camera::Camera(const WindowToRender& target)
 {
     mViewMatrix = glm::lookAt(mCameraPosition, mCameraPosition + mCameraFront, mCameraUp);
 
-    const auto targetSize = mRenderTarget.getSize();
-    mProjectionMatrix = glm::perspective(
-        glm::radians(0.0f), static_cast<float>(targetSize.x / targetSize.y), 1.f, 100.f);
-}
-
-void Camera::updateShakeValues(const float& deltaTime)
-{
-    constexpr auto tolerance = 2.f;
-    mCurrentShakeValues = lerp(mCurrentShakeValues, mTargetShakeValues, deltaTime * 6.f);
-    auto difference = glm::abs(static_cast<glm::vec3>(mCurrentShakeValues - mTargetShakeValues));
-    if (difference.x <= tolerance && difference.y <= tolerance && difference.z <= tolerance)
-    {
-        mTargetShakeValues = {0, 0, 0};
-    }
+    const auto targetSize = glm::vec2(mRenderTarget.getSize().x, mRenderTarget.getSize().y);
+    mProjectionMatrix = glm::perspective(glm::radians(mFovCamera), targetSize.x / targetSize.y,
+                                         mNearPlane, mFarPlane);
 }
 
 void Camera::update(const float& deltaTime)
 {
-    updateShakeValues(deltaTime);
     handleMouseInputs(deltaTime);
 
-    const auto width = static_cast<float>(mRenderTarget.getSize().x);
-    const auto height = static_cast<float>(mRenderTarget.getSize().y);
-    mProjectionMatrix = glm::perspective(glm::radians(mFovCamera), width / height, 0.1f, 10000.f);
+    // const auto width = static_cast<float>(mRenderTarget.getSize().x);
+    // const auto height = static_cast<float>(mRenderTarget.getSize().y);
+    // mProjectionMatrix =
+    //     glm::perspective(glm::radians(mFovCamera), width / height, mNearPlane, mFarPlane);
     mViewMatrix = glm::lookAt(mCameraPosition, mCameraPosition + mCameraFront, mCameraUp);
 }
 
@@ -56,16 +45,15 @@ void Camera::handleMouseInputs(const float& deltaTime)
 
 void Camera::calculateCameraDirectionVector()
 {
-    const auto rotation = mRotation + mCurrentShakeValues;
     glm::vec3 direction;
-    direction.x = cos(glm::radians(rotation.yaw)) * cos(glm::radians(rotation.pitch));
-    direction.y = sin(glm::radians(rotation.pitch));
-    direction.z = sin(glm::radians(rotation.yaw)) * cos(glm::radians(rotation.pitch));
+    direction.x = cos(glm::radians(mRotation.yaw)) * cos(glm::radians(mRotation.pitch));
+    direction.y = sin(glm::radians(mRotation.pitch));
+    direction.z = sin(glm::radians(mRotation.yaw)) * cos(glm::radians(mRotation.pitch));
     mCameraFront = glm::normalize(direction);
 
-    direction.x = cos(glm::radians(rotation.yaw));
+    direction.x = cos(glm::radians(mRotation.yaw));
     direction.y = 0;
-    direction.z = sin(glm::radians(rotation.yaw));
+    direction.z = sin(glm::radians(mRotation.yaw));
     mCameraFrontWithoutPitch = glm::normalize(direction);
 }
 
@@ -162,6 +150,16 @@ glm::vec3 Camera::cameraPosition() const
     return mCameraPosition;
 }
 
+float Camera::nearPlane() const
+{
+    return mNearPlane;
+}
+
+float Camera::farPlane() const
+{
+    return mFarPlane;
+}
+
 void Camera::updateImGui()
 {
     ImGui::Begin("Camera");
@@ -172,11 +170,6 @@ void Camera::updateImGui()
 Rotation3D Camera::rotation() const
 {
     return mRotation;
-}
-
-void Camera::shake()
-{
-    mTargetShakeValues = {0.f, 4.f, 0.f};
 }
 
 float Camera::fov() const

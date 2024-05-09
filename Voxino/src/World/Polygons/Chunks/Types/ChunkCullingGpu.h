@@ -11,8 +11,8 @@ namespace Voxino::Polygons
 class ChunkCullingGpu : public ChunkArray<ChunkArrayCullingGpuMeshBuilder>
 {
 public:
-    // ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-    //                 ChunkContainer& parent); // TODO
+    ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+                    ChunkContainerBase& parent);// TODO
     ChunkCullingGpu(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.
@@ -25,22 +25,6 @@ public:
      * @param shader Shader with the help of which the object should be drawn
      */
     void drawTerrain(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const override;
-
-    /**
-     * Draws this chunk liquids to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawLiquids(const Renderer& renderer, const Shader& shader,
-                     const Camera& camera) const override;
-
-    /**
-     * Draws this chunk floral to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     */
-    void drawFlorals(const Renderer& renderer, const Shader& shader,
                      const Camera& camera) const override;
 
 private:

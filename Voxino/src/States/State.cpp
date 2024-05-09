@@ -67,4 +67,9 @@ void State::requestClear() const noexcept
     mStack.clear();
 }
 
+State_ID State::requestStateOnTop() const noexcept
+{
+    return mStack.top();
+}
+
 }// namespace Voxino

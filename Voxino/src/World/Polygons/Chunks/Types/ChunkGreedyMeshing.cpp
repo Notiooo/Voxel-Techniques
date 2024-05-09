@@ -8,6 +8,14 @@ namespace Voxino::Polygons
 {
 
 ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
+                                       const TexturePackArray& texturePack,
+                                       ChunkContainerBase& parent)
+    : ChunkArray(blockPosition, texturePack, parent)
+{
+    initializeChunk();
+}
+
+ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
                                        const TexturePackArray& texturePack)
     : ChunkArray(blockPosition, texturePack)
 {
@@ -16,8 +24,11 @@ ChunkGreedyMeshing::ChunkGreedyMeshing(const Block::Coordinate& blockPosition,
 
 void ChunkGreedyMeshing::initializeChunk()
 {
+    MEASURE_SCOPE;
+    TracyMessageAuto("Initializing ChunkGreedyMeshing");
     prepareMesh();
     updateMesh();
+    TracyMessageAuto("End of ChunkGreedyMeshing initialization");
 }
 
 void ChunkGreedyMeshing::prepareMesh()
@@ -55,7 +66,6 @@ void ChunkGreedyMeshing::createBlockMesh(MeshRegion&& meshRegion)
 {
     mTerrainMeshBuilder.addQuad(meshRegion);
 }
-
 
 MeshRegion ChunkGreedyMeshing::tryMergeBiggestRegion(const Block::Coordinate& pos,
                                                      ProcessedBlocks& processedFaces,

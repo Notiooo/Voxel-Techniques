@@ -12,7 +12,7 @@ class ChunkBlocks;
 class SimpleTerrainGenerator;
 class Renderer;
 class Shader;
-class ChunkContainer;
+class ChunkContainerBase;
 
 namespace Raycast
 {
@@ -48,6 +48,10 @@ public:
      */
     void updateCounters();
 
+    auto allocatedBytes() const
+    {
+        return mAllocatedBytes;
+    }
     /**
      * \brief Fills the 3D texture with data.
      * @tparam T Type which is made of 4 GLubyte components.
@@ -57,6 +61,7 @@ public:
     void fill(const std::vector<T>& data)
     {
         MEASURE_SCOPE;
+        mAllocatedBytes = data.size() * sizeof(T);
         mIsDataFilled = true;
         if ((data.size() * sizeof(T)) != mWidth * mHeight * mDepth * 4) [[unlikely]]
         {
@@ -107,7 +112,7 @@ public:
      * \brief Returns the number of ray iterations.
      * \return The number of ray iterations.
      */
-    int lastNumberOfRayIterations();
+    int lastNumberOfRayIterations() const;
 
 private:
     /**
@@ -125,6 +130,7 @@ private:
     mutable bool mWasDataFiledLogPrinted{false};
     int mLastNumberOfRayIterations{};
     AtomicCounter mAtomicCounter;
+    unsigned long long mAllocatedBytes{0};
 };
 
 }// namespace Raycast

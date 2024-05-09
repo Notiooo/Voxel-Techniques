@@ -20,7 +20,7 @@ BufferLayout ChunkArrayCullingGpuMesh::bufferLayout()
     bl.push<float>(3);
     bl.push<float>(1);
     bl.push<float>(1);
-    bl.push<float>(1);
+    // bl.push<float>(1); // directionalLightning
     return bl;
 }
 
@@ -34,7 +34,7 @@ int ChunkArrayCullingGpuMesh::numberOfVertices()
     return vertices.size();
 }
 
-int ChunkArrayCullingGpuMesh::memorySize()
+unsigned long ChunkArrayCullingGpuMesh::memorySize()
 {
     return sizeof(VertexData) * vertices.size();
 }

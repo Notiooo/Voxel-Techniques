@@ -1,6 +1,6 @@
 #pragma once
 #include <Renderer/Graphics/2D/Sprite2D.h>
-#include <World/Camera.h>
+#include <World/AutomaticCamera.h>
 
 namespace Voxino
 {
@@ -29,9 +29,9 @@ public:
      */
     explicit Player(WindowToRender& window);
 
-    static constexpr auto PLAYER_MAX_FLYING_SPEED = 25.f;
+    static constexpr auto PLAYER_MAX_FLYING_SPEED = 2500000.f;
     static constexpr auto PLAYER_FLYING_DECELERATE_RATIO = 10.f;
-    static constexpr auto PLAYER_ACCELERATE_SPEED = 10.5f;
+    static constexpr auto PLAYER_ACCELERATE_SPEED = 100.5f;
 
     /**
      * \brief Draws all player components to a given target
@@ -72,13 +72,18 @@ public:
      * \brief Returns the player's camera
      * \return Player's camera
      */
-    Camera& camera();
+    AutomaticCamera& camera();
 
     /**
      * \brief Returns the player's camera
      * \return Player's camera
      */
-    [[nodiscard]] const Camera& camera() const;
+    [[nodiscard]] const AutomaticCamera& camera() const;
+
+    /**
+     * \brief Updates the status/logic of the ImGui Debug Menu
+     */
+    void updateImGui();
 
 private:
     /**
@@ -101,7 +106,7 @@ private:
 
 private:
     WindowToRender& mGameWindow;
-    Camera mCamera;
+    AutomaticCamera mCamera;
     glm::vec3 mPosition{0, 0, 0};
     glm::vec3 mVelocity{0, 0, 0};
     Texture mCrosshairTexture;

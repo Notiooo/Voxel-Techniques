@@ -48,6 +48,7 @@ void Skybox::unbind() const
 
 void Skybox::draw(const Camera& camera) const
 {
+    MEASURE_SCOPE_WITH_GPU;
     glDepthMask(GL_FALSE);
     constexpr auto numberOfVertices = 36;
     mShader.bind();

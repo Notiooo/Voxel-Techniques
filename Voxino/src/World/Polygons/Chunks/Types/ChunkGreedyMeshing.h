@@ -14,9 +14,8 @@ namespace Voxino::Polygons
 class ChunkGreedyMeshing : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
-    // ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray&
-    // texturePack,
-    //                    ChunkContainer& parent); // TODO
+    ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+                       ChunkContainerBase& parent);// TODO
     ChunkGreedyMeshing(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
 
     /**

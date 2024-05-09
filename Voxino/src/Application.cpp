@@ -1,25 +1,25 @@
 #include "Application.h"
-
-#include "States/CustomStates/ExitApplicationState.h"
-#include "States/CustomStates/GameState.h"
-#include "States/CustomStates/LogoState.h"
-#include "States/CustomStates/Polygons/PolygonSingleChunkState.h"
-#include "States/CustomStates/Raycast/RaycastSingleChunkColoredVoxels.h"
-#include "States/CustomStates/Raycast/RaycastSingleChunkTexturedVoxels.h"
-#include "Utils/Mouse.h"
 #include "pch.h"
 
-#include <States/CustomStates/Raycast/RaycastSingleChunkTexturedBrickmapGpu.h>
-#include <World/Polygons/Chunks/Types/ChunkBinaryGreedyMeshing.h>
-#include <World/Polygons/Chunks/Types/ChunkCullingGpu.h>
-#include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
-#include <World/Polygons/Chunks/Types/ChunkNaive.h>
+#include "States/CustomStates/ExitApplicationState.h"
+#include "States/CustomStates/Polygons/PolygonMultiChunkState.h"
+#include "States/CustomStates/Polygons/PolygonSingleChunkState.h"
+#include "States/CustomStates/Raycast/Multi/RaycastMultiChunk.h"
+#include "States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedBrickmapGpu.h"
+#include "States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedOctreeGpu.h"
+#include "States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedVoxels.h"
+#include "States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedVoxelsFixedStep.h"
+#include "Utils/FpsCounter.h"
+#include "Utils/Mouse.h"
+#include "World/Polygons/Chunks/Types/ChunkBinaryGreedyMeshing.h"
+#include "World/Polygons/Chunks/Types/ChunkCullingGpu.h"
+#include "World/Polygons/Chunks/Types/ChunkGreedyMeshing.h"
+#include "World/Polygons/Chunks/Types/ChunkNaive.h"
+
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Voxino
 {
-
-constexpr int FRAMES_PER_SECOND = 120;
 
 /**
  * @brief I kindly ask that the following variable not be changed, as the
@@ -28,12 +28,12 @@ constexpr int FRAMES_PER_SECOND = 120;
  *
  * @warning If you do not comply, the user will move differently and jump lower or higher.
  */
-constexpr int MINIMAL_FIXED_UPDATES_PER_FRAME = 120;
+constexpr int MINIMAL_FIXED_UPDATES_PER_FRAME = 60;
 
 const sf::Time Application::TIME_PER_FIXED_UPDATE_CALLS =
     sf::seconds(1.f / MINIMAL_FIXED_UPDATES_PER_FRAME);
-const int Application::SCREEN_WIDTH = 1280;
-const int Application::SCREEN_HEIGHT = 720;
+const int Application::SCREEN_WIDTH = 1920;
+const int Application::SCREEN_HEIGHT = 1080;
 
 
 void Application::configureImGuiSinks()
@@ -73,9 +73,7 @@ void Application::setupGlew()
 
 void Application::setupFlowStates()
 {
-    mAppStack.saveState<LogoState>(State_ID::LogoState, *mGameWindow);
     mAppStack.saveState<ExitApplicationState>(State_ID::ExitApplicationState);
-    mAppStack.saveState<GameState>(State_ID::GameState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCulling>>(
         State_ID::PolygonSingleChunkCullingState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkNaive>>(
@@ -86,13 +84,40 @@ void Application::setupFlowStates()
         State_ID::PolygonSingleChunkBinaryGreedyState, *mGameWindow);
     mAppStack.saveState<PolygonSingleChunkState<Polygons::ChunkCullingGpu>>(
         State_ID::PolygonSingleChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
+    mAppStack.saveState<PolygonMultiChunkState<Polygons::ChunkCulling>>(
+        State_ID::PolygonMultiChunkCullingState, *mGameWindow);
+    mAppStack.saveState<PolygonMultiChunkState<Polygons::ChunkNaive>>(
+        State_ID::PolygonMultiChunkNaiveState, *mGameWindow);
+    mAppStack.saveState<PolygonMultiChunkState<Polygons::ChunkGreedyMeshing>>(
+        State_ID::PolygonMultiChunkGreedyState, *mGameWindow);
+    mAppStack.saveState<PolygonMultiChunkState<Polygons::ChunkBinaryGreedyMeshing>>(
+        State_ID::PolygonMultiChunkBinaryGreedyState, *mGameWindow);
+    mAppStack.saveState<PolygonMultiChunkState<Polygons::ChunkCullingGpu>>(
+        State_ID::PolygonMultiChunkCullingGpuState, *mGameWindow, "ChunkCullingGpu");
 
-    mAppStack.saveState<RaycastSingleChunkColoredVoxels>(State_ID::RaycastSingleChunkColoredVoxels,
-                                                         *mGameWindow);
     mAppStack.saveState<RaycastSingleChunkTexturedVoxels>(
         State_ID::RaycastSingleChunkTexturedVoxels, *mGameWindow);
+    mAppStack.saveState<RaycastSingleChunkTexturedVoxelsFixedStep>(
+        State_ID::RaycastSingleChunkTexturedVoxelsFixedStep, *mGameWindow);
     mAppStack.saveState<RaycastSingleChunkTexturedBrickmapGpu>(
         State_ID::RaycastSingleChunkTexturedBrickmapGpu, *mGameWindow);
+    mAppStack.saveState<RaycastSingleChunkTexturedOctreeGpu>(
+        State_ID::RaycastSingleChunkTexturedOctreeGpu, *mGameWindow);
+
+    mAppStack.saveState<RaycastMultiChunk<Raycast::RaycastChunk>>(
+        State_ID::RaycastMultiChunkTexturedVoxels, *mGameWindow,
+        SHADER_FILE_NAME(ChunkTexturedVoxels));
+    mAppStack.saveState<RaycastMultiChunk<Raycast::RaycastChunk>>(
+        State_ID::RaycastMultiChunkTexturedVoxelsFixedStep, *mGameWindow,
+        SHADER_FILE_NAME(ChunkTexturedVoxelsFixedStep));
+
+    mAppStack.saveState<RaycastMultiChunk<Raycast::RaycastChunkBrickmapGpu>>(
+        State_ID::RaycastMultiChunkTexturedBrickmapGpu, *mGameWindow,
+        SHADER_FILE_NAME(ChunkTexturedVoxelsBrickmapGpu));
+
+    mAppStack.saveState<RaycastMultiChunk<Raycast::RaycastChunkOctreeGpu>>(
+        State_ID::RaycastMultiChunkTexturedOctreeGpu, *mGameWindow,
+        SHADER_FILE_NAME(ChunkTexturedVoxelsOctreeGpu));
 }
 
 Application::Application()
@@ -109,7 +134,6 @@ Application::Application()
         std::make_unique<WindowToRender>(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Voxino",
                                          sf::Style::Titlebar | sf::Style::Close, settings);
 
-    mGameWindow->setFramerateLimit(FRAMES_PER_SECOND);
     mGameWindow->setActive(true);
     loadResources();
     configureImGui();
@@ -120,11 +144,30 @@ Application::Application()
     TracyGpuContext;
     initializeTracyScreenCapture();
     setupFlowStates();
-    mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
+    // mAppStack.push(State_ID::PolygonSingleChunkNaiveState);
+    // mAppStack.push(State_ID::PolygonSingleChunkCullingState);
+    // mAppStack.push(State_ID::PolygonSingleChunkCullingGpuState);
+    // mAppStack.push(State_ID::PolygonSingleChunkGreedyState);
+    // mAppStack.push(State_ID::PolygonSingleChunkBinaryGreedyState);
+
+    // mAppStack.push(State_ID::PolygonMultiChunkNaiveState);
+    // mAppStack.push(State_ID::PolygonMultiChunkCullingState);
+    // mAppStack.push(State_ID::PolygonMultiChunkCullingGpuState);
+    // mAppStack.push(State_ID::PolygonMultiChunkGreedyState);
+    // mAppStack.push(State_ID::PolygonMultiChunkBinaryGreedyState);
+    // mAppStack.push(State_ID::RaycastSingleChunkTexturedVoxels);
+    // mAppStack.push(State_ID::RaycastSingleChunkTexturedVoxelsFixedStep);
+    // mAppStack.push(State_ID::RaycastSingleChunkTexturedBrickmapGpu);
+    mAppStack.push(State_ID::RaycastSingleChunkTexturedOctreeGpu);
+    // mAppStack.push(State_ID::RaycastMultiChunkTexturedVoxels);
+    // mAppStack.push(State_ID::RaycastMultiChunkTexturedVoxelsFixedStep);
+    // mAppStack.push(State_ID::RaycastMultiChunkTexturedBrickmapGpu);
+    // mAppStack.push(State_ID::RaycastMultiChunkTexturedOctreeGpu);
 }
 
 void Application::initializeTracyScreenCapture()
 {
+#ifdef TRACY_COLLECT_THUMBNAILS
     glGenTextures(4, m_fiTexture);
     glGenFramebuffers(4, m_fiFramebuffer);
     glGenBuffers(4, m_fiPbo);
@@ -140,6 +183,7 @@ void Application::initializeTracyScreenCapture()
         glBindBuffer(GL_PIXEL_PACK_BUFFER, m_fiPbo[i]);
         glBufferData(GL_PIXEL_PACK_BUFFER, 320 * 180 * 4, nullptr, GL_STREAM_READ);
     }
+#endif
 }
 
 void Application::toggleImGuiDisplay()
@@ -168,7 +212,10 @@ void Application::run()
                  mGameWindow->getSize().y);
 
     initializeMinitraceProfiler();
+    FPSCounter::instance().disable();
     performApplicationLoop();
+    FPSCounter::instance().printOverallAverageFPS();
+    FPSCounter::instance().printFPSStandardDeviation();
 
     mGameWindow->close();
 #ifndef DISABLE_IMGUI
@@ -273,12 +320,21 @@ void Application::updateImGuiSelectScene()
 {
     ImGui::Begin("Scene Selector", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-    static auto scene = [this](std::string name, State_ID state_id)
+    auto currentStateId = mAppStack.top();
+    static auto scene = [this, &currentStateId](std::string name, State_ID state_id)
     {
+        if (state_id == currentStateId)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+        }
         if (ImGui::Button(name.c_str()))
         {
             mAppStack.clear();
             mAppStack.push(state_id);
+        }
+        if (state_id == currentStateId)
+        {
+            ImGui::PopStyleColor();
         }
     };
 
@@ -313,8 +369,6 @@ void Application::updateImGuiSelectScene()
     };
 
     splitLineText("Game related");
-    scene("Logo", State_ID::LogoState);
-    scene("Game State", State_ID::GameState);
     scene("Exit application", State_ID::ExitApplicationState);
 
     splitLineText("Polygons");
@@ -323,12 +377,52 @@ void Application::updateImGuiSelectScene()
     scene("Single Chunk Greedy", State_ID::PolygonSingleChunkGreedyState);
     scene("Single Chunk Binary Greedy", State_ID::PolygonSingleChunkBinaryGreedyState);
     scene("Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
+    scene("Multi Chunk Culling", State_ID::PolygonMultiChunkCullingState);
+    scene("Multi Chunk Naive", State_ID::PolygonMultiChunkNaiveState);
+    scene("Multi Chunk Greedy", State_ID::PolygonMultiChunkGreedyState);
+    scene("Multi Chunk Binary Greedy", State_ID::PolygonMultiChunkBinaryGreedyState);
+    scene("Multi Chunk Culling GPU", State_ID::PolygonMultiChunkCullingGpuState);
 
     splitLineText("Raycast");
-    scene("Single Chunk Colored", State_ID::RaycastSingleChunkColoredVoxels);
     scene("Single Chunk Textured", State_ID::RaycastSingleChunkTexturedVoxels);
+    scene("Single Chunk Textured Fixed Step", State_ID::RaycastSingleChunkTexturedVoxelsFixedStep);
     scene("Single Chunk Textured Brickmap Gpu", State_ID::RaycastSingleChunkTexturedBrickmapGpu);
+    scene("Single Chunk Textured Octree Gpu", State_ID::RaycastSingleChunkTexturedOctreeGpu);
+    scene("Multi Chunk Textured", State_ID::RaycastMultiChunkTexturedVoxels);
+    scene("Multi Chunk Textured Fixed Step", State_ID::RaycastMultiChunkTexturedVoxelsFixedStep);
+    scene("Multi Chunk Textured Brickmap Gpu", State_ID::RaycastMultiChunkTexturedBrickmapGpu);
+    scene("Multi Chunk Textured Octree Gpu", State_ID::RaycastMultiChunkTexturedOctreeGpu);
     ImGui::End();
+}
+
+void Application::calculateAndSendFPSToTracy(double deltaTime)
+{
+#ifdef PLOT_AVERAGE_FPS
+    static bool isFirstFrame = true;
+    if (not isFirstFrame) [[likely]]
+    {
+        static std::deque<double> frameTimes;
+        static const size_t maxSamples = 100;
+        static double totalTime = 0.0;
+
+        frameTimes.push_back(deltaTime);
+        totalTime += deltaTime;
+
+        if (frameTimes.size() > maxSamples)
+        {
+            totalTime -= frameTimes.front();
+            frameTimes.pop_front();
+        }
+
+        // Calculate the average FPS
+        auto averageFPS = static_cast<int64_t>(frameTimes.size() / totalTime);
+        TracyPlot("Average FPS", averageFPS);
+    }
+    else
+    {
+        isFirstFrame = false;
+    }
+#endif
 }
 
 void Application::displayFPS(float deltaTime)
@@ -406,6 +500,8 @@ void Application::fixedUpdate(const sf::Time& deltaTime)
 void Application::update(const sf::Time& deltaTime)
 {
     MEASURE_SCOPE;
+    calculateAndSendFPSToTracy(deltaTime.asSeconds());
+    FPSCounter::instance().addFrame(deltaTime.asSeconds());
     const auto deltaTimeInSeconds = deltaTime.asSeconds();
     Mouse::update(deltaTimeInSeconds, *mGameWindow);
 
@@ -421,6 +517,7 @@ void Application::update(const sf::Time& deltaTime)
 
 void Application::performScreenCaptureTracyProfiler()
 {
+#ifdef TRACY_COLLECT_THUMBNAILS
     while (!m_fiQueue.empty())
     {
         const auto fiIdx = m_fiQueue.front();
@@ -448,6 +545,7 @@ void Application::performScreenCaptureTracyProfiler()
     m_fiFence[m_fiIdx] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     m_fiQueue.emplace_back(m_fiIdx);
     m_fiIdx = (m_fiIdx + 1) % 4;
+#endif
 }
 
 void Application::render()
@@ -464,8 +562,8 @@ void Application::render()
     performScreenCaptureTracyProfiler();
     // display to the window
     mGameWindow->display();
-    FrameMark;
-    TracyGpuCollect;
+    FRAME_MARKER;
+    GPU_COLLECT;
 }
 
 

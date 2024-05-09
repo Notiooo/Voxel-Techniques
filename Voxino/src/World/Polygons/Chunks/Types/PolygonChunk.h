@@ -8,7 +8,6 @@ class ChunkBlocks;
 class SimpleTerrainGenerator;
 class Renderer;
 class Shader;
-class ChunkContainer;
 
 namespace Polygons
 {
@@ -54,28 +53,8 @@ public:
     virtual void drawTerrain(const Renderer& renderer, const Shader& shader,
                              const Camera& camera) const;
 
-    /**
-     * Draws this chunk liquids to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     * @param camera Camera through which the game world is viewed
-     */
-    virtual void drawLiquids(const Renderer& renderer, const Shader& shader,
-                             const Camera& camera) const;
-
-    /**
-     * Draws this chunk floral to the game screen
-     * @param renderer Renderer drawing the 3D game world onto the 2D screen
-     * @param shader Shader with the help of which the object should be drawn
-     * @param camera Camera through which the game world is viewed
-     */
-    virtual void drawFlorals(const Renderer& renderer, const Shader& shader,
-                             const Camera& camera) const;
-
 protected:
     std::unique_ptr<Model3D> mTerrainModel;
-    std::unique_ptr<Model3D> mFluidModel;
-    std::unique_ptr<Model3D> mFloralModel;
 };
 
 }// namespace Polygons

@@ -52,6 +52,18 @@ public:
     glm::vec3 cameraPosition() const;
 
     /**
+     * Returns the near plane of the camera.
+     * @return Near plane of the camera.
+     */
+    float nearPlane() const;
+
+    /**
+     * Returns the far plane of the camera.
+     * @return Far plane of the camera.
+     */
+    float farPlane() const;
+
+    /**
      * @brief Sets the camera position
      * @param newPosition The new position on which the camera should be placed.
      */
@@ -108,17 +120,12 @@ public:
     Rotation3D rotation() const;
 
     /**
-     * \brief Shakes the camera
-     */
-    void shake();
-
-    /**
      * @brief Retrieves the current field of view (FOV) of the camera.
      * @return The current field of view of the camera, in degrees.
      */
     float fov() const;
 
-private:
+protected:
     /**
      * Handle keyboard behavior such as moving the camera inside the application
      * @param deltaTime the time that has passed since the application was last updated.
@@ -166,22 +173,15 @@ private:
      */
     void calculateCameraDirectionVector();
 
-    /**
-     * \brief Updates the values responsible for shaking the camera
-     * \param deltaTime the time that has passed since the application was last updated.
-     */
-    void updateShakeValues(const float& deltaTime);
-
-private:
+protected:
     const WindowToRender& mRenderTarget;
     glm::vec3 mCameraPosition = glm::vec3(0, 0, 0);
     glm::vec3 mCameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 mCameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 mCameraFrontWithoutPitch = glm::vec3(0.0f, 0.0f, -1.0f);
     Rotation3D mRotation{-90, 0, 0.f};
-
-    Rotation3D mTargetShakeValues{0, 0, 0};
-    Rotation3D mCurrentShakeValues{0, 0, 0};
+    float mNearPlane = 0.1f;
+    float mFarPlane = 10000.f;
 
     float mCameraSpeed = 5.f;
     float mCameraSensitivity = 4.f;

@@ -172,6 +172,8 @@ private:
      */
     void setupFlowStates();
 
+    void calculateAndSendFPSToTracy(double deltaTime);
+
     /**
      * @brief The time it takes for one game frame to be generated.
      */
@@ -230,12 +232,14 @@ private:
     bool mIsImGuiDisplayDisabled{false};
 
     // Tracy Profiler Screen capture variables
+#ifdef TRACY_COLLECT_THUMBNAILS
     GLuint m_fiTexture[4];
     GLuint m_fiFramebuffer[4];
     GLuint m_fiPbo[4];
     GLsync m_fiFence[4];
     int m_fiIdx = 0;
     std::vector<int> m_fiQueue;
+#endif
 };
 
 }// namespace Voxino

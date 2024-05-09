@@ -20,7 +20,7 @@ BufferLayout ChunkArrayMesh::bufferLayout()
     bl.push<float>(3);
     bl.push<float>(2);
     bl.push<float>(1);
-    bl.push<float>(1);
+    // bl.push<float>(1); // directionalLightning
     return bl;
 }
 
@@ -34,7 +34,7 @@ int ChunkArrayMesh::numberOfVertices()
     return vertices.size();
 }
 
-int ChunkArrayMesh::memorySize()
+unsigned long ChunkArrayMesh::memorySize()
 {
     return sizeof(VertexData) * vertices.size();
 }

@@ -11,8 +11,8 @@ namespace Voxino::Polygons
 class ChunkCulling : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
-    // ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-    //              ChunkContainer& parent); // TODO
+    ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+                 ChunkContainerBase& parent);// TODO
     ChunkCulling(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
     /**
      * \brief Prepares/generates the mesh chunk, but does not replace it yet.

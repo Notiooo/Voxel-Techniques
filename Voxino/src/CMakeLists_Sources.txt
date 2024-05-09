@@ -22,20 +22,27 @@ set(PROJECT_SOURCES
         Resources/TexturePackArray.cpp
         States/State.cpp
         States/StateStack.cpp
-        States/CustomStates/LogoState.cpp
         States/CustomStates/ExitApplicationState.cpp
-        States/CustomStates/GameState.cpp
         States/CustomStates/Polygons/PolygonSingleChunkState.cpp
-        States/CustomStates/Raycast/RaycastSingleChunkColoredVoxels.cpp
-        States/CustomStates/Raycast/RaycastSingleChunkTexturedVoxels.cpp
-        States/CustomStates/Raycast/RaycastSingleChunkTexturedBrickmapGpu.cpp
+        States/CustomStates/Polygons/PolygonMultiChunkState.cpp
+        States/CustomStates/Raycast/Single/RaycastSingleChunkBase.cpp
+        States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedVoxels.cpp
+        States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedVoxelsFixedStep.cpp
+        States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedBrickmapGpu.cpp
+        States/CustomStates/Raycast/Single/RaycastSingleChunkTexturedOctreeGpu.cpp
+        States/CustomStates/Raycast/Multi/RaycastMultiChunkTexturedVoxels.cpp
+        States/CustomStates/Raycast/Multi/RaycastMultiChunk.cpp
         Player/Player.cpp
+        World/AutomaticCamera.cpp
         World/Camera.cpp
         World/Skybox.cpp
         World/InfiniteGridFloor.cpp
         World/Chunks/Chunk.cpp
         World/Chunks/ChunkBlocks.cpp
         World/Chunks/ChunkContainer.cpp
+        World/Chunks/ChunkContainerBase.cpp
+        World/Chunks/ChunkContainerPolygons.cpp
+        World/Chunks/ChunkContainerRaycast.cpp
         World/Chunks/SimpleTerrainGenerator.cpp
         World/Block/Block.cpp
         World/Block/BlockMap.cpp
@@ -60,10 +67,15 @@ set(PROJECT_SOURCES
         World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.cpp
         World/Polygons/Meshes/Builders/MeshBuilder.cpp
         World/Raycast/Chunks/Brickmap.cpp
+        World/Raycast/Chunks/Brickgrid.cpp
         World/Raycast/Chunks/BrickgridGpu.cpp
+        World/Raycast/Chunks/OctreeGpu.cpp
         World/Raycast/Chunks/VoxelsGpu.cpp
         World/Raycast/Chunks/Types/RaycastChunk.cpp
+        World/Raycast/Chunks/Types/RaycastChunkBrickmap.cpp
         World/Raycast/Chunks/Types/RaycastChunkBrickmapGpu.cpp
+        World/Raycast/Chunks/Types/RaycastChunkOctreeGpu.cpp
+        Utils/profiler_memory_tracking.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp

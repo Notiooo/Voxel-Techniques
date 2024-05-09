@@ -23,18 +23,18 @@ BrickgridGpu::BrickgridGpu()
     GLCall(glTexBuffer(GL_TEXTURE_BUFFER, GL_R8UI, mOccupancyBuffer));
 
     GLCall(glGenTextures(1, &mTextureArray));
-    glBindTexture(GL_TEXTURE_3D, mTextureArray);
+    GLCall(glBindTexture(GL_TEXTURE_3D, mTextureArray));
 
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, Brickmap::BRICK_SIZE * GRID_SIZE,
-                 Brickmap::BRICK_SIZE * GRID_SIZE, Brickmap::BRICK_SIZE * GRID_SIZE, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, NULL);
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_SPARSE_ARB, GL_FALSE));
+    GLCall(glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, Brickmap::BRICK_SIZE * GRID_SIZE,
+                        Brickmap::BRICK_SIZE * GRID_SIZE, Brickmap::BRICK_SIZE * GRID_SIZE, 0,
+                        GL_RGBA, GL_UNSIGNED_BYTE, NULL));
 
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_SPARSE_ARB, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 }
 
 BrickgridGpu::~BrickgridGpu()
@@ -43,21 +43,22 @@ BrickgridGpu::~BrickgridGpu()
     glDeleteTextures(1, &mOccupancyTex);
 }
 
-int BrickgridGpu::lastNumberOfRayIterations()
+int BrickgridGpu::lastNumberOfRayIterations() const
 {
     return mLastNumberOfRayIterations;
 }
 
 void BrickgridGpu::updateCounters()
 {
-
+    mAtomicCounter.bind();
     mLastNumberOfRayIterations = mAtomicCounter.read();
     mAtomicCounter.reset();
+    mAtomicCounter.unbind();
 }
 
 size_t BrickgridGpu::index(size_t x, size_t y, size_t z)
 {
-    return x * GRID_SIZE * GRID_SIZE + y * GRID_SIZE + z;
+    return z * GRID_SIZE * GRID_SIZE + y * GRID_SIZE + x;
 }
 
 std::bitset<Voxino::BrickgridGpu::GRID_VOLUME> BrickgridGpu::occupancyBitset()
@@ -97,6 +98,7 @@ void BrickgridGpu::update()
 {
     if (mNeedsBufferUpdate)
     {
+        mAllocatedBytes = sizeof(mOccupancyBitset);
         std::vector<unsigned char> buffer(GRID_VOLUME, 0);
         for (size_t i = 0; i < GRID_VOLUME; ++i)
         {
@@ -115,25 +117,32 @@ void BrickgridGpu::update()
             if (mGrid[i])
             {
                 // Calculate the 3D grid position based on the linear index
-                int z = i / (GRID_SIZE * GRID_SIZE);
-                int y = (i / GRID_SIZE) % GRID_SIZE;
+                // int z = i / (GRID_SIZE * GRID_SIZE);
+                // int y = (i / GRID_SIZE) % GRID_SIZE;
+                // int x = i % GRID_SIZE;
+
                 int x = i % GRID_SIZE;
+                int y = (i / GRID_SIZE) % GRID_SIZE;
+                int z = i / (GRID_SIZE * GRID_SIZE);
 
                 // Calculate the offsets for the texture
                 int xOffset = x * Brickmap::BRICK_SIZE;
                 int yOffset = y * Brickmap::BRICK_SIZE;
                 int zOffset = z * Brickmap::BRICK_SIZE;
 
-                // Check if memory is committed for this brick, if using sparse textures
-                glTexPageCommitmentARB(GL_TEXTURE_3D, 0, xOffset, yOffset, zOffset,
-                                       Brickmap::BRICK_SIZE, Brickmap::BRICK_SIZE,
-                                       Brickmap::BRICK_SIZE, GL_TRUE);
 
                 // Now upload the texture data for this specific brick
                 GLCall(glTexSubImage3D(GL_TEXTURE_3D, 0, xOffset, yOffset, zOffset,
                                        Brickmap::BRICK_SIZE, Brickmap::BRICK_SIZE,
                                        Brickmap::BRICK_SIZE, GL_RGBA, GL_UNSIGNED_BYTE,
                                        mGrid[i]->textureIds.data()));
+
+                mAllocatedBytes += mGrid[i]->textureIds.size() * sizeof(mGrid[i]->textureIds[0]);
+
+                // // Check if memory is committed for this brick, if using sparse textures
+                // GLCall(glTexPageCommitmentARB(GL_TEXTURE_3D, 0, xOffset, yOffset, zOffset,
+                //                               Brickmap::BRICK_SIZE, Brickmap::BRICK_SIZE,
+                //                               Brickmap::BRICK_SIZE, GL_TRUE));
             }
         }
     }
@@ -163,6 +172,7 @@ void BrickgridGpu::draw(const Renderer& renderer, const Shader& shader, const Ca
                                                 ChunkBlocks::BLOCKS_PER_DIMENSION,
                                                 ChunkBlocks::BLOCKS_PER_DIMENSION));
     renderer.drawRaycast(shader, camera);
+    mAtomicCounter.unbind();
 }
 
 }// namespace Voxino

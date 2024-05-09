@@ -30,54 +30,54 @@ TEST(StateStackTest, StateStackShouldBeEmptyOnDefault)
 TEST(StateStackTest, StateStackShouldBeEmptyAfterOnlySaveState)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_TRUE(s.empty());
 }
 
 TEST(StateStackTest, StateShouldNotBePushedBeforeUpdateOrHandleEvent)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     EXPECT_TRUE(s.empty());
 }
 
 TEST(StateStackTest, StateShouldBePushedAfterUpdate)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.update(0);
     EXPECT_FALSE(s.empty());
-    EXPECT_EQ(s.top(), State_ID::GameState);
+    EXPECT_EQ(s.top(), State_ID::PolygonSingleChunkCullingState);
 }
 
 TEST(StateStackTest, StateShouldBePushedAfterFixedUpdate)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.fixedUpdate(0);
     EXPECT_FALSE(s.empty());
-    EXPECT_EQ(s.top(), State_ID::GameState);
+    EXPECT_EQ(s.top(), State_ID::PolygonSingleChunkCullingState);
 }
 
 TEST(StateStackTest, StateShouldBePushedAfterHandleEvent)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.handleEvent(sf::Event());
     EXPECT_FALSE(s.empty());
-    EXPECT_EQ(s.top(), State_ID::GameState);
+    EXPECT_EQ(s.top(), State_ID::PolygonSingleChunkCullingState);
 }
 
 TEST(StateStackTest, CorrectStateIdShouldBeOnTopAfterPushTwice)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
     s.saveState<State>(State_ID::PauseState);
-    s.push(State_ID::GameState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.push(State_ID::PauseState);
     s.update(0);
     EXPECT_FALSE(s.empty());
@@ -87,8 +87,8 @@ TEST(StateStackTest, CorrectStateIdShouldBeOnTopAfterPushTwice)
 TEST(StateStackTest, StateStackCorrectPop)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.update(0);
     EXPECT_FALSE(s.empty());
     s.pop();
@@ -100,9 +100,9 @@ TEST(StateStackTest, StateStackCorrectPop)
 TEST(StateStackTest, StateStackCorrectClear)
 {
     StateStack s;
-    s.saveState<State>(State_ID::GameState);
-    s.push(State_ID::GameState);
-    s.push(State_ID::GameState);
+    s.saveState<State>(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
+    s.push(State_ID::PolygonSingleChunkCullingState);
     s.update(0);
     EXPECT_FALSE(s.empty());
     s.clear();
@@ -114,7 +114,7 @@ TEST(StateStackTest, StateStackCorrectClear)
 TEST(StateStackTest, StateStackCorrectUpdate)
 {
     UglyTestableStateStack s;
-    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock, update(15));
     s.update(15);
 }
@@ -122,8 +122,8 @@ TEST(StateStackTest, StateStackCorrectUpdate)
 TEST(StateStackTest, StateStackUpdateBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock2, update(15)).WillOnce(testing::Return(false));
     EXPECT_CALL(mock1, update(15)).Times(0);
     s.update(15);
@@ -132,8 +132,8 @@ TEST(StateStackTest, StateStackUpdateBlockingStateBelow)
 TEST(StateStackTest, StateStackUpdateNotBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock2, update(15)).WillOnce(testing::Return(true));
     EXPECT_CALL(mock1, update(15));
     s.update(15);
@@ -142,7 +142,7 @@ TEST(StateStackTest, StateStackUpdateNotBlockingStateBelow)
 TEST(StateStackTest, StateStackCorrectFixedUpdate)
 {
     UglyTestableStateStack s;
-    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock, fixedUpdate(15));
     s.fixedUpdate(15);
 }
@@ -150,8 +150,8 @@ TEST(StateStackTest, StateStackCorrectFixedUpdate)
 TEST(StateStackTest, StateStackFixedUpdateBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock2, fixedUpdate(15)).WillOnce(testing::Return(false));
     EXPECT_CALL(mock1, fixedUpdate(15)).Times(0);
     s.fixedUpdate(15);
@@ -160,8 +160,8 @@ TEST(StateStackTest, StateStackFixedUpdateBlockingStateBelow)
 TEST(StateStackTest, StateStackFixedUpdateNotBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     EXPECT_CALL(mock2, fixedUpdate(15)).WillOnce(testing::Return(true));
     EXPECT_CALL(mock1, fixedUpdate(15));
     s.fixedUpdate(15);
@@ -170,7 +170,7 @@ TEST(StateStackTest, StateStackFixedUpdateNotBlockingStateBelow)
 TEST(StateStackTest, StateStackCorrectHandleEvent)
 {
     UglyTestableStateStack s;
-    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     sf::Event event;
     event.type = sf::Event::MouseButtonPressed;
 
@@ -181,7 +181,7 @@ TEST(StateStackTest, StateStackCorrectHandleEvent)
 TEST(StateStackTest, StateStackDrawIsCalled)
 {
     UglyTestableStateStack s;
-    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     WindowStub windowStub;
     WindowStub renderStates;
     EXPECT_CALL(mock, draw(testing::_));
@@ -191,8 +191,8 @@ TEST(StateStackTest, StateStackDrawIsCalled)
 TEST(StateStackTest, StateStackHandleEventBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     sf::Event event;
     event.type = sf::Event::MouseButtonPressed;
 
@@ -204,8 +204,8 @@ TEST(StateStackTest, StateStackHandleEventBlockingStateBelow)
 TEST(StateStackTest, StateStackHandleEventNotBlockingStateBelow)
 {
     UglyTestableStateStack s;
-    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
-    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::GameState);
+    auto& mock1 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
+    auto& mock2 = s.forcePushStateAndReturn<MockState>(State_ID::PolygonSingleChunkCullingState);
     sf::Event event;
     event.type = sf::Event::MouseButtonPressed;
 

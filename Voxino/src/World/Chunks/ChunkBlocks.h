@@ -13,7 +13,7 @@ class ChunkBlocks
 {
 public:
     // For Binary Greedy Meshing to work all of them must be equal
-    static constexpr auto BLOCKS_PER_DIMENSION = 16;
+    static constexpr auto BLOCKS_PER_DIMENSION = BLOCK_PER_DIMENSION_IN_CHUNK;
     static constexpr auto BLOCKS_PER_X_DIMENSION = BLOCKS_PER_DIMENSION;
     static constexpr auto BLOCKS_PER_Y_DIMENSION = BLOCKS_PER_DIMENSION;
     static constexpr auto BLOCKS_PER_Z_DIMENSION = BLOCKS_PER_DIMENSION;
@@ -42,7 +42,8 @@ public:
         return mBlocks[index];
     }
 
-    inline Block& block(unsigned short x, unsigned short y, unsigned short z)
+    template<typename T>
+    inline Block& block(T x, T y, T z)
     {
         auto index = (z * BLOCKS_PER_Y_DIMENSION * BLOCKS_PER_X_DIMENSION) +
                      (y * BLOCKS_PER_X_DIMENSION) + x;
@@ -50,8 +51,7 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] inline const Block& block(unsigned short x, unsigned short y,
-                                            unsigned short z) const
+    [[nodiscard]] inline const Block& block(T x, T y, T z) const
     {
         auto index = (z * BLOCKS_PER_Y_DIMENSION * BLOCKS_PER_X_DIMENSION) +
                      (y * BLOCKS_PER_X_DIMENSION) + x;

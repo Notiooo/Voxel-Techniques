@@ -8,6 +8,8 @@
 #include "World/Polygons/Chunks/Types/ChunkCulling.h"
 #include "World/Skybox.h"
 
+#include <Utils/FpsCounter.h>
+
 namespace Voxino
 {
 
@@ -84,17 +86,31 @@ PolygonSingleChunkState<ChunkType>::PolygonSingleChunkState(StateStack& stack,
               {ShaderType::FragmentShader, "resources/Shaders/Polygons/" + shaderName + ".fs"},
               {ShaderType::GeometryShader, "resources/Shaders/Polygons/" + shaderName + ".gs"}}
     , mTexturePack("default")
-    , mChunk({0, 128, 0}, mTexturePack)
+    , mChunk({0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0}, mTexturePack)
 {
+    MEASURE_SCOPE;
     Mouse::lockMouseAtCenter(mWindow);
 
-    // GLCall(glEnable(GL_CULL_FACE));
+    auto radius = ChunkBlocks::BLOCKS_PER_DIMENSION + 2;
+    auto center = glm::vec3(ChunkBlocks::BLOCKS_PER_X_DIMENSION / 2.f, 0,
+                            ChunkBlocks::BLOCKS_PER_Z_DIMENSION / 2.f);
+    center.y +=
+        (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4) + ChunkBlocks::BLOCKS_PER_Y_DIMENSION / 3.f;
+
+    auto cameraOffset = glm::vec3(0.0f, ChunkBlocks::BLOCKS_PER_Y_DIMENSION * 0.66f, 0.0f);
+    mPlayer.camera().setRotationPath(radius, center, cameraOffset);
+    // mPlayer.camera().setStaticPointWithAngle(center, radius, cameraOffset, 225.f);
+
+    GLCall(glEnable(GL_CULL_FACE));
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     spdlog::info("Number of chunk vertices: {}", mChunk.numberOfVertices());
     spdlog::info("Size in buffer: {} bytes", mChunk.memorySize());
+    FPSCounter::instance().enable();
+
+    mPlayer.camera().setAutomatic(true);
 }
 
 template<typename ChunkType>
@@ -106,9 +122,7 @@ void PolygonSingleChunkState<ChunkType>::draw(sf::Window& target) const
         mSkybox.draw(mPlayer.camera());
     }
 
-    mChunk.drawTerrain(mRenderer, mShader, mPlayer.camera());
-    mChunk.drawLiquids(mRenderer, mShader, mPlayer.camera());
-    mChunk.drawFlorals(mRenderer, mShader, mPlayer.camera());
+    mChunk.draw(mRenderer, mShader, mPlayer.camera());
     mPlayer.draw(mRenderer);
 }
 
@@ -134,6 +148,7 @@ bool PolygonSingleChunkState<ChunkType>::handleEvent(const sf::Event& event)
 template<typename ChunkType>
 void PolygonSingleChunkState<ChunkType>::switchWireframe()
 {
+    MEASURE_SCOPE;
     mIsWireframe = !mIsWireframe;
     spdlog::info("Wireframe mode is {}", (mIsWireframe ? "enabled" : "disabled"));
     if (mIsWireframe)
@@ -159,6 +174,13 @@ template<typename ChunkType>
 bool PolygonSingleChunkState<ChunkType>::updateImGui(const float& deltaTime)
 {
     MEASURE_SCOPE;
+    mPlayer.updateImGui();
+    ImGui::Begin("Debug");
+    if (ImGui::Button("Switch wireframe"))
+    {
+        switchWireframe();
+    }
+    ImGui::End();
     return true;
 }
 
@@ -166,6 +188,12 @@ template<typename ChunkType>
 bool PolygonSingleChunkState<ChunkType>::update(const float& deltaTime)
 {
     MEASURE_SCOPE;
+    static auto totalTime = 0.f;
+    totalTime += deltaTime;
+    if (totalTime > 60.f)
+    {
+        requestPush(State_ID::ExitApplicationState);
+    }
     mPlayer.update(deltaTime);
     return true;
 }

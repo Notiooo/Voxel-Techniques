@@ -6,13 +6,12 @@ namespace Voxino::Polygons
 {
 
 
-// ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray&
-// texturePack,
-//                        ChunkContainer& parent)
-//     : ChunkArray(blockPosition, texturePack, parent)
-// {
-//     initializeChunk();
-// } // TODO
+ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+                       ChunkContainerBase& parent)
+    : ChunkArray(blockPosition, texturePack, parent)
+{
+    initializeChunk();
+}
 
 ChunkNaive::ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack)
     : ChunkArray(blockPosition, texturePack)
@@ -38,28 +37,18 @@ void ChunkNaive::createBlockMesh(const Block::Coordinate& pos, const Block& bloc
 {
     for (auto i = 0; i < static_cast<int>(Block::Face::Counter); ++i)
     {
-        if (block.id() == BlockId::Water)
-        {
-            mFluidMeshBuilder.addQuad(static_cast<Block::Face>(i),
-                                      block.blockTextureId(static_cast<Block::Face>(i)), pos);
-        }
-        else if (block.isFloral())
-        {
-            mFloralMeshBuilder.addQuad(static_cast<Block::Face>(i),
-                                       block.blockTextureId(static_cast<Block::Face>(i)), pos);
-        }
-        else
-        {
-            mTerrainMeshBuilder.addQuad(static_cast<Block::Face>(i),
-                                        block.blockTextureId(static_cast<Block::Face>(i)), pos);
-        }
+        mTerrainMeshBuilder.addQuad(static_cast<Block::Face>(i),
+                                    block.blockTextureId(static_cast<Block::Face>(i)), pos);
     }
 }
 
 void ChunkNaive::initializeChunk()
 {
+    MEASURE_SCOPE;
+    TracyMessageAuto("Initializing ChunkNaive");
     prepareMesh();
     updateMesh();
+    TracyMessageAuto("End of ChunkNaive initialization");
 }
 
 }// namespace Voxino::Polygons

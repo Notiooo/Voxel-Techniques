@@ -25,7 +25,7 @@ public:
      * \brief Returns the number of ray iterations in the last frame.
      * \return The number of ray iterations in the last frame.
      */
-    int lastNumberOfRayIterations();
+    int lastNumberOfRayIterations() const;
 
     /**
      * \brief Updates the atomic counter and resets it.
@@ -86,6 +86,11 @@ public:
      */
     void draw(const Renderer& renderer, const Shader& shader, const Camera& camera) const;
 
+    auto allocatedBytes() const
+    {
+        return mAllocatedBytes;
+    }
+
 private:
     std::array<std::unique_ptr<Brickmap>, GRID_VOLUME> mGrid;
     std::bitset<GRID_VOLUME> mOccupancyBitset;
@@ -97,6 +102,7 @@ private:
     AtomicCounter mAtomicCounter;
     bool mIsDataFilled{false};
     mutable bool mWasDataFiledLogPrinted{false};
+    unsigned long long mAllocatedBytes{0};
 };
 
 }// namespace Voxino

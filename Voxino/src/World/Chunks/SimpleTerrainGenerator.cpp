@@ -8,7 +8,7 @@ SimpleTerrainGenerator::SimpleTerrainGenerator(int seed)
     : mBasicTerrain(seed)
 {
     mBasicTerrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-    mBasicTerrain.SetFrequency(0.001);
+    mBasicTerrain.SetFrequency(0.01);
     mBasicTerrain.SetFractalGain(0);
     mBasicTerrain.SetFractalLacunarity(0.f);
     mBasicTerrain.SetFractalOctaves(1);
@@ -25,11 +25,14 @@ void SimpleTerrainGenerator::generateTerrainForChunk(const Chunk& chunk, ChunkBl
 {
     for (auto x = 0; x < ChunkBlocks::BLOCKS_PER_X_DIMENSION; ++x)
     {
-        for (auto z = 0; z < ChunkBlocks::BLOCKS_PER_Z_DIMENSION; ++z)
+        for (auto y = 0; y < ChunkBlocks::BLOCKS_PER_Y_DIMENSION; ++y)
         {
-            auto globalCoord = chunk.localToGlobalCoordinates({x, 0, z});
-            auto surfaceLevel = surfaceLevelAtGivenPosition(globalCoord.x, globalCoord.z);
-            generateColumnOfBlocks(chunkBlocks, surfaceLevel, x, globalCoord.y, z);
+            for (auto z = 0; z < ChunkBlocks::BLOCKS_PER_Z_DIMENSION; ++z)
+            {
+                auto globalCoord = chunk.localToGlobalCoordinates({x, y, z});
+                auto surfaceLevel = surfaceLevelAtGivenPosition(globalCoord.x, globalCoord.z);
+                generateColumnOfBlocks(chunkBlocks, surfaceLevel, x, globalCoord.y, z);
+            }
         }
     }
 }
@@ -85,6 +88,10 @@ void SimpleTerrainGenerator::generateColumnOfBlocks(ChunkBlocks& chunkBlocks, in
         else if (globalY < SEA_LEVEL)
         {
             chunkBlocks.block(x, y, z).setBlockType(BlockId::Water);
+        }
+        else
+        {
+            chunkBlocks.block(x, y, z).setBlockType(BlockId::Air);
         }
     }
 }

@@ -18,6 +18,7 @@ Player::Player(WindowToRender& window)
 
 void Player::draw(const Renderer& target) const
 {
+    MEASURE_SCOPE_WITH_GPU;
     mCrosshair.draw(target);
 }
 
@@ -117,14 +118,19 @@ void Player::handleEvent(const sf::Event& event)
     // nothing yet
 }
 
-Camera& Player::camera()
+AutomaticCamera& Player::camera()
 {
     return mCamera;
 }
 
-const Camera& Player::camera() const
+const AutomaticCamera& Player::camera() const
 {
     return mCamera;
+}
+
+void Player::updateImGui()
+{
+    mCamera.updateImGui();
 }
 
 }// namespace Voxino

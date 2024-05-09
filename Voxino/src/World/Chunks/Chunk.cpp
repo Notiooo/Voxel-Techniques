@@ -1,6 +1,6 @@
 #include "Chunk.h"
 #include "World/Block/Block.h"
-#include "World/Chunks/ChunkContainer.h"
+#include "World/Chunks/ChunkContainerBase.h"
 #include "World/Chunks/SimpleTerrainGenerator.h"
 #include "pch.h"
 
@@ -8,21 +8,31 @@
 namespace Voxino
 {
 
-Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack)
+Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+             ChunkContainerBase& parent)
     : mChunkPosition(std::move(blockPosition))
     , mTexturePack(texturePack)
-    // , mParentContainer()
+    , mParentContainer(&parent)
     , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
     , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
 {
-    auto chunkCoordinate = ChunkContainer::Coordinate::blockToChunkMetric(mChunkPosition);
+    generateChunkTerrain();
+}
+
+Chunk::Chunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack)
+    : mChunkPosition(std::move(blockPosition))
+    , mTexturePack(texturePack)
+    , mParentContainer()
+    , mChunkOfBlocks(std::make_unique<ChunkBlocks>())
+    , mTerrainGenerator(std::make_unique<SimpleTerrainGenerator>())
+{
     generateChunkTerrain();
 }
 
 Chunk::Chunk(Chunk&& rhs) noexcept
     : mChunkPosition(std::move(rhs.mChunkPosition))
     , mTexturePack(rhs.mTexturePack)
-    // , mParentContainer(rhs.mParentContainer)
+    , mParentContainer(rhs.mParentContainer)
     // , mTerrainModel(std::move(rhs.mTerrainModel)) // TODO
     , mChunkOfBlocks(std::move(rhs.mChunkOfBlocks))
     , mTerrainGenerator(std::move(rhs.mTerrainGenerator))
@@ -205,14 +215,14 @@ std::optional<Block> Chunk::neighbourBlockInGivenDirection(const Block::Coordina
         return std::optional<Block>(localBlock(blockNeighborPosition).id());
     }
 
-    // if (mParentContainer)
-    // {
-    //     if (const auto& neighborBlock =
-    //             mParentContainer->worldBlock(localToGlobalCoordinates(blockNeighborPosition)))
-    //     {
-    //         return std::optional<Block>(neighborBlock->id());
-    //     }
-    // } // TODO
+    if (mParentContainer)
+    {
+        if (const auto& neighborBlock =
+                mParentContainer->worldBlock(localToGlobalCoordinates(blockNeighborPosition)))
+        {
+            return std::optional<Block>(neighborBlock->id());
+        }
+    }
 
     return std::nullopt;
 }
@@ -231,12 +241,11 @@ bool Chunk::tryToPlaceBlock(const BlockId& blockId, const Block::Coordinate& loc
         return tryToPlaceBlockInsideThisChunk(blockId, localCoordinates,
                                               blocksThatMightBeOverplaced);
     }
-    // else if (mParentContainer)
-    // {
-    //     auto globalCoordinates = localToGlobalCoordinates(localCoordinates);
-    //     mParentContainer->tryToPlaceBlock(blockId, globalCoordinates,
-    //     blocksThatMightBeOverplaced);
-    // } // TODO
+    if (mParentContainer)
+    {
+        auto globalCoordinates = localToGlobalCoordinates(localCoordinates);
+        mParentContainer->tryToPlaceBlock(blockId, globalCoordinates, blocksThatMightBeOverplaced);
+    };
     return false;
 }
 

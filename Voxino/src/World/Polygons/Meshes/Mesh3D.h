@@ -44,7 +44,7 @@ struct Mesh3D
     /**
      * The size in memory that the mesh occupies
      */
-    virtual int memorySize() = 0;
+    virtual unsigned long memorySize() = 0;
 
     /* ==== Members ===== */
     std::vector<GLuint> indices;

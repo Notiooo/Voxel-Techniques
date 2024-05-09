@@ -25,6 +25,9 @@ public:
     using FaceCullingMask = std::array<uint64_t, 3 * PLANE_SIZE_P2 * 2>;
     using AxisEncodedBitSequences = std::array<uint64_t, 3 * PLANE_SIZE_P2>;
 
+    ChunkBinaryGreedyMeshing(const Block::Coordinate& blockPosition,
+                             const TexturePackArray& texturePack,
+                             ChunkContainerBase& parent);// TODO
 
     ChunkBinaryGreedyMeshing(const Block::Coordinate& blockPosition,
                              const TexturePackArray& texturePack);

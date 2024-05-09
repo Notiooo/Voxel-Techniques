@@ -1,4 +1,5 @@
 #pragma once
+#include "ChunkContainerBase.h"
 #include "World/Chunks/ChunkBlocks.h"
 
 namespace Voxino
@@ -8,6 +9,10 @@ class SimpleTerrainGenerator
 {
 public:
     explicit SimpleTerrainGenerator(int seed = 1337);
+    static constexpr int MAX_HEIGHT_MAP =
+        ChunkBlocks::BLOCKS_PER_Y_DIMENSION * ChunkContainerBase::MAX_CHUNKS_IN_HEIGHT;
+    static constexpr auto SEA_LEVEL = static_cast<int>(MAX_HEIGHT_MAP / 3.f);
+    static constexpr auto MINIMAL_TERRAIN_LEVEL = static_cast<int>(MAX_HEIGHT_MAP / 4.f);
 
     /**
      * @brief Generates terrain for a given chunk with a given set of blocks
@@ -23,10 +28,7 @@ public:
     static int randomSeed();
 
 private:
-    static constexpr auto SEA_LEVEL = 60;
-    static constexpr auto MINIMAL_TERRAIN_LEVEL = 20;
     static constexpr auto BASIC_TERRAIN_SQUASHING_FACTOR = 0.25f;
-    static constexpr int MAX_HEIGHT_MAP = 256;
 
     /**
      * @brief Generates terrain on the indicated chunk using the indicated biome.

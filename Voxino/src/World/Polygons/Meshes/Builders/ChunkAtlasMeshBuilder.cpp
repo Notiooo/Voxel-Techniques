@@ -24,7 +24,7 @@ void ChunkAtlasMeshBuilder::addQuad(const Block::Face& blockFace,
         auto& vertex = mMesh->vertices.emplace_back();
         vertex.position = addBlockFaceVertices(blockFace, blockPosition, i);
         vertex.textureCoordinates = textureQuad[i];
-        vertex.directionalLightning = addBlockFaceFakeLightning(blockFace);
+        // vertex.directionalLightning = addBlockFaceFakeLightning(blockFace);
     }
     addBlockFaceIndices(indices);
 }

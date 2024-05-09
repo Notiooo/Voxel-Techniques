@@ -1,3 +1,4 @@
 out/
 .vshistory/
 CMakeSettings.json
+cmake-*

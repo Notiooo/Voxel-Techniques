@@ -5,11 +5,11 @@ layout(triangle_strip, max_vertices = 4) out;
 
 out vec2 g_TexCoords;
 out float g_TextureId;
-out float g_DirectionalLightning;
+//out float g_DirectionalLightning;
 
 in float v_Face[];
 in float v_TextureId[];
-in float v_DirectionalLightning[];
+//in float v_DirectionalLightning[];
 
 float voxSize = 1;
 
@@ -79,7 +79,7 @@ void AddQuad(vec4 center, mat4 mvp, int blockFace) {
         gl_Position = center + mvp * vec4(faces[i], 0.0);
         g_TexCoords = texCoords[i];
         g_TextureId = v_TextureId[0];
-        g_DirectionalLightning = v_DirectionalLightning[0];
+        //g_DirectionalLightning = v_DirectionalLightning[0];
         EmitVertex();
     }
     EndPrimitive();
@@ -87,6 +87,6 @@ void AddQuad(vec4 center, mat4 mvp, int blockFace) {
 
 void main() {
     vec4 center = gl_in[0].gl_Position;
-    mat4 mvp = projection * view;
+    mat4 mvp = projection * view * model;
     AddQuad(center, mvp, int(v_Face[0]));
 }

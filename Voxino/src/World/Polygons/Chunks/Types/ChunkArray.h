@@ -26,7 +26,7 @@ public:
      * Returns the size in memory that the mesh occupies
      * @return The size in memory in bytes that the chunk occupies
      */
-    int memorySize() override;
+    unsigned long memorySize() override;
 
     /**
      * \brief Swaps the current chunk mesh with the latest, most recently generated one
@@ -40,22 +40,18 @@ public:
 
 protected:
     MeshBuilder mTerrainMeshBuilder;
-    MeshBuilder mFluidMeshBuilder;
-    MeshBuilder mFloralMeshBuilder;
 };
 
 template<typename MeshBuilder>
 int ChunkArray<MeshBuilder>::numberOfVertices()
 {
-    return mTerrainModel->mesh().numberOfVertices() + mFloralModel->mesh().numberOfVertices() +
-           mFluidModel->mesh().numberOfVertices();
+    return mTerrainModel->mesh().numberOfVertices();
 }
 
 template<typename MeshBuilder>
-int ChunkArray<MeshBuilder>::memorySize()
+unsigned long ChunkArray<MeshBuilder>::memorySize()
 {
-    return mTerrainModel->mesh().memorySize() + mFloralModel->mesh().memorySize() +
-           mFluidModel->mesh().memorySize();
+    return mTerrainModel->mesh().memorySize();
 }
 
 template<typename MeshBuilder>
@@ -63,8 +59,6 @@ void ChunkArray<MeshBuilder>::rebuildMesh()
 {
     MEASURE_SCOPE;
     mTerrainMeshBuilder.resetMesh();
-    mFluidMeshBuilder.resetMesh();
-    mFloralMeshBuilder.resetMesh();
     prepareMesh();
 }
 
@@ -77,18 +71,6 @@ void ChunkArray<MeshBuilder>::updateMesh()
         mTerrainModel = std::make_unique<MeshBuilder::ModelType>();
     }
     mTerrainModel->setMesh(mTerrainMeshBuilder.mesh3D());
-
-    if (!mFluidModel)
-    {
-        mFluidModel = std::make_unique<MeshBuilder::ModelType>();
-    }
-    mFluidModel->setMesh(mFluidMeshBuilder.mesh3D());
-
-    if (!mFloralModel)
-    {
-        mFloralModel = std::make_unique<MeshBuilder::ModelType>();
-    }
-    mFloralModel->setMesh(mFloralMeshBuilder.mesh3D());
 }
 
 }// namespace Voxino::Polygons

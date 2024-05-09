@@ -15,8 +15,8 @@ namespace Polygons
 class ChunkNaive : public ChunkArray<ChunkArrayMeshBuilder>
 {
 public:
-    // ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
-    //            ChunkContainer& parent); // TODO
+    ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack,
+               ChunkContainerBase& parent);// TODO
     ChunkNaive(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
 
     /**

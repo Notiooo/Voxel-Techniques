@@ -2,8 +2,9 @@
 #include "Tracy.hpp"
 #include "TracyOpenGL.hpp"
 #include "constants.h"
+#include "profiler_memory_tracking.h"
 
-#if defined(_DEBUG) or defined(UNIT_TEST)
+#if defined(UNIT_TEST)
     #undef MTR_ENABLED
     #undef TRACY_ENABLE
 #else
@@ -44,28 +45,54 @@
     #define MINITRACE_COLLECT_FUNCTION_CUSTOM(custom_name) (void)0
 #endif
 
-#define FRAME_MARKER                                                                               \
-    FrameMark;                                                                                     \
-    (void)0
+#ifdef ENABLE_TRACY_MARKERS
 
-#define MEASURE_SCOPE                                                                              \
-    MINITRACE_COLLECT_FUNCTION;                                                                    \
-    ZoneScoped;                                                                                    \
-    (void)0
+    #define GPU_COLLECT                                                                            \
+        TracyGpuCollect;                                                                           \
+        (void)0
 
-#define MEASURE_SCOPE_WITH_GPU                                                                     \
-    MINITRACE_COLLECT_FUNCTION;                                                                    \
-    ZoneScoped;                                                                                    \
-    TracyGpuZone(__FUNCTION__);                                                                    \
-    (void)0
+    #define FRAME_MARKER                                                                           \
+        FrameMark;                                                                                 \
+        (void)0
 
-#define MEASURE_SCOPE_CUSTOM(name)                                                                 \
-    MINITRACE_COLLECT_FUNCTION_CUSTOM(name);                                                       \
-    ZoneScopedN(name);                                                                             \
-    (void)0
+    #define MEASURE_SCOPE                                                                          \
+        MINITRACE_COLLECT_FUNCTION;                                                                \
+        ZoneScoped;                                                                                \
+        (void)0
 
-#define MEASURE_SCOPE_WITH_GPU_CUSTOM(name)                                                        \
-    MINITRACE_COLLECT_FUNCTION_CUSTOM(name);                                                       \
-    ZoneScopedN(name);                                                                             \
-    TracyGpuZone(name);                                                                            \
-    (void)0
+    #define MEASURE_SCOPE_WITH_GPU                                                                 \
+        MINITRACE_COLLECT_FUNCTION;                                                                \
+        ZoneScoped;                                                                                \
+        TracyGpuZone(__FUNCTION__);                                                                \
+        (void)0
+
+    #define MEASURE_SCOPE_CUSTOM(name)                                                             \
+        MINITRACE_COLLECT_FUNCTION_CUSTOM(name);                                                   \
+        ZoneScopedN(name);                                                                         \
+        (void)0
+
+    #define MEASURE_SCOPE_WITH_GPU_CUSTOM(name)                                                    \
+        MINITRACE_COLLECT_FUNCTION_CUSTOM(name);                                                   \
+        ZoneScopedN(name);                                                                         \
+        TracyGpuZone(name);                                                                        \
+        (void)0
+
+
+    #define TracyMessageAuto(msg) TracyMessage(msg, strlen(msg))
+    #define TracyMessageAutoC(msg, color) TracyMessageC(msg, strlen(msg), color)
+    #define TracyMessageAutoL(msg) TracyMessageL(msg, strlen(msg))
+    #define TracyMessageAutoLC(msg, color) TracyMessageLC(msg, strlen(msg), color)
+
+#else
+    #define GPU_COLLECT
+    #define FRAME_MARKER
+    #define MEASURE_SCOPE
+    #define MEASURE_SCOPE_WITH_GPU
+    #define MEASURE_SCOPE_CUSTOM(name)
+    #define MEASURE_SCOPE_WITH_GPU_CUSTOM(name)
+    #define TracyMessageAuto(msg)
+    #define TracyMessageAutoC(msg, color)
+    #define TracyMessageAutoL(msg)
+    #define TracyMessageAutoLC(msg, color)
+
+#endif

@@ -22,6 +22,12 @@ public:
     explicit ChunkArrayMeshBuilder(Block::Coordinate origin);
     ChunkArrayMeshBuilder();
 
+    enum QuadMode
+    {
+        BINARY_GREEDY,
+        NORMAL
+    };
+
     /**
      * Resets the builder state, clearing any progress and setting it back to initial conditions.
      */
@@ -37,7 +43,7 @@ public:
      * Adds a quad to the mesh based on the specified mesh region details.
      * @param move The mesh region information used to define the quad's properties and placement.
      */
-    void addQuad(const MeshRegion& move);
+    void addQuad(const MeshRegion& move, QuadMode mode = NORMAL);
 
     /**
      * Adds a quad to the mesh in place of the designated face at the given coordinates and with the
@@ -76,7 +82,9 @@ private:
      */
     [[nodiscard]] glm::vec3 addBlockFaceVertices(const Block::Face& blockFace,
                                                  const Block::Coordinate& blockPosition, int i,
-                                                 float width, float height) const;
+                                                 float width, float height, QuadMode mode) const;
+    std::vector<GLfloat> faceVertices(const Block::Face& blockFace, QuadMode mode) const;
+    std::vector<GLfloat> faceVerticesForBinaryGreedy(const Block::Face& blockFace) const;
 
 protected:
     /* ==== Members ===== */

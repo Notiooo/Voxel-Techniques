@@ -15,7 +15,7 @@ static void BM_ChunkCullingRebuildMesh(benchmark::State& state)
 {
     initializeOpenGL();
 
-    auto blockPosition = Block::Coordinate{0, 0, 0};
+    auto blockPosition = Block::Coordinate{0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0};
     auto texturePack = TexturePackArray("default");
     auto chunk = Polygons::ChunkCulling(blockPosition, texturePack);
     for (auto _: state)
@@ -30,7 +30,7 @@ static void BM_ChunkCullingGPURebuildMesh(benchmark::State& state)
 {
     initializeOpenGL();
 
-    auto blockPosition = Block::Coordinate{0, 0, 0};
+    auto blockPosition = Block::Coordinate{0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0};
     auto texturePack = TexturePackArray("default");
     auto chunk = Polygons::ChunkCullingGpu(blockPosition, texturePack);
     for (auto _: state)
@@ -45,7 +45,7 @@ static void BM_ChunkNaiveRebuildMesh(benchmark::State& state)
 {
     initializeOpenGL();
 
-    auto blockPosition = Block::Coordinate{0, 0, 0};
+    auto blockPosition = Block::Coordinate{0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0};
     auto texturePack = TexturePackArray("default");
     auto chunk = Polygons::ChunkNaive(blockPosition, texturePack);
     for (auto _: state)
@@ -60,7 +60,7 @@ static void BM_ChunkGreedyMeshingRebuildMesh(benchmark::State& state)
 {
     initializeOpenGL();
 
-    auto blockPosition = Block::Coordinate{0, 0, 0};
+    auto blockPosition = Block::Coordinate{0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0};
     auto texturePack = TexturePackArray("default");
     auto chunk = Polygons::ChunkGreedyMeshing(blockPosition, texturePack);
     for (auto _: state)
@@ -75,7 +75,7 @@ static void BM_ChunkBinaryGreedyMeshingRebuildMesh(benchmark::State& state)
 {
     initializeOpenGL();
 
-    auto blockPosition = Block::Coordinate{0, 0, 0};
+    auto blockPosition = Block::Coordinate{0, (SimpleTerrainGenerator::MAX_HEIGHT_MAP / 4), 0};
     auto texturePack = TexturePackArray("default");
     auto chunk = Polygons::ChunkBinaryGreedyMeshing(blockPosition, texturePack);
     for (auto _: state)

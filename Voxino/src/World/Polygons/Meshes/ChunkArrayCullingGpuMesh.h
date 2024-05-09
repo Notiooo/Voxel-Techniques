@@ -44,7 +44,7 @@ struct ChunkArrayCullingGpuMesh : public Mesh3D
      * Returns the size in memory that the mesh occupies
      * @return The size in memory in bytes that the mesh occupies
      */
-    int memorySize() override;
+    unsigned long memorySize() override;
 
     /* ==== Members ===== */
     struct VertexData
@@ -52,7 +52,7 @@ struct ChunkArrayCullingGpuMesh : public Mesh3D
         glm::vec3 position{};
         float textureId{};
         float face{};
-        float directionalLightning{};
+        // float directionalLightning{};
     };
     std::vector<VertexData> vertices;
 };

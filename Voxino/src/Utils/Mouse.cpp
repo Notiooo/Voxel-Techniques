@@ -41,11 +41,18 @@ sf::Vector2i Mouse::mouseOffset()
 
 void Mouse::update(const float& deltaTime, const sf::Window& window)
 {
+    static auto accumulatedDeltaTime = 0.f;
+    accumulatedDeltaTime += deltaTime;
     if (isMouseLocked())
     {
         const auto windowCenter = sf::Vector2i(window.getSize().x / 2.f, window.getSize().y / 2.f);
-        mMouseOffset = sf::Mouse::getPosition(window) - windowCenter;
-        centerMouse(window);
+
+        if (accumulatedDeltaTime > 0.01f)
+        {
+            mMouseOffset = sf::Mouse::getPosition(window) - windowCenter;
+            centerMouse(window);
+            accumulatedDeltaTime = 0;
+        }
     }
 }
 

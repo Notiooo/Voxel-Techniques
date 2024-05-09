@@ -16,7 +16,7 @@ blocks:
 
   - name: Water
     texture: Water
-    transparent: true
+    transparent: false
     collidable: false
 
   - name: Sand

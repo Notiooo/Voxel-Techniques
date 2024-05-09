@@ -43,9 +43,21 @@ ChunkBinaryGreedyMeshing::AxisEncodedBitSequences ChunkBinaryGreedyMeshing::
                         axisEncodedBits[x + (y * PLANE_SIZE_P) + PLANE_SIZE_P2 * 2] |= 1ULL << z;
                     }
                 }
-                else
+                else if (mParentContainer)
                 {
-                    // TODO: Get global block and check if it is transparent
+                    auto block =
+                        mParentContainer->worldBlock(localToGlobalCoordinates(localCoordinates));
+                    if (block and not block->isTransparent())
+                    {
+                        // For each x and z we get binary values  representing y axis of chunk
+                        axisEncodedBits[x + (z * PLANE_SIZE_P)] |= 1ULL << y;
+
+                        // For each z and y we get binary values representing x axis of chunk
+                        axisEncodedBits[z + (y * PLANE_SIZE_P) + PLANE_SIZE_P2] |= 1ULL << x;
+
+                        // For each x and y we get binary values representing z axis of chunk
+                        axisEncodedBits[x + (y * PLANE_SIZE_P) + PLANE_SIZE_P2 * 2] |= 1ULL << z;
+                    }
                 }
             }
         }
@@ -233,6 +245,15 @@ uint32_t ChunkBinaryGreedyMeshing::expandAndClearRow(BinaryRow& data, size_t sta
 
 
 ChunkBinaryGreedyMeshing::ChunkBinaryGreedyMeshing(const Block::Coordinate& blockPosition,
+                                                   const TexturePackArray& texturePack,
+                                                   ChunkContainerBase& parent)
+    : ChunkArray(blockPosition, texturePack, parent)
+{
+    initializeChunk();
+}
+
+
+ChunkBinaryGreedyMeshing::ChunkBinaryGreedyMeshing(const Block::Coordinate& blockPosition,
                                                    const TexturePackArray& texturePack)
     : ChunkArray(blockPosition, texturePack)
 {
@@ -241,8 +262,11 @@ ChunkBinaryGreedyMeshing::ChunkBinaryGreedyMeshing(const Block::Coordinate& bloc
 
 void ChunkBinaryGreedyMeshing::initializeChunk()
 {
+    MEASURE_SCOPE;
+    TracyMessageAuto("Initializing ChunkBinaryGreedyMeshing");
     prepareMesh();
     updateMesh();
+    TracyMessageAuto("End of ChunkBinaryGreedyMeshing initialization");
 }
 
 void ChunkBinaryGreedyMeshing::prepareMesh()
@@ -254,7 +278,7 @@ void ChunkBinaryGreedyMeshing::prepareMesh()
         auto meshRegions = generateMeshForAxis(binaryPlanes, axis);
         for (const auto& meshRegion: meshRegions)
         {
-            mTerrainMeshBuilder.addQuad(meshRegion);
+            mTerrainMeshBuilder.addQuad(meshRegion, ChunkArrayMeshBuilder::QuadMode::BINARY_GREEDY);
         }
     }
 }

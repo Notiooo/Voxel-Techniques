@@ -13,6 +13,8 @@ class RaycastChunk : public Chunk
 {
 public:
     RaycastChunk(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
+    RaycastChunk(Block::Coordinate blockPosition, const TexturePackArray& texturePack,
+                 ChunkContainerBase& parent);
 
     /**
      * Returns the number of chunk vertices
@@ -24,7 +26,9 @@ public:
      * Returns the size in memory that the mesh occupies
      * @return The size in memory in bytes that the chunk occupies
      */
-    int memorySize() override;
+    unsigned long memorySize() override;
+
+    unsigned long lastNumberOfRayIterations() const;
 
     /**
      * \brief Removes a block on coordinates given relatively to the position of the chunk

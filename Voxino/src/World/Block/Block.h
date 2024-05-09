@@ -166,6 +166,11 @@ public:
      */
     [[nodiscard]] RGBA toRGBA() const;
 
+    bool operator==(const Block& other) const
+    {
+        return id() == other.id();
+    }
+
 
 private:
     [[nodiscard]] std::array<GLubyte, 4> toBlockInShader() const;
@@ -177,3 +182,17 @@ private:
 };
 
 }// namespace Voxino
+
+namespace std
+{
+
+template<>
+struct hash<Voxino::Block>
+{
+    std::size_t operator()(const Voxino::Block& k) const noexcept
+    {
+        return std::hash<Voxino::BlockId>()(k.id());
+    }
+};
+
+}// namespace std
