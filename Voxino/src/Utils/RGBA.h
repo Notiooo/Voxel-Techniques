@@ -11,4 +11,9 @@ struct RGBA
     GLubyte g;
     GLubyte b;
     GLubyte a;
+
+    [[nodiscard]] std::array<GLubyte, 4> toArray() const
+    {
+        return {r, g, b, a};
+    }
 };

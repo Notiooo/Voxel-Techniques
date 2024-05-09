@@ -4,6 +4,8 @@
 #include "Utils/CoordinateBase.h"
 #include "Utils/Direction.h"
 
+#include <Utils/RGBA.h>
+
 
 namespace Voxino
 {
@@ -157,6 +159,17 @@ public:
      * behind them should be visible.
      */
     [[nodiscard]] bool isFloral() const;
+
+    /**
+     * @brief Converts the block to a RGBA color
+     * @return RGBA color
+     */
+    [[nodiscard]] RGBA toRGBA() const;
+
+
+private:
+    [[nodiscard]] std::array<GLubyte, 4> toBlockInShader() const;
+    static float encodeTextureID(int highPart, int lowPart);
 
 
 private:

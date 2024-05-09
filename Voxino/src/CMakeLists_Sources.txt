@@ -28,6 +28,7 @@ set(PROJECT_SOURCES
         States/CustomStates/Polygons/PolygonSingleChunkState.cpp
         States/CustomStates/Raycast/RaycastSingleChunkColoredVoxels.cpp
         States/CustomStates/Raycast/RaycastSingleChunkTexturedVoxels.cpp
+        States/CustomStates/Raycast/RaycastSingleChunkTexturedBrickmapGpu.cpp
         Player/Player.cpp
         World/Camera.cpp
         World/Skybox.cpp
@@ -58,8 +59,11 @@ set(PROJECT_SOURCES
         World/Polygons/Meshes/Builders/ChunkArrayMeshBuilder.cpp
         World/Polygons/Meshes/Builders/ChunkArrayCullingGpuMeshBuilder.cpp
         World/Polygons/Meshes/Builders/MeshBuilder.cpp
+        World/Raycast/Chunks/Brickmap.cpp
+        World/Raycast/Chunks/BrickgridGpu.cpp
         World/Raycast/Chunks/VoxelsGpu.cpp
         World/Raycast/Chunks/Types/RaycastChunk.cpp
+        World/Raycast/Chunks/Types/RaycastChunkBrickmapGpu.cpp
         Utils/Mouse.cpp
         Utils/CoordinateBase.cpp
         Utils/Direction.cpp

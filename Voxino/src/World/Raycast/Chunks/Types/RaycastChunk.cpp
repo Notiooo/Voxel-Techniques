@@ -1,7 +1,6 @@
 #include "RaycastChunk.h"
+#include "Utils/RGBA.h"
 #include "pch.h"
-
-#include <Utils/RGBA.h>
 
 namespace Voxino::Raycast
 {
@@ -37,7 +36,7 @@ void RaycastChunk::fillData()
         }
         else
         {
-            data.push_back(toRGBA(block));
+            data.push_back(block.toRGBA());
         }
     }
     mVoxels.fill(data);
@@ -75,37 +74,10 @@ bool RaycastChunk::tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
     {
         auto& block = mChunkOfBlocks->block(localCoordinates);
         mVoxels.updateSingleBlock({localCoordinates.x, localCoordinates.y, localCoordinates.z},
-                                  toBlockInShader(block));
+                                  block.toRGBA().toArray());
         return true;
     }
     return false;
-}
-
-std::array<GLubyte, 4> RaycastChunk::toBlockInShader(const Block& block)
-{
-    std::array<GLubyte, 4> rgba{};
-    constexpr auto numberOfBlockFaces = 6;
-    for (auto i = 0; i < numberOfBlockFaces; i += 2)
-    {
-        auto textureID1 = block.blockTextureId(static_cast<Block::Face>(i));
-        auto textureID2 = block.blockTextureId(static_cast<Block::Face>(i + 1));
-        rgba[i / 2] = encodeTextureID(textureID1, textureID2);
-    }
-    rgba[3] = 255;
-    return rgba;
-}
-
-float RaycastChunk::encodeTextureID(int highPart, int lowPart)
-{
-    int value = (highPart << 4) | lowPart;
-    return value;
-}
-
-RGBA RaycastChunk::toRGBA(const Voxino::Block& block)
-{
-    auto blockInShader = toBlockInShader(block);
-    const auto rgba = reinterpret_cast<RGBA&>(blockInShader);
-    return rgba;
 }
 
 }// namespace Voxino::Raycast

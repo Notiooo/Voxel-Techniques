@@ -9,6 +9,7 @@
 #include "Utils/Mouse.h"
 #include "pch.h"
 
+#include <States/CustomStates/Raycast/RaycastSingleChunkTexturedBrickmapGpu.h>
 #include <World/Polygons/Chunks/Types/ChunkBinaryGreedyMeshing.h>
 #include <World/Polygons/Chunks/Types/ChunkCullingGpu.h>
 #include <World/Polygons/Chunks/Types/ChunkGreedyMeshing.h>
@@ -90,6 +91,8 @@ void Application::setupFlowStates()
                                                          *mGameWindow);
     mAppStack.saveState<RaycastSingleChunkTexturedVoxels>(
         State_ID::RaycastSingleChunkTexturedVoxels, *mGameWindow);
+    mAppStack.saveState<RaycastSingleChunkTexturedBrickmapGpu>(
+        State_ID::RaycastSingleChunkTexturedBrickmapGpu, *mGameWindow);
 }
 
 Application::Application()
@@ -322,8 +325,9 @@ void Application::updateImGuiSelectScene()
     scene("Single Chunk Culling GPU", State_ID::PolygonSingleChunkCullingGpuState);
 
     splitLineText("Raycast");
-    scene("Single Chunk Colored Voxels", State_ID::RaycastSingleChunkColoredVoxels);
-    scene("Single Chunk Textured Voxels", State_ID::RaycastSingleChunkTexturedVoxels);
+    scene("Single Chunk Colored", State_ID::RaycastSingleChunkColoredVoxels);
+    scene("Single Chunk Textured", State_ID::RaycastSingleChunkTexturedVoxels);
+    scene("Single Chunk Textured Brickmap Gpu", State_ID::RaycastSingleChunkTexturedBrickmapGpu);
     ImGui::End();
 }
 

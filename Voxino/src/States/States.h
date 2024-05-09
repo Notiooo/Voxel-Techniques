@@ -19,6 +19,7 @@ enum class State_ID
     PolygonSingleChunkCullingGpuState,
     RaycastSingleChunkColoredVoxels,
     RaycastSingleChunkTexturedVoxels,
+    RaycastSingleChunkTexturedBrickmapGpu,
     PauseState,
 
     ExitApplicationState

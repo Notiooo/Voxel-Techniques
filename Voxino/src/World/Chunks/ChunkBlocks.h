@@ -13,7 +13,7 @@ class ChunkBlocks
 {
 public:
     // For Binary Greedy Meshing to work all of them must be equal
-    static constexpr auto BLOCKS_PER_DIMENSION = 32;
+    static constexpr auto BLOCKS_PER_DIMENSION = 16;
     static constexpr auto BLOCKS_PER_X_DIMENSION = BLOCKS_PER_DIMENSION;
     static constexpr auto BLOCKS_PER_Y_DIMENSION = BLOCKS_PER_DIMENSION;
     static constexpr auto BLOCKS_PER_Z_DIMENSION = BLOCKS_PER_DIMENSION;

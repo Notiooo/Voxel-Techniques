@@ -72,6 +72,34 @@ bool Block::isFloral() const
         default: return false;
     }
 }
+
+RGBA Block::toRGBA() const
+{
+    auto blockInShader = toBlockInShader();
+    const auto rgba = reinterpret_cast<RGBA&>(blockInShader);
+    return rgba;
+}
+
+std::array<GLubyte, 4> Block::toBlockInShader() const
+{
+    std::array<GLubyte, 4> rgba{};
+    constexpr auto numberOfBlockFaces = 6;
+    for (auto i = 0; i < numberOfBlockFaces; i += 2)
+    {
+        auto textureID1 = blockTextureId(static_cast<Block::Face>(i));
+        auto textureID2 = blockTextureId(static_cast<Block::Face>(i + 1));
+        rgba[i / 2] = encodeTextureID(textureID1, textureID2);
+    }
+    rgba[3] = 255;
+    return rgba;
+}
+
+float Block::encodeTextureID(int highPart, int lowPart)
+{
+    int value = (highPart << 4) | lowPart;
+    return value;
+}
+
 bool Block::isCollidable() const
 {
     return mBlockType->collidable;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "World/Chunks/Chunk.h"
+#include "World/Raycast/Chunks/BrickgridGpu.h"
+#include "World/Raycast/Chunks/Brickmap.h"
 #include "World/Raycast/Chunks/VoxelsGpu.h"
 
 namespace Voxino::Raycast
@@ -9,10 +11,17 @@ namespace Voxino::Raycast
 /**
  * It is a large object consisting of a multitude of individual blocks contained within it.
  */
-class RaycastChunk : public Chunk
+class RaycastChunkBrickmapGpu : public Chunk
 {
 public:
-    RaycastChunk(const Block::Coordinate& blockPosition, const TexturePackArray& texturePack);
+    static constexpr int BRICKS_PER_DIMENSION =
+        ChunkBlocks::BLOCKS_PER_DIMENSION / Brickmap::BRICK_SIZE;
+    static constexpr int BRICKS_PER_CHUNK =
+        BRICKS_PER_DIMENSION * BRICKS_PER_DIMENSION * BRICKS_PER_DIMENSION;
+
+
+    RaycastChunkBrickmapGpu(const Block::Coordinate& blockPosition,
+                            const TexturePackArray& texturePack);
 
     /**
      * Returns the number of chunk vertices
@@ -25,12 +34,6 @@ public:
      * @return The size in memory in bytes that the chunk occupies
      */
     int memorySize() override;
-
-    /**
-     * \brief Removes a block on coordinates given relatively to the position of the chunk
-     * \param localCoordinates Coordinates relative to the position of the chunk
-     */
-    void removeLocalBlock(const Block::Coordinate& localCoordinates) override;
 
     /**
      * Draws this chunk to the game screen
@@ -51,23 +54,12 @@ public:
      */
     void updateImGui() override;
 
-protected:
-    /**
-     * \brief It tries to insert the indicated block in the indicated place in the chunk.
-     * \param blockId Block Identifier
-     * \param localCoordinates Coordinates relative to the position of the chunk
-     * \param blocksThatMightBeOverplaced Blocks that can be overwritten by a function. Others
-     * cannot be overwritten.
-     */
-    bool tryToPlaceBlockInsideThisChunk(const BlockId& blockId,
-                                        const Block::Coordinate& localCoordinates,
-                                        std::vector<BlockId>& blocksThatMightBeOverplaced) override;
-
 private:
     void fillData();
+    Brickmap& brickmap(int x, int y, int z);
 
 private:
-    VoxelsGpu mVoxels;
+    BrickgridGpu mBrickgrid;
 };
 
 }// namespace Voxino::Raycast
